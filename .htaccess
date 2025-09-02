@@ -1,0 +1,7 @@
+# Перенаправление API
+RewriteCond %{REQUEST_URI} ^/api/ [NC]
+RewriteRule ^ api.php [QSA,L]
+
+# Перенаправление веб-запросов
+RewriteCond %{REQUEST_URI} !^/api/ [NC]
+RewriteRule ^ index.php [QSA,L]

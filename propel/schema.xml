@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<database name="default" defaultIdMethod="native" namespace="\Models" defaultPhpNamingMethod="underscore">
+  <table name="category" idMethod="native" phpName="Category">
+    <column name="id" phpName="Id" type="INTEGER" description="Идентификатор" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="teacherId" phpName="Teacherid" type="INTEGER" description="Преподаватель" required="true"/>
+    <column name="organ" phpName="Organ" type="LONGVARCHAR" description="Орган издавший приказ" required="true"/>
+    <column name="date" phpName="Date" type="DATE" description="Дата" required="true"/>
+    <column name="num" phpName="Num" type="INTEGER" description="Номер приказа" required="true"/>
+    <column name="post" phpName="Post" type="LONGVARCHAR" description="Должность" required="true"/>
+    <column name="place" phpName="Place" type="LONGVARCHAR" description="Образовательная организация" required="true"/>
+    <column name="categoryId" phpName="Categoryid" type="INTEGER" description="Присвоенная категория" required="true"/>
+    <foreign-key foreignTable="teacher" name="category_ibfk_1" onDelete="RESTRICT" onUpdate="CASCADE">
+      <reference local="teacherId" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="categoryList" name="category_ibfk_2" onDelete="RESTRICT" onUpdate="CASCADE">
+      <reference local="categoryId" foreign="id"/>
+    </foreign-key>
+    <index name="teacher">
+      <index-column name="teacherId"/>
+    </index>
+    <index name="category">
+      <index-column name="categoryId"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="categoryList" idMethod="native" phpName="Categorylist">
+    <column name="id" phpName="Id" type="INTEGER" description="Идентификатор" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="65" description="Наименование " required="true"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="event" idMethod="native" phpName="Event">
+    <column name="id" phpName="Id" type="INTEGER" description="Идентификатор" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="infoId" phpName="Infoid" type="INTEGER" description="Информация" required="true"/>
+    <column name="teacherId" phpName="Teacherid" type="INTEGER" description="Преподаватель" required="true"/>
+    <column name="teacherRoleId" phpName="Teacherroleid" type="INTEGER" description="Роль участия" required="true"/>
+    <column name="studentId" phpName="Studentid" type="INTEGER" description="Студент" required="true"/>
+    <column name="awardId" phpName="Awardid" type="INTEGER" description="Награда" required="true"/>
+    <column name="document" phpName="Document" type="LONGVARCHAR" description="Документ" required="true"/>
+    <foreign-key foreignTable="eventInfo" name="event_ibfk_1" onDelete="RESTRICT" onUpdate="CASCADE">
+      <reference local="infoId" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="teacher" name="event_ibfk_2" onDelete="RESTRICT" onUpdate="CASCADE">
+      <reference local="teacherId" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="eventRole" name="event_ibfk_3" onDelete="RESTRICT" onUpdate="CASCADE">
+      <reference local="teacherRoleId" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="student" name="event_ibfk_4" onDelete="RESTRICT" onUpdate="CASCADE">
+      <reference local="studentId" foreign="id"/>
+    </foreign-key>
+    <foreign-key foreignTable="eventAwardDegree" name="event_ibfk_5" onDelete="RESTRICT" onUpdate="CASCADE">
+      <reference local="awardId" foreign="id"/>
+    </foreign-key>
+    <index name="event_ibfk_1">
+      <index-column name="infoId"/>
+    </index>
+    <index name="teacher">
+      <index-column name="teacherId"/>
+    </index>
+    <index name="teacherRole">
+      <index-column name="teacherRoleId"/>
+    </index>
+    <index name="student">
+      <index-column name="studentId"/>
+    </index>
+    <index name="award">
+      <index-column name="awardId"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="eventAwardDegree" idMethod="native" phpName="Eventawarddegree" description="Степени награждения">
+    <column name="id" phpName="Id" type="INTEGER" description="Идентификатор" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="45" description="Наименование " required="true"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="eventInfo" idMethod="native" phpName="Eventinfo" description="Чемпионаты">
+    <column name="id" phpName="Id" type="INTEGER" description="Идентификатор" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="255" description="Наименование" required="true"/>
+    <column name="start" phpName="Start" type="DATE" description="Дата начала " required="true"/>
+    <column name="end" phpName="End" type="DATE" description="Дата окончания" required="true"/>
+    <column name="level" phpName="Level" type="INTEGER" description="Уровень проведения"/>
+    <foreign-key foreignTable="eventLevel" name="eventinfo_ibfk_1" onDelete="SET NULL" onUpdate="CASCADE">
+      <reference local="level" foreign="id"/>
+    </foreign-key>
+    <index name="level">
+      <index-column name="level"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="eventLevel" idMethod="native" phpName="Eventlevel" description="Уровни чемпионатов">
+    <column name="id" phpName="Id" type="INTEGER" description="Идентификатор" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="30" description="Наименование" required="true"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="eventRole" idMethod="native" phpName="Eventrole" description="Роль участия">
+    <column name="id" phpName="Id" type="INTEGER" description="Идентификатор" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="45" description="Наименование" required="true"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="skill" idMethod="native" phpName="Skill" description="Повышение квалификации действует 3 года">
+    <column name="id" phpName="Id" type="INTEGER" description="Идентификатор" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="teacherId" phpName="Teacherid" type="INTEGER" description="Преподаватель" required="true"/>
+    <column name="num" phpName="Num" type="INTEGER" description="Номер удостоверения" required="true"/>
+    <column name="regNum" phpName="Regnum" type="INTEGER" description="Регистрационный номер" required="true"/>
+    <column name="city" phpName="City" type="VARCHAR" size="65" description="Город" required="true"/>
+    <column name="date" phpName="Date" type="DATE" description="Дата выдачи" required="true"/>
+    <column name="place" phpName="Place" type="LONGVARCHAR" description="Место прохождения" required="true"/>
+    <column name="start" phpName="Start" type="DATE" description="Дата начала" required="true"/>
+    <column name="end" phpName="End" type="DATE" description="Дата окончания" required="true"/>
+    <column name="theme" phpName="Theme" type="LONGVARCHAR" description="Тема" required="true"/>
+    <column name="hours" phpName="Hours" type="INTEGER" description="Объем в часах" required="true"/>
+    <column name="director" phpName="Director" type="VARCHAR" size="65" description="Руководитель" required="true"/>
+    <column name="secretary" phpName="Secretary" type="VARCHAR" size="65" description="Секретарь" required="true"/>
+    <column name="docPath" phpName="Docpath" type="LONGVARCHAR" description="Путь до документа" required="true"/>
+    <foreign-key foreignTable="teacher" name="skill_ibfk_1" onDelete="RESTRICT" onUpdate="CASCADE">
+      <reference local="teacherId" foreign="id"/>
+    </foreign-key>
+    <index name="teacher">
+      <index-column name="teacherId"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="student" idMethod="native" phpName="Student" description="Студенты">
+    <column name="id" phpName="Id" type="INTEGER" description="Идентификатор" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="surname" phpName="Surname" type="VARCHAR" size="45" description="Фамилия" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="45" description="Имя" required="true"/>
+    <column name="midname" phpName="Midname" type="VARCHAR" size="45" description="Отчество" required="true"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="teacher" idMethod="native" phpName="Teacher" description="Преподаватели">
+    <column name="id" phpName="Id" type="INTEGER" description="Идентификатор" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="surname" phpName="Surname" type="VARCHAR" size="45" description="Фамилия" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="45" description="Имя" required="true"/>
+    <column name="midname" phpName="Midname" type="VARCHAR" size="45" description="Отчество" required="true"/>
+    <column name="login" phpName="Login" type="LONGVARCHAR" description="Логин" required="true"/>
+    <column name="password" phpName="Password" type="LONGVARCHAR" description="Пароль" required="true"/>
+    <column name="roleId" phpName="Roleid" type="INTEGER" description="роль" required="true"/>
+    <column name="needUpdSkill" phpName="Needupdskill" type="BOOLEAN" size="1" description="Необходимость обновить данные об квалификации" required="true" defaultValue="true"/>
+    <column name="canUpdCategory" phpName="Canupdcategory" type="BOOLEAN" size="1" description="Возможность обновить категорию" required="true" defaultValue="true"/>
+    <foreign-key foreignTable="userRole" name="teacher_ibfk_1" onDelete="RESTRICT" onUpdate="CASCADE">
+      <reference local="roleId" foreign="id"/>
+    </foreign-key>
+    <index name="role">
+      <index-column name="roleId"/>
+    </index>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+  <table name="userRole" idMethod="native" phpName="Userrole">
+    <column name="id" phpName="Id" type="INTEGER" description="Идентификатор" primaryKey="true" autoIncrement="true" required="true"/>
+    <column name="name" phpName="Name" type="VARCHAR" size="10" description="Роль" required="true"/>
+    <vendor type="mysql">
+      <parameter name="Engine" value="InnoDB"/>
+    </vendor>
+  </table>
+</database>

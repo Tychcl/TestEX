@@ -1,0 +1,12 @@
+{
+    "name": "lox/teacher-competence",
+    "description": "project",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/",
+            "Classes\\": "src/classes"
+        }
+    },
+    "require": {}
+}

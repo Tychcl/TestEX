@@ -1,8 +1,28 @@
 <?php
+use Classes\HelloWorld;
+use DI\ContainerBuilder;
+use Relay\Relay;
+use Zend\Diactoros\ServerRequestFactory;
+use function DI\create;
+
+
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
-use Classes\HelloWorld;
+$containerBuilder = new ContainerBuilder();
 
-$hello = new HelloWorld();
-$hello->announce();
+$middlewareQueue = [];
+
+$requestHandler = new Relay($middlewareQueue);
+$requestHandler->handle(ServerRequestFactory::fromGlobals());
+
+$containerBuilder->useAutowiring(false);
+$containerBuilder->useAnnotations(false);
+$containerBuilder->addDefinitions([
+    HelloWorld::class => create(HelloWorld::class)
+]);
+
+$container = $containerBuilder->build();
+
+$helloWorld = $container->get(HelloWorld::class);
+$helloWorld->announce();
 ?>

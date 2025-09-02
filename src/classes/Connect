@@ -1,0 +1,20 @@
+<?php
+namespace Classes;
+
+use PDO;
+
+class Connect{
+
+    private $conn;
+
+    public function __construct(PDO $conn){
+        $this->conn = $conn;
+    }
+
+    public function close(){
+        $this->conn = null;
+    }
+
+}
+
+?>

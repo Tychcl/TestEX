@@ -2,6 +2,8 @@
 
 namespace Api;
 
+use Models\CategorylistQuery;
+
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 
 class ListsController{
@@ -14,8 +16,8 @@ class ListsController{
             return json_encode(["error" => "list name required or bad name",
             "names" => $names]);
         }
-        $elements = $list.'Query'()::create()->find()->toArray();
-        return json_encode($elements);
+        $elements = CategorylistQuery::create()->find()->toArray();
+        return json_encode($elements.$list);
     }
 }
 

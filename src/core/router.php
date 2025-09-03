@@ -7,62 +7,38 @@ class Router {
 
     public function add($method, $path, $handler) {
         $this->routes[] = [
-            'method' => strtoupper($method),
+            'method' => $method,
             'path' => $path,
-            'handler' => $handler,
-            'pattern' => $this->buildPattern($path)
+            'handler' => $handler
         ];
     }
 
-    private function buildPattern($path) {
-        return preg_replace('/\{[a-z]+\}/', '([^/]+)', $path);
-    }
-
-    public function dispatch() {
-        $requestMethod = $_SERVER['REQUEST_METHOD'];
-        $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
-        
+    public function dispatch($method, $uri) {
         foreach ($this->routes as $route) {
-            // Проверяем соответствие метода
-            if ($route['method'] !== $requestMethod) {
-                continue;
-            }
-            
-            // Проверяем соответствие пути
-            if (preg_match("#^{$route['pattern']}$#", $requestUri, $matches)) {
-                // Извлекаем параметры из пути
-                $pathParams = $this->extractPathParams($route['path'], $matches);
+            if ($route['method'] === $method) {
+                $pattern = preg_replace('/\{[a-z]+\}/', '([^/]+)', $route['path']);
+                $pattern = str_replace('/', '\/', $pattern);
                 
-                // Объединяем с параметрами из query string
-                $allParams = array_merge($pathParams, $_GET);
-                
-                // Вызываем обработчик
-                list($controller, $action) = explode('@', $route['handler']);
-                $controllerInstance = new $controller();
-                return $controllerInstance->$action($allParams);
-            }
-        }
-        
-        // Если маршрут не найден
-        http_response_code(404);
-        return json_encode(['error' => 'Not found']);
-    }
-
-    private function extractPathParams($path, $matches) {
-        $params = [];
-        
-        preg_match_all('/\{([a-z]+)\}/', $path, $paramNames);
-        
-        if (count($matches) > 1) {
-            array_shift($matches);
-            foreach ($paramNames[1] as $index => $name) {
-                if (isset($matches[$index])) {
-                    $params[$name] = $matches[$index];
+                if (preg_match('/^' . $pattern . '$/', $uri, $matches)) {
+                    preg_match_all('/\{([a-z]+)\}/', $route['path'], $paramNames);
+                    $params = [];
+                    
+                    for ($i = 0; $i < count($paramNames[1]); $i++) {
+                        $params[$paramNames[1][$i]] = $matches[$i + 1] ?? null;
+                    }
+                    
+                    list($controller, $action) = explode('@', $route['handler']);
+                    $controllerInstance = new $controller();
+                    $response = $controllerInstance->$action($params);
+                    
+                    echo $response;
+                    return;
                 }
             }
         }
         
-        return $params;
+        http_response_code(404);
+        echo json_encode(['error' => 'Not found']);
     }
 }
 ?>

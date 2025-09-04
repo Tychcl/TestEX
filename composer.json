@@ -5,11 +5,12 @@
     "autoload": {
         "psr-4": {
             "App\\": "src/",
-            "Classes\\": "src/classes",
-            "Views\\": "src/views",
-            "Core\\": "src/core",
-            "Api\\": "src/controllers/api",
-            "Web\\": "src/controllers/Web"
+            "Classes\\": "src/classes/",
+            "Models\\": "src/classes/Models/",
+            "Views\\": "src/views/",
+            "Core\\": "src/core/",
+            "Api\\": "src/controllers/api/",
+            "Web\\": "src/controllers/web/"
         }
     },
     "require": {

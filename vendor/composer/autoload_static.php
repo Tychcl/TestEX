@@ -55,6 +55,10 @@ class ComposerStaticInit1b52c46b170241fc82d191e15745160d
             'Propel\\' => 7,
             'PhpOption\\' => 10,
         ),
+        'M' => 
+        array (
+            'Models\\' => 7,
+        ),
         'G' => 
         array (
             'GrahamCampbell\\ResultType\\' => 26,
@@ -78,7 +82,7 @@ class ComposerStaticInit1b52c46b170241fc82d191e15745160d
     public static $prefixDirsPsr4 = array (
         'Web\\' => 
         array (
-            0 => __DIR__ . '/../..' . '/src/controllers/Web',
+            0 => __DIR__ . '/../..' . '/src/controllers/web',
         ),
         'Views\\' => 
         array (
@@ -167,6 +171,10 @@ class ComposerStaticInit1b52c46b170241fc82d191e15745160d
         'PhpOption\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpoption/phpoption/src/PhpOption',
+        ),
+        'Models\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/src/classes/Models',
         ),
         'GrahamCampbell\\ResultType\\' => 
         array (

@@ -21,8 +21,6 @@ class ListsController {
                 "names" => $names
             ]);
         }
-        
-        echo $list;
 
         switch ($list) {
             case 'categoryList':

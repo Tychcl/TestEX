@@ -1,5 +1,6 @@
 <?php
 use Core\Router;
+use Classes\AnyList;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 require_once dirname(__DIR__) . '/generated-conf/config.php';
@@ -22,5 +23,5 @@ $router->add('GET', '/api/list/{list}', 'Api\ListsController@show');
 
 $requestUri = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 $requestMethod = $_SERVER['REQUEST_METHOD'];
-$router->dispatch($requestMethod, $requestUri);
+$r = $router->dispatch($requestMethod, $requestUri);
 ?>

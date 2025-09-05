@@ -1,3 +1,9 @@
 <?php
-namespace 
+namespace Api;
+
+use Models\TeacherQuery;
+
+class Signin{
+    
+}
 ?>

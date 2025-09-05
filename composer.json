@@ -10,7 +10,8 @@
             "Views\\": "src/views/",
             "Core\\": "src/core/",
             "Api\\": "src/controllers/api/",
-            "Web\\": "src/controllers/web/"
+            "Web\\": "src/controllers/web/",
+            "Middleware\\": "src/core/middleware/"
         }
     },
     "require": {

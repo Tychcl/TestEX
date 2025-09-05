@@ -1,0 +1,20 @@
+<?php
+
+namespace Core;
+
+class Request
+{
+    public $method;
+    public $uri;
+    public $headers;
+    public $body;
+    
+    public function __construct()
+    {
+        $this->method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+        $this->uri = $_SERVER['REQUEST_URI'] ?? '/';
+        $this->headers = getallheaders();
+        $this->body = file_get_contents('php://input');
+    }
+}
+?>

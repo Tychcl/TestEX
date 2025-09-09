@@ -4,12 +4,21 @@ namespace Middleware;
 
 use Core\Request;
 use Core\Response;
+use Core\Router;
 
 class AuthMiddleware implements MiddlewareInterface
 {
+
+    private array $exception;
+
+    public function __construct(array $ex)
+    {
+        $this->exception = $ex;
+    }
+
     public function handle(Request $request, callable $next): Response
     {
-        if (!$this->isAuthenticated($request)) {
+        if (!in_array(parse_url($request->uri, PHP_URL_PATH), $this->exception) && !$this->isAuthenticated($request)) {
             $response = new Response();
             $response->status = 401;
             $response->body = 'Unauthorized';

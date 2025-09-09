@@ -13,7 +13,24 @@ class Router {
         ];
     }
 
+    public function filterParams($params){
+        if (is_array($params)) {
+            return array_map([$this, 'filterParams'], $params);
+        }
+        $params = strip_tags($params);
+        $params = htmlspecialchars($params, ENT_QUOTES, 'UTF-8');
+        return $params;
+    }
+
     public function dispatch($method, $uri) {
+        $path = parse_url($uri, PHP_URL_PATH);
+        
+        $queryParams = [];
+        $queryString = parse_url($uri, PHP_URL_QUERY);
+        if ($queryString) {
+            parse_str($queryString, $queryParams);
+        }
+
         foreach ($this->routes as $route) {
             if ($route['method'] !== $method) {
                 continue;
@@ -21,8 +38,8 @@ class Router {
             
             $pattern = preg_replace('/\{[a-z]+\}/', '([^/]+)', $route['path']);
             $pattern = '#^' . $pattern . '$#';
-            
-            if (preg_match($pattern, $uri, $matches)) {
+
+            if (preg_match($pattern, $path, $matches)) {
                 preg_match_all('/\{([a-z]+)\}/', $route['path'], $paramNames);
                 $params = [];
                 
@@ -30,22 +47,31 @@ class Router {
                     $params[$paramNames[1][$i]] = $matches[$i + 1] ?? null;
                 }
                 
-                list($controller, $action) = explode('@', $route['handler']);
+                $params = array_merge($params, $queryParams);
+                $params = $this->filterParams($params);
                 
+                list($controller, $action) = explode('@', $route['handler']);
+            
                 if (strpos($controller, '\\') === false) {
                     $controller = "Api\\{$controller}";
                 }
                 
                 $controllerInstance = new $controller();
-                $response = $controllerInstance->$action($params);
+                $result = $controllerInstance->$action($params);
                 
-                echo $response;
-                return;
+                if ($result instanceof Response) {
+                    return $result;
+                }
+                
+                $response = new Response();
+                $response->body = $result;
+                return $response;
             }
         }
-        
-        http_response_code(404);
-        echo json_encode(['error' => 'Not found']);
+    
+        $response = new Response();
+        $response->status = 404;
+        $response->body = json_encode(['error' => 'Not found']);
+        return $response;
     }
 }
-?>

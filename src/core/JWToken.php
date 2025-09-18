@@ -10,7 +10,7 @@ class JWToken
 {
     public static function generateToken($payload)
     {
-        $dotenv = Dotenv::createImmutable(dirname(__DIR__));
+        $dotenv = Dotenv::createImmutable(dirname(__DIR__,2));
         $dotenv->load();
 
         $secretKey = $_ENV['JWT'];
@@ -28,9 +28,8 @@ class JWToken
     public static function validateToken($token)
     {
         try {
-            $dotenv = Dotenv::createImmutable(dirname(__DIR__));
+            $dotenv = Dotenv::createImmutable(dirname(__DIR__,2));
             $dotenv->load();
-
             $secretKey = $_ENV['JWT'];
             $decoded = JWT::decode($token, new Key($secretKey, 'HS256'));
             return (array) $decoded->data;

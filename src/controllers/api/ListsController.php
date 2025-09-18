@@ -2,6 +2,7 @@
 
 namespace Api;
 
+use Core\Response;
 use Models\CategorylistQuery;
 use Models\EventawarddegreeQuery;
 use Models\EventlevelQuery;
@@ -10,16 +11,15 @@ use Models\UserroleQuery;
 
 class ListsController {
     public function show($params) {
-        $names = ["categoryList", "eventAwardDegree", "eventLevel", "eventRole", "userRole"];
+        $names = ['categoryList', 'eventAwardDegree', 'eventLevel', 'eventRole', 'userRole'];
         $list = $params['list'] ?? null;
-        
+        $r = new Response();
+
         if (!in_array($list, $names)) {
-            http_response_code(400);
-            header('Content-Type: application/json');
-            return json_encode([
-                "error" => "list name required or bad name",
-                "names" => $names
-            ]);
+            $r->status = 400;
+            $r->body = ['error' => 'list name required or bad name',
+                'names' => $names];
+            return $r;
         }
 
         switch ($list) {
@@ -42,8 +42,8 @@ class ListsController {
                 $elements = [];
         }
         
-        header('Content-Type: application/json');
-        return json_encode($elements);
+        $r->body = $elements;
+        return $r;
     }
 }
 

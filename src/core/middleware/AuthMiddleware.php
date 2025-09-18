@@ -2,9 +2,12 @@
 
 namespace Middleware;
 
+use Models\TeacherQuery;
+use Core\JWToken;
 use Core\Request;
 use Core\Response;
 use Core\Router;
+use Exception;
 
 class AuthMiddleware implements MiddlewareInterface
 {
@@ -29,8 +32,22 @@ class AuthMiddleware implements MiddlewareInterface
     
     private function isAuthenticated(Request $request): bool
     {
-        // код проверки jwt потом написать
-        return isset($request->headers['Authorization']);
+        try{
+            if($request->cookie['jwt'])
+            {
+                $payload = JWToken::validateToken($request->cookie['jwt']);
+                $v = TeacherQuery::create()->filterById(intval($payload['id']))->
+                filterByLogin($payload['login'])->
+                filterByRoleid(intval($payload['roleid']))->
+                findOne();
+                if($v){
+                    return true;
+                }
+            }
+            return false;
+        }catch(Exception $e){
+            return false;
+        }
     }
 }
 ?>

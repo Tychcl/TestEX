@@ -8,6 +8,7 @@ class Request
     public $uri;
     public $headers;
     public $body;
+    public $cookie;
     
     public function __construct()
     {
@@ -15,6 +16,7 @@ class Request
         $this->uri = $_SERVER['REQUEST_URI'] ?? '/';
         $this->headers = getallheaders();
         $this->body = file_get_contents('php://input');
+        $this->cookie = $_COOKIE;
     }
 }
 ?>

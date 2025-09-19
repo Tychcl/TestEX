@@ -4,6 +4,7 @@ namespace Api;
 use Core\Response;
 use Core\JWToken;
 use Core\Request;
+use Models\Teacher;
 use Models\TeacherQuery;
 use Exception;
 use Models\UserroleQuery;
@@ -63,7 +64,7 @@ class AuthController{
         $fio = $params['fio'] ?? null;
         $login = $params['login'] ?? null;
         $password = $params['password'] ?? null;
-        $role = $params['role'] ?? 2;
+        $role = $params['roleid'] ?? null;
 
         if($request->jwt_payload['roleid'] != 1){
             $r = new Response();
@@ -72,10 +73,10 @@ class AuthController{
             return $r;
         }
         
-        if($fio == null || $login == null || $password == null){
+        if($fio == null || $login == null || $password == null || $role == null){
             $r = new Response();
             $r->status = 400;
-            $r->body = ['error' => 'fio,login and password required, if role not entered then role set 1-teacher, role can be id or name'];
+            $r->body = ['error' => 'fio,login, password and roleid required'];
             return $r;
         }
 
@@ -88,15 +89,20 @@ class AuthController{
 
         $roles = UserroleQuery::create();
 
-        if(!$roles->findOneById($role) | !$roles->findOneByName($role)) {
+        if(!$roles->findOneById($role)) {
             $r = new Response();
             $r->status = 400;
-            $r->body = ['error' => 'role by id or name not found'];
+            $r->body = ['error' => 'role by id not found'];
             return $r;
         }
 
-
-        
+        $fio = explode(' ', $fio);
+        $teacher = new Teacher()->
+        setSurname($fio[0])->
+        setName($fio[1])->
+        setMidname($fio[2])->
+        setLogin($login)->
+        setPassword(password_hash($password, PASSWORD_DEFAULT));
     }
 
 }

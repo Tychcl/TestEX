@@ -9,6 +9,7 @@ class Request
     public $headers;
     public $body;
     public $cookie;
+    public $jwt_payload;
     
     public function __construct()
     {

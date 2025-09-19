@@ -41,6 +41,7 @@ class AuthMiddleware implements MiddlewareInterface
                 filterByRoleid(intval($payload['roleid']))->
                 findOne();
                 if($v){
+                    $request->jwt_payload = $payload;
                     return true;
                 }
             }

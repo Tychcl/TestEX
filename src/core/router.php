@@ -22,7 +22,9 @@ class Router {
         return $params;
     }
 
-    public function dispatch($method, $uri) {
+    public function dispatch(Request $request) {
+        $uri = $request->uri;
+        $method = $request->method;
         $path = parse_url($uri, PHP_URL_PATH);
         
         $queryParams = [];
@@ -57,7 +59,7 @@ class Router {
                 }
                 
                 $controllerInstance = new $controller();
-                $result = $controllerInstance->$action($params);
+                $result = $controllerInstance->$action($params, $request);
                 
                 if ($result instanceof Response) {
                     return $result;

@@ -3,12 +3,14 @@ namespace Api;
 
 use Core\Response;
 use Core\JWToken;
+use Core\Request;
 use Models\TeacherQuery;
 use Exception;
+use Models\UserroleQuery;
 
 class AuthController{
     
-    public function signin($params)
+    public function signin($params, Request $request)
     {
         $login = $params['login'] ?? null;
         $pwd = $params['password'] ?? null;
@@ -22,14 +24,12 @@ class AuthController{
         try{
             $teacher = TeacherQuery::create()->findOneByLogin($login);
             if($teacher && password_verify($pwd, $teacher->getPassword())){
-                
                 $payload = [
                     'id' => $teacher->getId(),
                     'login' => $teacher->getLogin(),
                     'roleid' => $teacher->getRoleid()
                 ];
                 $token = JWToken::generateToken($payload);
-                
                 $r = new Response();
                 $r->setCook(
                     'jwt', 
@@ -37,11 +37,10 @@ class AuthController{
                     time() + (60 * 60 * 6), // 6 часов
                     '/', 
                     '', 
-                    false, // secure - только HTTPS если пустить сайт в работу
+                    false, // secure - только HTTPS если пустить сайт в работу нужно true
                     true, // httponly - недоступно через JavaScript
                     'Strict' // samesite
                 );
-                
                 $r->status = 200;
                 $r->body = ['success' => $payload];
                 return $r;
@@ -57,8 +56,47 @@ class AuthController{
             $r->body = ['error' => $e->getMessage()];
             return $r;
         }
-        
+    }
 
+    public function signup($params, Request $request)
+    {
+        $fio = $params['fio'] ?? null;
+        $login = $params['login'] ?? null;
+        $password = $params['password'] ?? null;
+        $role = $params['role'] ?? 2;
+
+        if($request->jwt_payload['roleid'] != 1){
+            $r = new Response();
+            $r->status = 400;
+            $r->body = ['error' => 'no access'];
+            return $r;
+        }
+        
+        if($fio == null || $login == null || $password == null){
+            $r = new Response();
+            $r->status = 400;
+            $r->body = ['error' => 'fio,login and password required, if role not entered then role set 1-teacher, role can be id or name'];
+            return $r;
+        }
+
+        if(!preg_match('/[А-Я]{1}[a-я]* [А-Я]{1}[a-я]* [А-Я]{1}[a-я]*/', $fio)){
+            $r = new Response();
+            $r->status = 400;
+            $r->body = ['error' => 'wrong pattern, example: Фамилия Имя Отчесво, only cyrillic'];
+            return $r;
+        }
+
+        $roles = UserroleQuery::create();
+
+        if(!$roles->findOneById($role) | !$roles->findOneByName($role)) {
+            $r = new Response();
+            $r->status = 400;
+            $r->body = ['error' => 'role by id or name not found'];
+            return $r;
+        }
+
+
+        
     }
 
 }

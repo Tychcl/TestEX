@@ -17,6 +17,6 @@ class RouterMiddleware implements MiddlewareInterface
 
     public function handle(Request $request, callable $next): Response
     {
-        return $this->router->dispatch($request->method, $request->uri);
+        return $this->router->dispatch($request);
     }
 }

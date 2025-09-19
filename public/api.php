@@ -10,6 +10,7 @@ require_once dirname(__DIR__) . '/generated-conf/config.php';
 $router = new Router();
 $router->add('GET', '/api/list/{list}', 'Api\ListsController@show');
 $router->add('GET', '/api/auth/signin', 'Api\AuthController@signin');
+$router->add('GET', '/api/auth/signup', 'Api\AuthController@signup');
 
 $dispatcher = MiddlewareFabric::createForApi($router);
 

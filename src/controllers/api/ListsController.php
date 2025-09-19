@@ -2,6 +2,7 @@
 
 namespace Api;
 
+use Core\Request;
 use Core\Response;
 use Models\CategorylistQuery;
 use Models\EventawarddegreeQuery;
@@ -10,7 +11,7 @@ use Models\EventroleQuery;
 use Models\UserroleQuery;
 
 class ListsController {
-    public function show($params) {
+    public function show($params, Request $request) {
         $names = ['categoryList', 'eventAwardDegree', 'eventLevel', 'eventRole', 'userRole'];
         $list = $params['list'] ?? null;
         $r = new Response();

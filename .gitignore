@@ -1,3 +1,5 @@
-\vendor
+/vendor
 .env
 /src/core/.env
+/propel/generated/*
+!/propel/generated/.gitkeep

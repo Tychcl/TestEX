@@ -1,24 +1,47 @@
 {
-    "name": "lox/teacher-competence",
-    "description": "project",
-    "type": "project",
-    "autoload": {
-        "psr-4": {
-            "App\\": "src/",
-            "Classes\\": "src/classes/",
-            "Models\\": "src/classes/Models/",
-            "Views\\": "src/views/",
-            "Core\\": "src/core/",
-            "Api\\": "src/controllers/api/",
-            "Web\\": "src/controllers/web/",
-            "Middleware\\": "src/core/middleware/"
-        }
-    },
-    "require": {
-        "vlucas/phpdotenv": "^5.6",
-        "propel/propel": "~2.0@beta",
-        "kreait/firebase-php": "^6.9"
-    },
-    "minimum-stability": "beta",
-    "prefer-stable": true
+  "name": "lox/teacher-competence",
+  "description": "project",
+  "type": "project",
+  "autoload": {
+      "psr-4": {
+          "App\\": "src/",
+          "Classes\\": "src/classes/",
+          "Models\\": "src/classes/Models/",
+          "Views\\": "src/views/",
+          "Core\\": "src/core/",
+          "Api\\": "src/controllers/api/",
+          "Web\\": "src/controllers/web/",
+          "Middleware\\": "src/core/middleware/"
+      },
+      "classmap": [
+          "propel/generated/classes/",
+          "src/classes/Models/"
+      ]
+  },
+  "require": {
+      "vlucas/phpdotenv": "^5.6",
+      "propel/propel": "~2.0@beta",
+      "kreait/firebase-php": "^6.9"
+  },
+  "minimum-stability": "beta",
+  "prefer-stable": true,
+  "scripts": {
+    "post-update-cmd": [
+        "@propel:reverse",
+        "@propel:build"
+    ],
+    "schema-update": [
+        "@propel:reverse",
+        "@propel:build",
+        "@propel:diff",
+        "@propel:migrate"
+    ],
+    "propel:reverse": "vendor/bin/propel model:reverse --config-dir=propel/config --output-dir=propel/schema",
+    "propel:build": "vendor/bin/propel model:build --config-dir=propel/config",
+    "propel:diff": "vendor/bin/propel diff --config-dir=propel/config",
+    "propel:migrate": "vendor/bin/propel migrate --config-dir=propel/config",
+    "propel:sql-build": "vendor/bin/propel sql:build --config-dir=propel/config",
+    "propel:sql-insert": "vendor/bin/propel sql:insert --config-dir=propel/config",
+    "propel:status": "vendor/bin/propel migration:status --config-dir=propel/config"
+  }
 }

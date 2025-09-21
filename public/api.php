@@ -5,7 +5,7 @@ use Core\MiddlewareFabric;
 use Middleware\RouterMiddleware;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
-require_once dirname(__DIR__) . '/generated-conf/config.php';
+require_once dirname(__DIR__) . '/propel/generated/conf/config.php';
 
 $router = new Router();
 $router->add('GET', '/api/list/{list}', 'Api\ListsController@show');

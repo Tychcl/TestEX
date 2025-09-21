@@ -97,8 +97,7 @@ class AuthController{
         }
 
         $fio = explode(' ', $fio);
-        $teacher = new Teacher()->
-        setSurname($fio[0])->
+        $teacher = new Teacher()->setSurname($fio[0])->
         setName($fio[1])->
         setMidname($fio[2])->
         setLogin($login)->

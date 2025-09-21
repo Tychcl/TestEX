@@ -3,13 +3,15 @@
 namespace Core;
 
 class Response {
-    public $status = 200;
+    public $status;
     public $body;
     public $headers = [];
     public $cookies = [];
     
-    public function __construct() {
+    public function __construct($status = 200, $body = null) {
         $this->setSecurityHeaders();
+        $this->status = $status;
+        $this->body = $body;
     }
     
     private function setSecurityHeaders() {

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Сен 11 2025 г., 08:46
+-- Время создания: Сен 22 2025 г., 00:47
 -- Версия сервера: 8.0.30
 -- Версия PHP: 7.4.30
 
@@ -156,6 +156,17 @@ INSERT INTO `eventRole` (`id`, `name`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Структура таблицы `propel_migration`
+--
+
+CREATE TABLE `propel_migration` (
+  `version` int DEFAULT '0',
+  `execution_datetime` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Структура таблицы `skill`
 --
 
@@ -184,9 +195,7 @@ CREATE TABLE `skill` (
 
 CREATE TABLE `student` (
   `id` int NOT NULL COMMENT 'Идентификатор',
-  `surname` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Фамилия',
-  `name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Имя',
-  `midname` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Отчество'
+  `fio` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'ФИО'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Студенты';
 
 -- --------------------------------------------------------
@@ -197,9 +206,7 @@ CREATE TABLE `student` (
 
 CREATE TABLE `teacher` (
   `id` int NOT NULL COMMENT 'Идентификатор',
-  `surname` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Фамилия',
-  `name` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Имя',
-  `midname` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Отчество',
+  `fio` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'ФИО',
   `login` text NOT NULL COMMENT 'Логин',
   `password` text NOT NULL COMMENT 'Пароль',
   `roleId` int NOT NULL COMMENT 'роль',
@@ -211,8 +218,8 @@ CREATE TABLE `teacher` (
 -- Дамп данных таблицы `teacher`
 --
 
-INSERT INTO `teacher` (`id`, `surname`, `name`, `midname`, `login`, `password`, `roleId`, `needUpdSkill`, `canUpdCategory`) VALUES
-(1, 'Ощепков', 'Александр', 'Олегович', 'Aoshepkov', 'admin', 2, 1, 1);
+INSERT INTO `teacher` (`id`, `fio`, `login`, `password`, `roleId`, `needUpdSkill`, `canUpdCategory`) VALUES
+(1, 'Очень Важная Тучка', 'tychcl', '$2y$12$XOMnjvpvBv.2634YPN8d6.haV20SIYOzca1efClv.s6AkqnhYYrhe', 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -230,8 +237,8 @@ CREATE TABLE `userRole` (
 --
 
 INSERT INTO `userRole` (`id`, `name`) VALUES
-(1, 'teacher'),
-(2, 'admin');
+(1, 'admin'),
+(2, 'teacher');
 
 --
 -- Индексы сохранённых таблиц
@@ -375,7 +382,7 @@ ALTER TABLE `student`
 -- AUTO_INCREMENT для таблицы `teacher`
 --
 ALTER TABLE `teacher`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT 'Идентификатор', AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT 'Идентификатор', AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT для таблицы `userRole`

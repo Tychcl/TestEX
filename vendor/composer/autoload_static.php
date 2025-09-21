@@ -113,6 +113,7 @@ class ComposerStaticInit1b52c46b170241fc82d191e15745160d
             'Google\\Api\\' => 11,
             'Google\\ApiCore\\LongRunning\\' => 27,
             'Google\\ApiCore\\' => 15,
+            'Generated\\' => 10,
             'GPBMetadata\\Google\\Type\\' => 24,
             'GPBMetadata\\Google\\Rpc\\' => 23,
             'GPBMetadata\\Google\\Protobuf\\' => 28,
@@ -382,6 +383,10 @@ class ComposerStaticInit1b52c46b170241fc82d191e15745160d
         'Google\\ApiCore\\' => 
         array (
             0 => __DIR__ . '/..' . '/google/gax/src',
+        ),
+        'Generated\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/propel/generated/classes',
         ),
         'GPBMetadata\\Google\\Type\\' => 
         array (

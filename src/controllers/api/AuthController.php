@@ -96,12 +96,8 @@ class AuthController{
             return $r;
         }
 
-        $fio = explode(' ', $fio);
-        $teacher = new Teacher()->setSurname($fio[0])->
-        setName($fio[1])->
-        setMidname($fio[2])->
-        setLogin($login)->
-        setPassword(password_hash($password, PASSWORD_DEFAULT));
+        $teacher = new Teacher();
+        $teacher->setFio($fio)->setLogin($login)->setPassword(password_hash($password, PASSWORD_DEFAULT))->set;
     }
 
 }

@@ -3,7 +3,7 @@
         'name' => 'lox/teacher-competence',
         'pretty_version' => 'dev-back',
         'version' => 'dev-back',
-        'reference' => '589d292200f0f1ce5a4e4194b51500c4853ee87f',
+        'reference' => '5a4d0922ff34d0acf4c6362a9bd49a265b81f853',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -211,7 +211,7 @@
         'lox/teacher-competence' => array(
             'pretty_version' => 'dev-back',
             'version' => 'dev-back',
-            'reference' => '589d292200f0f1ce5a4e4194b51500c4853ee87f',
+            'reference' => '5a4d0922ff34d0acf4c6362a9bd49a265b81f853',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

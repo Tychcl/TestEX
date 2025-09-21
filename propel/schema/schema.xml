@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<database name="default" defaultIdMethod="native" defaultPhpNamingMethod="underscore">
+<database name="default" defaultIdMethod="native" defaultPhpNamingMethod="underscore" namespace="Models">
   <table name="category" idMethod="native" phpName="Category">
     <column name="id" phpName="Id" type="INTEGER" description="Идентификатор" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="teacherId" phpName="Teacherid" type="INTEGER" description="Преподаватель" required="true"/>
@@ -138,18 +138,14 @@
   </table>
   <table name="student" idMethod="native" phpName="Student" description="Студенты">
     <column name="id" phpName="Id" type="INTEGER" description="Идентификатор" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="surname" phpName="Surname" type="VARCHAR" size="45" description="Фамилия" required="true"/>
-    <column name="name" phpName="Name" type="VARCHAR" size="45" description="Имя" required="true"/>
-    <column name="midname" phpName="Midname" type="VARCHAR" size="45" description="Отчество" required="true"/>
+    <column name="fio" phpName="Fio" type="VARCHAR" size="255" description="ФИО" required="true"/>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
   <table name="teacher" idMethod="native" phpName="Teacher" description="Преподаватели">
     <column name="id" phpName="Id" type="INTEGER" description="Идентификатор" primaryKey="true" autoIncrement="true" required="true"/>
-    <column name="surname" phpName="Surname" type="VARCHAR" size="45" description="Фамилия" required="true"/>
-    <column name="name" phpName="Name" type="VARCHAR" size="45" description="Имя" required="true"/>
-    <column name="midname" phpName="Midname" type="VARCHAR" size="45" description="Отчество" required="true"/>
+    <column name="fio" phpName="Fio" type="VARCHAR" size="255" description="ФИО" required="true"/>
     <column name="login" phpName="Login" type="LONGVARCHAR" description="Логин" required="true"/>
     <column name="password" phpName="Password" type="LONGVARCHAR" description="Пароль" required="true"/>
     <column name="roleId" phpName="Roleid" type="INTEGER" description="роль" required="true"/>

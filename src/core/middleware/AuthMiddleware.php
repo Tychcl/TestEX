@@ -22,10 +22,7 @@ class AuthMiddleware implements MiddlewareInterface
     public function handle(Request $request, callable $next): Response
     {
         if (!in_array(parse_url($request->uri, PHP_URL_PATH), $this->exception) && !$this->isAuthenticated($request)) {
-            $response = new Response();
-            $response->status = 401;
-            $response->body = 'Unauthorized';
-            return $response;
+            return new Response(401, ['error'=>'Unauthorized']);
         }
         return $next($request);
     }

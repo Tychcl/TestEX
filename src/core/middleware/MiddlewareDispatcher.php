@@ -23,10 +23,7 @@ class MiddlewareDispatcher
     private function createHandler(): callable
     {
         $handler = function (Request $request) {
-            $response = new Response();
-            $response->body = 'Page not found';
-            $response->status = 404;
-            return $response;
+            return new Response(404, ['error'=>'Page not found']);
         };
         
         foreach (array_reverse($this->middlewares) as $middleware) {

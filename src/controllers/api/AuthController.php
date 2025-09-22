@@ -16,7 +16,7 @@ class AuthController{
         $login = strtolower($params['login']) ?? null;
         $pwd = $params['password'] ?? null;
 
-        if($login == null || $pwd == null){
+        if(!$login || !$pwd){
             return new Response(400, ['error' => 'Login and password required']);
         }
         try{
@@ -59,7 +59,7 @@ class AuthController{
             return new Response(400, ['error' => 'no access']);
         }
         
-        if($fio == null || $login == null || $password == null || $role == null){
+        if(!$fio || !$login|| !$password|| !$role){
             return new Response(400, ['error' => 'fio,login, password and roleid required']);
         }
 
@@ -75,13 +75,51 @@ class AuthController{
             return new Response(400, ['error' => 'role by id not found']);
         }
 
-        $teacher = new Teacher();
-        $teacher->setFio($fio)->
-        setLogin($login)->
-        setPassword(password_hash($password, PASSWORD_DEFAULT))->
-        setRoleid(intval($role))->save();
+        try{
+            $teacher = new Teacher();
+            $teacher->setFio($fio)->
+            setLogin($login)->
+            setPassword(password_hash($password, PASSWORD_DEFAULT))->
+            setRoleid(intval($role))->save();
+            return new Response(200, ['user succefuly created']);
+        }catch(Exception $e){
+            return new Response(500, ['error' => $e->getMessage()]);
+        }
+    }
 
-        return new Response(200, ['user succefuly created']);
+    public function passwordchange($params, Request $request){
+        
+        $password = $params['password'] ?? null;
+        $confirm_password = $params['confirmpassword'] ?? null;
+        $new_password = $params['newpassword'] ?? null;
+
+        if(!$password|| !$confirm_password|| !$new_password){
+            return new Response(400, ['error' => 'Password, confirmpassword and newpassword required']);
+        }
+
+        if($password != $confirm_password){
+            return new Response(400, ['error' => 'Passwords are not equals']);
+        }
+
+        if($password == $new_password){
+            return new Response(400, ['error' => 'You already use this password']);
+        }
+
+        try{
+
+            $teacher = TeacherQuery::create()->findOneById($request->jwt_payload['id']);
+
+            if(!password_verify($password, $teacher->getPassword())){
+                return new Response(400, ['error' => 'Wrong password']);
+            }
+
+            $teacher->setPassword(password_hash($new_password, PASSWORD_DEFAULT))->save();
+
+            return new Response(200, ['Password successfully changed']);
+
+        }catch(Exception $e){
+            return new Response(500, ['error' => $e->getMessage()]);
+        }
     }
 
 }

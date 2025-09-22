@@ -65,15 +65,10 @@ class Router {
                     return $result;
                 }
                 
-                $response = new Response();
-                $response->body = $result;
-                return $response;
+                return new Response(200, $result);
             }
         }
     
-        $response = new Response();
-        $response->status = 404;
-        $response->body = json_encode(['error' => 'Not found']);
-        return $response;
+        return new Response(404, ['error' => 'Wrong api route']);
     }
 }

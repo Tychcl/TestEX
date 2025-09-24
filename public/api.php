@@ -9,11 +9,23 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 require_once dirname(__DIR__) . '/propel/generated/conf/config.php';
 
 $router = new Router();
-$r = Routes::$routes;
-$router->add('GET', $r['signin'], 'Api\AuthController@signin');
-$router->add('GET', $r['lists'], 'Api\ListsController@show');
-$router->add('GET', $r['signup'], 'Api\AuthController@signup');
-$router->add('GET', $r['passwordchange'], 'Api\AuthController@passwordchange');
+$r = Routes::$api;
+//user
+$router->add($r['signin']);
+$router->add($r['signup']);
+$router->add($r['signout']);
+$router->add($r['passwordchange']);
+//event
+#$router->add($r['eventShow']);
+
+$router->add($r['eventAward']);
+$router->add($r['eventLevel']);
+$router->add($r['eventRole']);
+
+$router->add($r['eventinfoadd']);
+$router->add($r['lists']);
+
+
 
 $dispatcher = MiddlewareFabric::createForApi($router);
 

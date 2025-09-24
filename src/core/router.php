@@ -2,14 +2,16 @@
 
 namespace Core;
 
+use Core\Routes;
+
 class Router {
     private $routes = [];
 
-    public function add($method, $path, $handler) {
+    public function add($r) {
         $this->routes[] = [
-            'method' => strtoupper($method),
-            'path' => $path,
-            'handler' => $handler
+            'method' => strtoupper($r['method']),
+            'path' => $r['path'],
+            'handler' => $r['handler']
         ];
     }
 

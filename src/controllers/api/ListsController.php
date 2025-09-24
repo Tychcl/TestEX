@@ -14,13 +14,9 @@ class ListsController {
     public function show($params, Request $request) {
         $names = ['categoryList', 'eventAwardDegree', 'eventLevel', 'eventRole', 'userRole'];
         $list = $params['list'] ?? null;
-        $r = new Response();
 
         if (!in_array($list, $names)) {
-            $r->status = 400;
-            $r->body = ['error' => 'list name required or bad name',
-                'names' => $names];
-            return $r;
+            return new Response(400, ['error' => 'list name required or bad name', 'names' => $names]);
         }
 
         switch ($list) {
@@ -43,8 +39,7 @@ class ListsController {
                 $elements = [];
         }
         
-        $r->body = $elements;
-        return $r;
+        return new Response(400, $elements);
     }
 }
 

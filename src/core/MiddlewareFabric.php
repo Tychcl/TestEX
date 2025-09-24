@@ -32,8 +32,8 @@ class MiddlewareFabric
         $dispatcher->add(new LoggingMiddleware());
         
         // Место для мидлваров апи
-        $r = Routes::$routes;
-        $ex = [$r['signin']]; //массив исключений для проверки аунтефикации
+        $r = Routes::$api;
+        $ex = [$r['signin']['path']]; //массив исключений для проверки аунтефикации
         $dispatcher->add(new AuthMiddleware($ex));
 
         $dispatcher->add(new RouterMiddleware($router));

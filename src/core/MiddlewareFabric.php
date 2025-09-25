@@ -33,7 +33,7 @@ class MiddlewareFabric
         
         // Место для мидлваров апи
         $r = Routes::$api;
-        $ex = [$r['signin']['path']]; //массив исключений для проверки аунтефикации
+        $ex = [$r['userSignin']['path']]; //массив исключений для проверки аунтефикации
         $dispatcher->add(new AuthMiddleware($ex));
 
         $dispatcher->add(new RouterMiddleware($router));

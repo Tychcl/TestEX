@@ -14,12 +14,6 @@ use Models\EventlevelQuery;
 
 class ChampionshipController{
 
-    $map = [
-        'award' => EventawarddegreeQuery::create()->find()->toArray(),
-        'level' => EventlevelQuery::create()->find()->toArray(),
-        'role' => EventlevelQuery::create()->find()->toArray()
-    ];
-
     public function add($params, Request $request){
         try{
             $name = $params['name'] ?? null;
@@ -53,75 +47,33 @@ class ChampionshipController{
 
     public function showList($params, Request $request){
         try{ 
+            $map = [
+                'award' => 'Models\EventawarddegreeQuery',
+                'level' => 'Models\EventlevelQuery',
+                'role' => 'Models\EventroleQuery'
+            ];
             $id = $params['id'] ?? null;
             $name = $params['name'] ?? null;
+            if(!$name || !in_array($name, array_keys($map))){
+                return new Response(400, ['error' => 'wrong name or name required']);
+            }
 
-            if(!$name){
-                return new Response(400, ['error' => 'name required']);
-            }
-            switch($name){
-                
-            }
+            return $this->show($map['role'], $id);
+
         }catch(Exception $e){
             return new Response(500, ['error' => $e->getMessage()]);
         }
     }
 
-    public function show($list, $id){
+    private function show($list, $id = null){
         try{ 
             if($id){
-                $a = $list->findOneById($id);
+                $a = $list::create()->findOneById($id);
                 if($a){
                     return new Response(200, $a->toArray());
                 }
             }
-            return new Response(200, ['list' => $list->find()->toArray()]);
-        }catch(Exception $e){
-            return new Response(500, ['error' => $e->getMessage()]);
-        }
-    }
-
-    public function showAward($params, Request $request){
-        try{ 
-            $id = $params['id'] ?? null;
-            if($id){
-                $a = EventawarddegreeQuery::create()->findOneById($id)->toArray();
-                if($a){
-                    return new Response(200, $a);
-                }
-            }
-            return new Response(200, ['list' => EventawarddegreeQuery::create()->find()->toArray()]);
-        }catch(Exception $e){
-            return new Response(500, ['error' => $e->getMessage()]);
-        }
-    }
-
-    public function showLevel($params, Request $request){
-        try{ 
-            $id = $params['id'] ?? null;
-            if($id){
-                $a = EventlevelQuery::create()->findOneById($id);
-                if($a){
-                    return new Response(200, $a->toArray());
-                }
-                else{}
-            }
-            return new Response(200, ['list' => EventlevelQuery::create()->find()->toArray()]);
-        }catch(Exception $e){
-            return new Response(500, ['error' => $e->getMessage()]);
-        }
-    }
-
-    public function showRole($params, Request $request){
-        try{ 
-            $id = $params['id'] ?? null;
-            if($id){
-                $a = EventlevelQuery::create()->findOneById($id)->toArray();
-                if($a){
-                    return new Response(200, $a);
-                }
-            }
-            return new Response(200, ['list' => EventlevelQuery::create()->find()->toArray()]);
+            return new Response(200, ['list' => $list::create()->find()->toArray()]);
         }catch(Exception $e){
             return new Response(500, ['error' => $e->getMessage()]);
         }

@@ -5,16 +5,17 @@ namespace Core;
 class Routes{
 
     public static $api = [
+        //такие "/api/event/{name}" апи пути в api.php всегда должны быть последними из свое группы для добавлнеия в роутер
         //user auth routes
-        'signup' => ['method' => 'GET','path' => '/api/user/signup', 'handler' => 'Api\AuthController@signup'],
-        'signin' => ['method' => 'GET', 'path' => '/api/user/signin', 'handler' => 'Api\AuthController@signin'],
-        'signout' => ['method' => 'GET', 'path' => '/api/user/signout', 'handler' => 'Api\AuthController@signout'],
-        'passwordchange' => ['method' => 'GET', 'path' => '/api/user/passwordchange', 'handler' => 'Api\AuthController@passwordchange'],
-        //get all lists
-        'lists' => ['method' => 'GET', 'path' => '/api/list/{list}', 'handler' => 'Api\ListsController@show'],
+        'userSignup' => ['method' => 'POST','path' => '/api/user/signup', 'handler' => 'Api\UserController@signup'],
+        'userSignin' => ['method' => 'POST', 'path' => '/api/user/signin', 'handler' => 'Api\UserController@signin'],
+        'userSignout' => ['method' => 'POST', 'path' => '/api/user/signout', 'handler' => 'Api\UserController@signout'],
+        'userPasswordChange' => ['method' => 'PUT', 'path' => '/api/user/passwordchange', 'handler' => 'Api\UserController@passwordChange'],
+        'userDelete' => ['method' => 'DELETE', 'path' => '/api/user/delete', 'handler' => 'Api\UserController@userDelete'],
+        'userShow' => ['method' => 'GET', 'path' => '/api/user/show', 'handler' => 'Api\UserController@userDelete'],
         //event
         'eventinfoadd' => ['method' => 'GET', 'path' => '/api/event/new', 'handler' => 'Api\ChampionshipController@add'],
-        'eventShow' => ['method' => 'GET', 'path' => '/api/event/{name}', 'handler' => 'Api\ChampionshipController@showList'],
+        'eventListShow' => ['method' => 'GET', 'path' => '/api/event/{name}', 'handler' => 'Api\ChampionshipController@showList'],
     ];
 
     public static $web = [

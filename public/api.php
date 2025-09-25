@@ -11,19 +11,15 @@ require_once dirname(__DIR__) . '/propel/generated/conf/config.php';
 $router = new Router();
 $r = Routes::$api;
 //user
-$router->add($r['signin']);
-$router->add($r['signup']);
-$router->add($r['signout']);
-$router->add($r['passwordchange']);
+$router->add($r['userSignin']);
+$router->add($r['userSignup']);
+$router->add($r['userSignout']);
+$router->add($r['userPasswordChange']);
+$router->add($r['userDelete']);
 //event
-#$router->add($r['eventShow']);
-
-$router->add($r['eventAward']);
-$router->add($r['eventLevel']);
-$router->add($r['eventRole']);
-
 $router->add($r['eventinfoadd']);
-$router->add($r['lists']);
+$router->add($r['eventListShow']);//всегда последнее в группе event
+//$router->add($r['lists']);
 
 
 

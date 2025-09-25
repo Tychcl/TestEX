@@ -10,10 +10,9 @@ use Exception;
 use Models\UserroleQuery;
 use Classes\Validate;
 
-class AuthController{
+class UserController{
     
-    public function signin($params, Request $request)
-    {
+    public function signin($params, Request $request){
         $login = strtolower($params['login']) ?? null;
         $pwd = $params['password'] ?? null;
 
@@ -49,17 +48,16 @@ class AuthController{
         }
     }
 
-    public function signup($params, Request $request)
-    {
+    public function signup($params, Request $request){
         try{
+            if($request->jwt_payload['roleid'] != 1){
+                return new Response(400, ['error' => 'no access']);
+            }
+
             $fio = $params['fio'] ?? null;
             $login = strtolower($params['login']) ?? null;
             $password = $params['password'] ?? null;
             $role = $params['roleid'] ?? null;
-
-            if($request->jwt_payload['roleid'] != 1){
-                return new Response(400, ['error' => 'no access']);
-            }
 
             if(!$fio || !$login|| !$password|| !$role){
                 return new Response(400, ['error' => 'fio,login, password and roleid required']);
@@ -88,7 +86,7 @@ class AuthController{
         }
     }
 
-    public function passwordchange($params, Request $request){
+    public function passwordСhange($params, Request $request){
         try{
 
             $password = $params['password'] ?? null;
@@ -140,6 +138,29 @@ class AuthController{
         }catch(Exception $e){
             return new Response(500, ['error' => $e->getMessage()]);
         }
+    }
+
+    public function userDelete($params, Request $request){
+        try{
+            if($request->jwt_payload['roleid'] != 1){
+                return new Response(400, ['error' => 'no access']);
+            }
+
+            $id = $params['id'] ?? null;
+            $login = $params['login'] ?? null;
+
+            if(!$id || !$login){
+                return new Response(400, ['error' => 'id, login required']);
+            }
+
+            TeacherQuery::create()->filterById($id)->findOneByLogin($login)->delete();
+
+            return new Response(200, ['success']);
+
+        }catch(Exception $e){
+            return new Response(500, ['error' => $e->getMessage()]);
+        }
+        
     }
 
 }

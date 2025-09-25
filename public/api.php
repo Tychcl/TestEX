@@ -16,6 +16,7 @@ $router->add($r['userSignup']);
 $router->add($r['userSignout']);
 $router->add($r['userPasswordChange']);
 $router->add($r['userDelete']);
+$router->add($r['userFind']);
 //event
 $router->add($r['eventinfoadd']);
 $router->add($r['eventListShow']);//всегда последнее в группе event

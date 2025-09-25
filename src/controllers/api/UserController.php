@@ -9,6 +9,7 @@ use Models\TeacherQuery;
 use Exception;
 use Models\UserroleQuery;
 use Classes\Validate;
+use Models\Map\TeacherTableMap;
 
 class UserController{
     
@@ -153,7 +154,14 @@ class UserController{
                 return new Response(400, ['error' => 'id, login required']);
             }
 
-            TeacherQuery::create()->filterById($id)->findOneByLogin($login)->delete();
+            $e = TeacherQuery::create()->filterById($id)->findOneByLogin($login);
+
+            if(!$e){
+                return new Response(400, ['error' => 'not found']);
+            }
+            
+            $e->delete();
+            return new Response(200, ['deleted']);
 
             return new Response(200, ['success']);
 
@@ -161,6 +169,31 @@ class UserController{
             return new Response(500, ['error' => $e->getMessage()]);
         }
         
+    }
+
+    public function find($params, Request $request){
+        try{
+            if($request->jwt_payload['roleid'] != 1){
+                return new Response(400, ['error' => 'no access']);
+            }
+
+            $colums = array_keys(TeacherTableMap::getTableMap()->getColumns());
+            $by = strtoupper($params['by']) ?? null;
+            $value = $params['value'] ?? null;
+
+            if($by && in_array($by, $colums) && $value){ 
+                $e = TeacherQuery::create()->findOneBy($by, $value);
+                if($e){
+                    return new Response(200, $e);
+                }
+                return new Response(400, ['error' => 'not found']);
+            }elseif($by || $value){
+                return new Response(400, ['error' => 'wrong by or value']);
+            }
+            return new Response(200, TeacherQuery::create()->find()->toArray());
+        }catch(Exception $e){
+            return new Response(500, ['error' => $e->getMessage()]);
+        }
     }
 
 }

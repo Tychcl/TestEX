@@ -11,8 +11,23 @@ use Models\EventawarddegreeQuery;
 use Models\Eventinfo;
 use Models\EventinfoQuery;
 use Models\EventlevelQuery;
+use Models\EventQuery;
+use Models\Map\TeacherTableMap;
+use Models\TeacherQuery;
 
 class ChampionshipController{
+
+    private $models = [
+                'award' => 'Models\EventawarddegreeQuery',
+                'level' => 'Models\EventlevelQuery',
+                'role' => 'Models\EventroleQuery'
+            ];
+
+    private $map = [
+                'award' => 'Models\Map\EventawarddegreeTableMap',
+                'level' => 'Models\Map\EventlevelTableMap',
+                'role' => 'Models\Map\EventroleTableMap'
+            ];
 
     public function add($params, Request $request){
         try{
@@ -45,39 +60,59 @@ class ChampionshipController{
         }
     }
 
-    public function showList($params, Request $request){
-        try{ 
-            $map = [
-                'award' => 'Models\EventawarddegreeQuery',
-                'level' => 'Models\EventlevelQuery',
-                'role' => 'Models\EventroleQuery'
-            ];
+    public function delete($params, Request $request){
+        try{
+            if($request->jwt_payload['roleid'] != 1){
+                return new Response(400, ['error' => 'no access']);
+            }
+
             $id = $params['id'] ?? null;
+
+            if(!$id){
+                return new Response(400, ['error' => 'id required']);
+            }
+
+            $e = EventinfoQuery::create()->findOneById($id);
+
+            if(!$e){
+                return new Response(400, ['error' => 'not found']);
+            }
+            
+            $e->delete();
+            return new Response(200, ['deleted']);
+
+        }catch(Exception $e){
+            return new Response(500, ['error' => $e->getMessage()]);
+        }
+        
+    }
+
+    public function showList($params, Request $request){
+        try{
+            $colums = ['id', 'name'];
+            $by = strtolower($params['by']) ?? null;
+            $value = $params['value'] ?? null;
             $name = $params['name'] ?? null;
-            if(!$name || !in_array($name, array_keys($map))){
+
+            if(!$name || !in_array($name, array_keys($this->models))){
                 return new Response(400, ['error' => 'wrong name or name required']);
             }
 
-            return $this->show($map['role'], $id);
+            $list = $this->models[$name];
 
-        }catch(Exception $e){
-            return new Response(500, ['error' => $e->getMessage()]);
-        }
-    }
-
-    private function show($list, $id = null){
-        try{ 
-            if($id){
-                $a = $list::create()->findOneById($id);
-                if($a){
-                    return new Response(200, $a->toArray());
+            if($by && in_array($by, $colums) && $value){ 
+                $e = $list::create()->findOneBy($by, $value);
+                if($e){
+                    return new Response(200, $e);
                 }
+                return new Response(400, ['error' => 'not found']);
+            }elseif($by || $value){
+                return new Response(400, ['error' => 'wrong by or value']);
             }
-            return new Response(200, ['list' => $list::create()->find()->toArray()]);
+            return new Response(200, $list::create()->find()->toArray());
         }catch(Exception $e){
             return new Response(500, ['error' => $e->getMessage()]);
         }
     }
-
 }
 ?>

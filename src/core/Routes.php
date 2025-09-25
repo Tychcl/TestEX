@@ -12,9 +12,9 @@ class Routes{
         'userSignout' => ['method' => 'POST', 'path' => '/api/user/signout', 'handler' => 'Api\UserController@signout'],
         'userPasswordChange' => ['method' => 'PUT', 'path' => '/api/user/passwordchange', 'handler' => 'Api\UserController@passwordChange'],
         'userDelete' => ['method' => 'DELETE', 'path' => '/api/user/delete', 'handler' => 'Api\UserController@userDelete'],
-        'userShow' => ['method' => 'GET', 'path' => '/api/user/show', 'handler' => 'Api\UserController@userDelete'],
+        'userFind' => ['method' => 'GET', 'path' => '/api/user/find', 'handler' => 'Api\UserController@find'],
         //event
-        'eventinfoadd' => ['method' => 'GET', 'path' => '/api/event/new', 'handler' => 'Api\ChampionshipController@add'],
+        'eventinfoadd' => ['method' => 'POST', 'path' => '/api/event/new', 'handler' => 'Api\ChampionshipController@add'],
         'eventListShow' => ['method' => 'GET', 'path' => '/api/event/{name}', 'handler' => 'Api\ChampionshipController@showList'],
     ];
 

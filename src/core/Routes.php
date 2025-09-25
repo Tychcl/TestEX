@@ -14,7 +14,8 @@ class Routes{
         'userDelete' => ['method' => 'DELETE', 'path' => '/api/user/delete', 'handler' => 'Api\UserController@userDelete'],
         'userFind' => ['method' => 'GET', 'path' => '/api/user/find', 'handler' => 'Api\UserController@find'],
         //event
-        'eventinfoadd' => ['method' => 'POST', 'path' => '/api/event/new', 'handler' => 'Api\ChampionshipController@add'],
+        'eventInfoAdd' => ['method' => 'POST', 'path' => '/api/event/new', 'handler' => 'Api\ChampionshipController@add'],
+        'eventInfoDelete' => ['method' => 'DELETE', 'path' => '/api/event/delete', 'handler' => 'Api\ChampionshipController@delete'],
         'eventListShow' => ['method' => 'GET', 'path' => '/api/event/{name}', 'handler' => 'Api\ChampionshipController@showList'],
     ];
 

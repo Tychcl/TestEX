@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Сен 22 2025 г., 00:47
+-- Время создания: Сен 26 2025 г., 00:24
 -- Версия сервера: 8.0.30
 -- Версия PHP: 7.4.30
 
@@ -219,7 +219,7 @@ CREATE TABLE `teacher` (
 --
 
 INSERT INTO `teacher` (`id`, `fio`, `login`, `password`, `roleId`, `needUpdSkill`, `canUpdCategory`) VALUES
-(1, 'Очень Важная Тучка', 'tychcl', '$2y$12$XOMnjvpvBv.2634YPN8d6.haV20SIYOzca1efClv.s6AkqnhYYrhe', 1, 1, 1);
+(1, 'Очень Важная Тучка', 'tychcl', '$2y$10$iOUx/MEm8g1ztoczR/Z1K.bYEBvuoCRtd954NcJAZXACYj5Xqum/i', 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -352,7 +352,7 @@ ALTER TABLE `eventAwardDegree`
 -- AUTO_INCREMENT для таблицы `eventInfo`
 --
 ALTER TABLE `eventInfo`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT 'Идентификатор';
+  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT 'Идентификатор', AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT для таблицы `eventLevel`
@@ -382,7 +382,7 @@ ALTER TABLE `student`
 -- AUTO_INCREMENT для таблицы `teacher`
 --
 ALTER TABLE `teacher`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT 'Идентификатор', AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT 'Идентификатор', AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT для таблицы `userRole`

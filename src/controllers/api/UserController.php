@@ -176,13 +176,39 @@ class UserController{
             if($request->jwt_payload['roleid'] != 1){
                 return new Response(400, ['error' => 'no access']);
             }
-
-            $colums = array_keys(TeacherTableMap::getTableMap()->getColumns());
+            $colums = TeacherTableMap::getTableMap()->getColumns();
+            unset($colums["PASSWORD"]);
+            $colums = array_keys($colums);
             $by = strtoupper($params['by']) ?? null;
+            $value = $params['value'] ?? null;
+            if($by && in_array($by, $colums) && $value){ 
+                $e = TeacherQuery::create()->select($colums)->findOneBy($by, $value);
+                if($e){
+                    return new Response(200, ['user' => $e]);
+                }
+                return new Response(400, ['error' => 'not found']);
+            }elseif($by || $value){
+                return new Response(400, ['error' => 'wrong by or value, can be lower or upper case', 'by' => $colums]);
+            }
+            return new Response(200, TeacherQuery::create()->find()->toArray());
+        }catch(Exception $e){
+            return new Response(500, ['error' => $e->getMessage()]);
+        }
+    }
+
+    public function showList($params, Request $request){
+        try{
+
+            if($request->jwt_payload['roleid'] != 1){
+                return new Response(400, ['error' => 'no access']);
+            }
+
+            $colums = ['id', 'name'];
+            $by = strtolower($params['by']) ?? null;
             $value = $params['value'] ?? null;
 
             if($by && in_array($by, $colums) && $value){ 
-                $e = TeacherQuery::create()->findOneBy($by, $value);
+                $e = UserroleQuery::create()->findOneBy($by, $value);
                 if($e){
                     return new Response(200, $e);
                 }
@@ -190,7 +216,7 @@ class UserController{
             }elseif($by || $value){
                 return new Response(400, ['error' => 'wrong by or value']);
             }
-            return new Response(200, TeacherQuery::create()->find()->toArray());
+            return new Response(200, UserroleQuery::create()->find()->toArray());
         }catch(Exception $e){
             return new Response(500, ['error' => $e->getMessage()]);
         }

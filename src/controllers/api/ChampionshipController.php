@@ -48,7 +48,7 @@ class ChampionshipController{
                 return new Response(400, ['error' => 'wrong levelid', 'list' => EventlevelQuery::create()->find()->toArray()]);
             }
 
-            if(EventinfoQuery::create()->filterByName($name)->filterByStart($start)->filterByEnd($end)->findByLevel($level)){
+            if(EventinfoQuery::create()->filterByName($name)->filterByStart($start)->filterByEnd($end)->findOneByLevel($level)){
                 return new Response(400, ['error' => 'already exists']);
             }
 

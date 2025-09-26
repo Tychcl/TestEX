@@ -10,7 +10,7 @@ class Router {
     public function add($r) {
         $this->routes[] = [
             'method' => strtoupper($r['method']),
-            'path' => $r['path'],
+            'path' => strtolower($r['path']),
             'handler' => $r['handler']
         ];
     }
@@ -25,7 +25,7 @@ class Router {
     }
 
     public function dispatch(Request $request) {
-        $uri = $request->uri;
+        $uri = strtolower($request->uri);
         $method = $request->method;
         $path = parse_url($uri, PHP_URL_PATH);
         

@@ -1,3 +1,24 @@
+-- Массовое обновление флагов для всех преподавателей
+CREATE PROCEDURE UpdateAllTeachersFlags()
+BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE teacher_id INT;
+    DECLARE cur CURSOR FOR SELECT id FROM teacher;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    
+    OPEN cur;
+    
+    read_loop: LOOP
+        FETCH cur INTO teacher_id;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        CALL UpdateTeacherFlags(teacher_id);
+    END LOOP;
+    
+    CLOSE cur;
+END //
+
 DELIMITER //
 
 CREATE PROCEDURE UpdateTeacherFlags(IN teacher_id INT)

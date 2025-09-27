@@ -13,13 +13,20 @@ class Routes{
             'signout' => ['method' => 'POST', 'path' => '/api/user/signout', 'handler' => 'Api\UserController@signout'],
             'passwordChange' => ['method' => 'PUT', 'path' => '/api/user/passwordchange', 'handler' => 'Api\UserController@passwordChange'],
             'delete' => ['method' => 'DELETE', 'path' => '/api/user/delete', 'handler' => 'Api\UserController@userDelete'],
-            'find' => ['method' => 'GET', 'path' => '/api/user/find', 'handler' => 'Api\UserController@find'],
-            'roleList' => ['method' => 'GET', 'path' => '/api/user/role', 'handler' => 'Api\UserController@showList']
+            'find' => ['method' => 'GET', 'path' => '/api/user/find', 'handler' => 'Api\UserController@userFind'],
+            'role' => [
+                'add' => ['method' => 'POST', 'path' => '/api/user/role/add', 'handler' => 'Api\UserController@roleAdd'],
+                'delete' => ['method' => 'DELETE', 'path' => '/api/user/role/delete', 'handler' => 'Api\UserController@roleDelete'],
+                'list' => ['method' => 'GET', 'path' => '/api/user/role/list', 'handler' => 'Api\UserController@roleList']
+            ]
         ],
         'event' => [
-            'infoAdd' => ['method' => 'POST', 'path' => '/api/event/new', 'handler' => 'Api\ChampionshipController@add'],
-            'infoDelete' => ['method' => 'DELETE', 'path' => '/api/event/delete', 'handler' => 'Api\ChampionshipController@delete'],
-            'listShow' => ['method' => 'GET', 'path' => '/api/event/{name}', 'handler' => 'Api\ChampionshipController@showList'],
+            'info' => [
+                'add' => ['method' => 'POST', 'path' => '/api/event/register', 'handler' => 'Api\ChampionshipController@infoAdd'],
+                'delete' => ['method' => 'DELETE', 'path' => '/api/event/delete', 'handler' => 'Api\ChampionshipController@infoDelete'],
+                //'find' => ['method' => 'GET', 'path' => '/api/event/delete', 'handler' => 'Api\ChampionshipController@infoDelete']
+            ],
+            'listShow' => ['method' => 'GET', 'path' => '/api/event/{name}', 'handler' => 'Api\ChampionshipController@eventList'],
         ]
         //event
         

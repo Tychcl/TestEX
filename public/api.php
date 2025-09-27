@@ -17,10 +17,13 @@ $router->add($r['user']['signout']);
 $router->add($r['user']['passwordChange']);
 $router->add($r['user']['delete']);
 $router->add($r['user']['find']);
-$router->add($r['user']['roleList']);
-//event
-$router->add($r['event']['infoAdd']);
-$router->add($r['event']['infoDelete']);
+//user role
+$router->add($r['user']['role']['add']);
+$router->add($r['user']['role']['delete']);
+$router->add($r['user']['role']['list']);
+//event info
+$router->add($r['event']['info']['add']);
+$router->add($r['event']['info']['delete']);
 $router->add($r['event']['listShow']);//всегда последнее в группе event
 //$router->add($r['lists']);
 

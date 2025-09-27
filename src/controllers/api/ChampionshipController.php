@@ -29,7 +29,7 @@ class ChampionshipController{
                 'role' => 'Models\Map\EventroleTableMap'
             ];
 
-    public function add($params, Request $request){
+    public function infoAdd($params, Request $request){
         try{
             $name = $params['name'] ?? null;
             $start = $params['start'] ?? null;
@@ -60,7 +60,7 @@ class ChampionshipController{
         }
     }
 
-    public function delete($params, Request $request){
+    public function infoDelete($params, Request $request){
         try{
             if($request->jwt_payload['roleid'] != 1){
                 return new Response(400, ['error' => 'no access']);
@@ -87,7 +87,13 @@ class ChampionshipController{
         
     }
 
-    public function showList($params, Request $request){
+    public function eventAdd($params, Request $request){
+        $infoid = $params['info'] ?? null;
+        $teacher = $params['teacher'] ?? null;
+        
+    }
+
+    public function eventList($params, Request $request){
         try{
             $colums = ['id', 'name'];
             $by = strtolower($params['by']) ?? null;
@@ -109,10 +115,11 @@ class ChampionshipController{
             }elseif($by || $value){
                 return new Response(400, ['error' => 'wrong by or value']);
             }
-            return new Response(200, $list::create()->find()->toArray());
+            return new Response(200, ['list'=>$list::create()->find()->toArray()]);
         }catch(Exception $e){
             return new Response(500, ['error' => $e->getMessage()]);
         }
     }
+
 }
 ?>

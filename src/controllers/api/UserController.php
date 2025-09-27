@@ -10,6 +10,7 @@ use Exception;
 use Models\UserroleQuery;
 use Classes\Validate;
 use Models\Map\TeacherTableMap;
+use Models\Userrole;
 
 class UserController{
     
@@ -69,7 +70,7 @@ class UserController{
             }
 
             if(TeacherQuery::create()->findOneByLogin($login)) {
-                return new Response(400, ['error' => 'user with login '.$login.' already exist']);
+                return new Response(400, ['error' => 'user with that login already exist']);
             }
 
             if(!UserroleQuery::create()->findOneById($role)) {
@@ -81,7 +82,7 @@ class UserController{
             setLogin($login)->
             setPassword(password_hash($password, PASSWORD_DEFAULT))->
             setRoleid(intval($role))->save();
-            return new Response(200, ['user succefuly created']);
+            return new Response(200, ['user' => $teacher->toArray()]);
         }catch(Exception $e){
             return new Response(500, ['error' => $e->getMessage()]);
         }
@@ -171,7 +172,7 @@ class UserController{
         
     }
 
-    public function find($params, Request $request){
+    public function userFind($params, Request $request){
         try{
             if($request->jwt_payload['roleid'] != 1){
                 return new Response(400, ['error' => 'no access']);
@@ -190,13 +191,72 @@ class UserController{
             }elseif($by || $value){
                 return new Response(400, ['error' => 'wrong by or value, can be lower or upper case', 'by' => $colums]);
             }
-            return new Response(200, TeacherQuery::create()->find()->toArray());
+            return new Response(200, ['user' => TeacherQuery::create()->find()->toArray()]);
         }catch(Exception $e){
             return new Response(500, ['error' => $e->getMessage()]);
         }
     }
 
-    public function showList($params, Request $request){
+    public function roleAdd($params, Request $request){
+         try{
+
+            if($request->jwt_payload['roleid'] != 1){
+                return new Response(400, ['error' => 'no access']);
+            }
+
+            $name = $params['name'] ?? null;
+
+            if(!$name){
+                return new Response(400, ['error' => 'name required']);
+            }
+
+            if(UserroleQuery::create()->findOneByName($name)){
+                return new Response(400, ['error' => 'already exists']);
+            }
+            
+            $r = new Userrole();
+            $r->setName($name)->save();
+
+            return new Response(200, ['success' => $r->toArray()]);
+
+        }catch(Exception $e){
+            return new Response(500, ['error' => $e->getMessage()]);
+        }
+    }
+
+    public function roleDelete($params, Request $request){
+         try{
+
+            if($request->jwt_payload['roleid'] != 1){
+                return new Response(400, ['error' => 'no access']);
+            }
+
+            $id = intval($params['id']) ?? null;
+
+            if(!$id){
+                return new Response(400, ['error' => 'id required']);
+            }
+
+            if($id < 3){
+                return new Response(400, ['error' => 'cant delete default roles']);
+            }
+            
+            $r = UserroleQuery::create()->findById($id);
+
+            if(!$r){
+                return new Response(400, ['error' => 'not exists']);
+            }
+
+            $r->delete();
+
+            return new Response(200, ['Deleted']);
+
+        }catch(Exception $e){
+            return new Response(500, ['error' => $e->getMessage()]);
+        }
+    }
+
+    public function roleList($params, Request $request){
         try{
 
             if($request->jwt_payload['roleid'] != 1){
@@ -216,7 +276,7 @@ class UserController{
             }elseif($by || $value){
                 return new Response(400, ['error' => 'wrong by or value']);
             }
-            return new Response(200, UserroleQuery::create()->find()->toArray());
+            return new Response(200, ['list' => UserroleQuery::create()->find()->toArray()]);
         }catch(Exception $e){
             return new Response(500, ['error' => $e->getMessage()]);
         }

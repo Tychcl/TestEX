@@ -3,3 +3,5 @@ web/propel/generated/*
 !web/propel/generated/.gitkeep
 .env
 /web/src/classes/Models
+/db/data/*
+!/db/data/.gitkeep

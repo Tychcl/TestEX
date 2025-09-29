@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Веб-сервер с PHP приложением
   web:
@@ -29,10 +27,10 @@ services:
     container_name: teacher_competence_db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: #root_password
+      MYSQL_ROOT_PASSWORD: strong_password_123
       MYSQL_DATABASE: teacherCompetence
-      MYSQL_USER: #app_user
-      MYSQL_PASSWORD: #app_password
+      MYSQL_USER: app_user_dev
+      MYSQL_PASSWORD: strong_password_123
     volumes:
       - ./db/data:/var/lib/mysql  # Сохраняем данные БД
       - ./DefaultSQL:/docker-entrypoint-initdb.d  # SQL скрипты для инициализации

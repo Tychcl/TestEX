@@ -1,5 +1,5 @@
 web/vendor
 web/propel/generated/*
 !web/propel/generated/.gitkeep
-/web/.env
+.env
 /web/src/classes/Models

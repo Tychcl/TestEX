@@ -1,45 +1,49 @@
 version: '3.8'
 
 services:
+  # Веб-сервер с PHP приложением
   web:
-    build: .
-    container_name: teacher_competence_app
+    build: ./web
+    container_name: teacher_competence
     ports:
-      - "80:80"
+      - "8080:80"  # Пробрасываем на порт 8080 хоста
     volumes:
-      - ./public:/var/www/html/public
-      - ./src:/var/www/html/src
-      - ./propel:/var/www/html/propel
-      - ./vendor:/var/www/html/vendor
-      - ./composer.json:/var/www/html/composer.json
-      - ./composer.lock:/var/www/html/composer.lock
-      - ./.env:/var/www/html/.env
+      - ./web:/var/www/html  # Монтируем код проекта
     depends_on:
-      - db
+      - db  # Указываем зависимость от БД
     networks:
       - app_network
     environment:
+      # Переменные для подключения к БД
       DATABASE_HOST: db
       DATABASE_PORT: 3306
       DATABASE_NAME: teacherCompetence
       DATABASE_USER: root
-      DATABASE_PASSWORD: root_password
+      DATABASE_PASSWORD: 
+      JWT: YeJLz7slFawiR3NHdt7HPJVgsWv8WQifxvMFLz3pdgatvSGRxiK5mioA0rXKNNUIjppHMp5vRibPIdXRQabdvYgFTlvR9n0SbA4j2xs85lPozEYxo81tvUvmRNcwrOn1XobleUSjza2AI1b6GOsWLhIOB2SwhhYME1Vyyq0fCV0VFMpSut9agWgOzVWrOUnSjvspRnJ2hnnRTUqdReA8eSx8Sfxpxe8rgVe1zL7qgB5NlPcr18GfTVx0jfLLPLXf
+    restart: unless-stopped
 
+  # База данных MySQL
   db:
     image: mysql:8.0
-    container_name: mysql_db
+    container_name: teacher_competence_db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_ROOT_PASSWORD: #root_password
       MYSQL_DATABASE: teacherCompetence
+      MYSQL_USER: #app_user
+      MYSQL_PASSWORD: #app_password
     volumes:
-      - ./db/data:/var/lib/mysql
-      - ./DefaultSQL/teacherCompetence.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./db/data:/var/lib/mysql  # Сохраняем данные БД
+      - ./DefaultSQL:/docker-entrypoint-initdb.d  # SQL скрипты для инициализации
     ports:
-      - "3306:3306"
+      - "3306:3306"  # Пробрасываем порт БД
     networks:
       - app_network
+    command: 
+      - --default-authentication-plugin=mysql_native_password  # Для совместимости
 
+# Общая сеть для контейнеров
 networks:
   app_network:
     driver: bridge

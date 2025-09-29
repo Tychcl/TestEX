@@ -27,15 +27,13 @@ COPY composer.json composer.lock ./
 # Установка зависимостей Composer
 RUN composer install --no-dev --optimize-autoloader
 
+# Копирование конфига Apache (теперь из той же папки web)
+COPY configs/apache/000-default.conf /etc/apache2/sites-available/000-default.conf
+
 # Копирование остальных файлов проекта
 COPY . .
 
-# Установка прав на запись для папок, которые могут потребоваться
+# Установка прав на запись
 RUN chown -R www-data:www-data /var/www/html
-
-# Установка DocumentRoot Apache в папку public
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
 EXPOSE 80

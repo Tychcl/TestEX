@@ -25,9 +25,13 @@ class Router {
     }
 
     public function dispatch(Request $request) {
-        $uri = strtolower($request->uri);
+        $uri = strtolower(rtrim($request->uri, '/'));
         $method = $request->method;
         $path = parse_url($uri, PHP_URL_PATH);
+        
+        if (empty($path)) {
+            $path = '/';
+        }
         
         $queryParams = [];
         $queryString = parse_url($uri, PHP_URL_QUERY);
@@ -40,11 +44,20 @@ class Router {
                 continue;
             }
             
-            $pattern = preg_replace('/\{[a-z]+\}/', '([^/]+)', $route['path']);
+            $routePath = rtrim($route['path'], '/');
+            
+            if (strpos($routePath, '{') === false) {
+                if ($routePath === $path) {
+                    return $this->executeHandler($route, $queryParams, $request);
+                }
+                continue;
+            }
+            
+            $pattern = preg_replace('/\{[a-z]+\}/', '([^/]+)', $routePath);
             $pattern = '#^' . $pattern . '$#';
 
             if (preg_match($pattern, $path, $matches)) {
-                preg_match_all('/\{([a-z]+)\}/', $route['path'], $paramNames);
+                preg_match_all('/\{([a-z]+)\}/', $routePath, $paramNames);
                 $params = [];
                 
                 for ($i = 0; $i < count($paramNames[1]); $i++) {
@@ -54,23 +67,33 @@ class Router {
                 $params = array_merge($params, $queryParams);
                 $params = $this->filterParams($params);
                 
-                list($controller, $action) = explode('@', $route['handler']);
-            
-                if (strpos($controller, '\\') === false) {
-                    $controller = "Api\\{$controller}";
-                }
-                
-                $controllerInstance = new $controller();
-                $result = $controllerInstance->$action($params, $request);
-                
-                if ($result instanceof Response) {
-                    return $result;
-                }
-                
-                return new Response(200, $result);
+                return $this->executeHandler($route, $params, $request);
             }
         }
     
-        return new Response(404, ['error' => 'Wrong api route']);
+        return new Response(404, [
+            'error' => 'Wrong api route', 
+            'uri' => $uri,
+            'method' => $method,
+            'path' => $path,
+            'routes' => array_column($this->routes, 'path')
+        ]);
+    }
+    
+    private function executeHandler($route, $params, $request) {
+        list($controller, $action) = explode('@', $route['handler']);
+    
+        if (strpos($controller, '\\') === false) {
+            $controller = "Api\\{$controller}";
+        }
+        
+        $controllerInstance = new $controller();
+        $result = $controllerInstance->$action($params, $request);
+        
+        if ($result instanceof Response) {
+            return $result;
+        }
+
+        return $result;
     }
 }

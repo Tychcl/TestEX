@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1:3306
--- Время создания: Сен 26 2025 г., 00:24
+-- Время создания: Сен 29 2025 г., 22:56
 -- Версия сервера: 8.0.30
 -- Версия PHP: 7.4.30
 
@@ -352,7 +352,7 @@ ALTER TABLE `eventAwardDegree`
 -- AUTO_INCREMENT для таблицы `eventInfo`
 --
 ALTER TABLE `eventInfo`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT 'Идентификатор', AUTO_INCREMENT=2;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT 'Идентификатор', AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT для таблицы `eventLevel`
@@ -382,13 +382,13 @@ ALTER TABLE `student`
 -- AUTO_INCREMENT для таблицы `teacher`
 --
 ALTER TABLE `teacher`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT 'Идентификатор', AUTO_INCREMENT=5;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT 'Идентификатор', AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT для таблицы `userRole`
 --
 ALTER TABLE `userRole`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT 'Идентификатор', AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT 'Идентификатор', AUTO_INCREMENT=6;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц

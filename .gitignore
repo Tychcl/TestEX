@@ -1,0 +1,5 @@
+web/vendor
+web/.env
+web/src/core/.env
+web/propel/generated/*
+!web/propel/generated/.gitkeep

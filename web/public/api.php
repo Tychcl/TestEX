@@ -27,8 +27,6 @@ $router->add($r['event']['info']['delete']);
 $router->add($r['event']['listShow']);//всегда последнее в группе event
 //$router->add($r['lists']);
 
-
-
 $dispatcher = MiddlewareFabric::createForApi($router);
 
 $request = new Request();

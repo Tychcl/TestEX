@@ -14,7 +14,7 @@ use Models\Userrole;
 
 class UserController{
     
-    public function signin($params, Request $request){
+    public function signin($params){
         $login = strtolower($params['login']) ?? null;
         $pwd = $params['password'] ?? null;
 
@@ -50,11 +50,8 @@ class UserController{
         }
     }
 
-    public function signup($params, Request $request){
+    public function signup($params){
         try{
-            if($request->jwt_payload['roleid'] != 1){
-                return new Response(400, ['error' => 'no access']);
-            }
 
             $fio = $params['fio'] ?? null;
             $login = strtolower($params['login']) ?? null;
@@ -88,11 +85,11 @@ class UserController{
         }
     }
 
-    public function passwordСhange($params, Request $request){
+    public function pwdChange($params){
         try{
 
             $password = $params['password'] ?? null;
-            $confirm_password = $params['confirmpassword'] ?? null;
+            $confirm_password = $params['confirm'] ?? null;
             $new_password = $params['newpassword'] ?? null;
 
             if(!$password|| !$confirm_password|| !$new_password){
@@ -106,9 +103,9 @@ class UserController{
             if($password == $new_password){
                 return new Response(400, ['error' => 'You already use this password']);
             }
+                session_start();
 
-
-                $teacher = TeacherQuery::create()->findOneById($request->jwt_payload['id']);
+                $teacher = TeacherQuery::create()->findOneById($_SESSION['id']);
 
                 if(!password_verify($password, $teacher->getPassword())){
                     return new Response(400, ['error' => 'Wrong password']);
@@ -125,6 +122,8 @@ class UserController{
 
     public function signout(){
         try{
+            session_destroy();
+            $_SESSION = array();
             $r = new Response(200, ['success']);
             $r->setCook(
                 'jwt', 
@@ -142,11 +141,8 @@ class UserController{
         }
     }
 
-    public function userDelete($params, Request $request){
+    public function userDelete($params){
         try{
-            if($request->jwt_payload['roleid'] != 1){
-                return new Response(400, ['error' => 'no access']);
-            }
 
             $id = $params['id'] ?? null;
             $login = $params['login'] ?? null;
@@ -172,11 +168,8 @@ class UserController{
         
     }
 
-    public function userFind($params, Request $request){
+    public function userFind($params){
         try{
-            if($request->jwt_payload['roleid'] != 1){
-                return new Response(400, ['error' => 'no access']);
-            }
             $colums = TeacherTableMap::getTableMap()->getColumns();
             unset($colums["PASSWORD"]);
             $colums = array_keys($colums);
@@ -197,12 +190,8 @@ class UserController{
         }
     }
 
-    public function roleAdd($params, Request $request){
+    public function roleAdd($params){
          try{
-
-            if($request->jwt_payload['roleid'] != 1){
-                return new Response(400, ['error' => 'no access']);
-            }
 
             $name = $params['name'] ?? null;
 
@@ -224,12 +213,8 @@ class UserController{
         }
     }
 
-    public function roleDelete($params, Request $request){
+    public function roleDelete($params){
          try{
-
-            if($request->jwt_payload['roleid'] != 1){
-                return new Response(400, ['error' => 'no access']);
-            }
 
             $id = intval($params['id']) ?? null;
 
@@ -256,12 +241,8 @@ class UserController{
         }
     }
 
-    public function roleList($params, Request $request){
+    public function roleList($params){
         try{
-
-            if($request->jwt_payload['roleid'] != 1){
-                return new Response(400, ['error' => 'no access']);
-            }
 
             $colums = ['id', 'name'];
             $by = strtolower($params['by']) ?? null;

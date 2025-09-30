@@ -62,9 +62,6 @@ class ChampionshipController{
 
     public function infoDelete($params, Request $request){
         try{
-            if($request->jwt_payload['roleid'] != 1){
-                return new Response(400, ['error' => 'no access']);
-            }
 
             $id = $params['id'] ?? null;
 

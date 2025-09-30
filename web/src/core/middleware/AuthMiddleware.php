@@ -12,35 +12,43 @@ use Exception;
 class AuthMiddleware implements MiddlewareInterface
 {
 
-    private array $exception;
+    private $exception;
+    private $admin;
 
-    public function __construct(array $ex)
+    public function __construct($ex, $a)
     {
         $this->exception = $ex;
+        $this->admin = $a;
     }
 
     public function handle(Request $request, callable $next): Response
     {
-        if (!in_array(parse_url($request->uri, PHP_URL_PATH), $this->exception) && !$this->isAuthenticated($request)) {
+        session_start();
+        $uri = parse_url($request->uri, PHP_URL_PATH);
+        if($request->cookie['jwt'] && empty($_SESSION))
+        {
+            $_SESSION = JWToken::validateToken($request->cookie['jwt']) ?? null;;
+        }
+        if (!in_array($uri, $this->exception) && !$this->isAuthenticated($_SESSION)) {
+            session_destroy();
+            $_SESSION = array();
             return new Response(401, ['error'=>'Unauthorized']);
+        }
+        if(in_array($uri, $this->admin) && $_SESSION['roleid'] != 1){
+            return new Response(400, ['error' => 'no access']);
         }
         return $next($request);
     }
     
-    private function isAuthenticated(Request $request): bool
+    private function isAuthenticated($payload): bool
     {
         try{
-            if($request->cookie['jwt'])
-            {
-                $payload = JWToken::validateToken($request->cookie['jwt']);
-                $v = TeacherQuery::create()->filterById(intval($payload['id']))->
-                filterByLogin($payload['login'])->
-                filterByRoleid(intval($payload['roleid']))->
-                findOne();
-                if($v){
-                    $request->jwt_payload = $payload;
-                    return true;
-                }
+            $v = TeacherQuery::create()->filterById(intval($payload['id']))->
+            filterByLogin($payload['login'])->
+            filterByRoleid(intval($payload['roleid']))->
+            findOne();
+            if($v){
+                return true;
             }
             return false;
         }catch(Exception $e){

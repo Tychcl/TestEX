@@ -1,8 +1,8 @@
 <?php
+use Html\event\info\Info;
+
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 require_once dirname(__DIR__) . '/propel/generated/conf/config.php';
-
-use Html\event\info\add\Add;
 
 //$host = 'db'; // Имя вашего контейнера с БД
 //$user = 'root'; // Ваш пользователь БД
@@ -21,5 +21,7 @@ use Html\event\info\add\Add;
 //} catch(PDOException $e) {
 //    echo "Ошибка подключения: " . $e->getMessage();
 //}
-echo add;
+
+$i = new Info();
+echo $i->add();
 ?>

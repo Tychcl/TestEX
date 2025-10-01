@@ -1,5 +1,9 @@
 RewriteEngine On
 
+# Исключаем статические файлы из перенаправления
+RewriteCond %{REQUEST_URI} \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$ [NC]
+RewriteRule ^ - [L]
+
 # Перенаправление API запросов
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d

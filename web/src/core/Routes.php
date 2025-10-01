@@ -22,11 +22,11 @@ class Routes{
         ],
         'event' => [
             'info' => [
-                'add' => ['method' => 'POST', 'path' => '/api/event/register', 'handler' => 'Api\ChampionshipController@infoAdd'],
-                'delete' => ['method' => 'DELETE', 'path' => '/api/event/delete', 'handler' => 'Api\ChampionshipController@infoDelete'],
-                //'find' => ['method' => 'GET', 'path' => '/api/event/delete', 'handler' => 'Api\ChampionshipController@infoDelete']
+                'add' => ['method' => 'POST', 'path' => '/api/event/info/add', 'handler' => 'Api\ChampionshipController@infoAdd'],
+                'delete' => ['method' => 'DELETE', 'path' => '/api/event/info/delete', 'handler' => 'Api\ChampionshipController@infoDelete'],
+                'find' => ['method' => 'GET', 'path' => '/api/event/info/find', 'handler' => 'Api\ChampionshipController@infoFind']
             ],
-            'listShow' => ['method' => 'GET', 'path' => '/api/event/{name}', 'handler' => 'Api\ChampionshipController@eventList'],
+            'listShow' => ['method' => 'GET', 'path' => '/api/event/{name}', 'handler' => 'Api\ChampionshipController@showList'],
         ]
         //event
         

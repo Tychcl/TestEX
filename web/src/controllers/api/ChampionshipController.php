@@ -12,6 +12,7 @@ use Models\Eventinfo;
 use Models\EventinfoQuery;
 use Models\EventlevelQuery;
 use Models\EventQuery;
+use Models\Map\EventinfoTableMap;
 use Models\Map\TeacherTableMap;
 use Models\TeacherQuery;
 
@@ -23,13 +24,7 @@ class ChampionshipController{
                 'role' => 'Models\EventroleQuery'
             ];
 
-    private $map = [
-                'award' => 'Models\Map\EventawarddegreeTableMap',
-                'level' => 'Models\Map\EventlevelTableMap',
-                'role' => 'Models\Map\EventroleTableMap'
-            ];
-
-    public function infoAdd($params, Request $request){
+    public function infoAdd($params){
         try{
             $name = $params['name'] ?? null;
             $start = $params['start'] ?? null;
@@ -54,13 +49,33 @@ class ChampionshipController{
 
             $event = new Eventinfo();
             $event->setName($name)->setStart($start)->setEnd($end)->setLevel($level)->save();
-            return new Response(200, 'success');
+            return new Response(200, ['success']);
         }catch(Exception $e){
             return new Response(500, ['error' => $e->getMessage()]);
         }
     }
 
-    public function infoDelete($params, Request $request){
+    public function infoFind($params){
+        try{
+            $colums = array_keys(EventinfoTableMap::getTableMap()->getColumns());
+            $by = strtoupper($params['by']) ?? null;
+            $value = $params['value'] ?? null;
+            if($by && in_array($by, $colums) && $value){ 
+                $e = EventinfoQuery::create()->select($colums)->findOneBy($by, $value);
+                if($e){
+                    return new Response(200, ['info' => $e]);
+                }
+                return new Response(400, ['error' => 'not found']);
+            }elseif($by || $value){
+                return new Response(400, ['error' => 'wrong by or value, can be lower or upper case', 'by' => $colums]);
+            }
+            return new Response(200, ['info' => EventinfoQuery::create()->find()->toArray()]);
+        }catch(Exception $e){
+            return new Response(500, ['error' => $e->getMessage()]);
+        }
+    }
+
+    public function infoDelete($params){
         try{
 
             $id = $params['id'] ?? null;
@@ -84,13 +99,13 @@ class ChampionshipController{
         
     }
 
-    public function eventAdd($params, Request $request){
+    public function eventAdd($params){
         $infoid = $params['info'] ?? null;
         $teacher = $params['teacher'] ?? null;
         
     }
 
-    public function eventList($params, Request $request){
+    public function showList($params){
         try{
             $colums = ['id', 'name'];
             $by = strtolower($params['by']) ?? null;
@@ -110,7 +125,7 @@ class ChampionshipController{
                 }
                 return new Response(400, ['error' => 'not found']);
             }elseif($by || $value){
-                return new Response(400, ['error' => 'wrong by or value']);
+                return new Response(400, ['error' => 'wrong by or value', 'by' => $colums]);
             }
             return new Response(200, ['list'=>$list::create()->find()->toArray()]);
         }catch(Exception $e){

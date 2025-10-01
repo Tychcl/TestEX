@@ -1,6 +1,6 @@
 <?php
 namespace Api;
-
+session_start();
 use Core\Response;
 use Core\JWToken;
 use Core\Request;
@@ -103,7 +103,6 @@ class UserController{
             if($password == $new_password){
                 return new Response(400, ['error' => 'You already use this password']);
             }
-                session_start();
 
                 $teacher = TeacherQuery::create()->findOneById($_SESSION['id']);
 
@@ -255,7 +254,7 @@ class UserController{
                 }
                 return new Response(400, ['error' => 'not found']);
             }elseif($by || $value){
-                return new Response(400, ['error' => 'wrong by or value']);
+                return new Response(400, ['error' => 'wrong by or value', 'by' => $colums]);
             }
             return new Response(200, ['list' => UserroleQuery::create()->find()->toArray()]);
         }catch(Exception $e){

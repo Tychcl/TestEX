@@ -1,7 +1,8 @@
 <?php
-use Classes\HelloWorld;
-
 require_once dirname(__DIR__) . '/vendor/autoload.php';
+require_once dirname(__DIR__) . '/propel/generated/conf/config.php';
+
+use Html\event\info\add\Add;
 
 //$host = 'db'; // Имя вашего контейнера с БД
 //$user = 'root'; // Ваш пользователь БД
@@ -20,8 +21,5 @@ require_once dirname(__DIR__) . '/vendor/autoload.php';
 //} catch(PDOException $e) {
 //    echo "Ошибка подключения: " . $e->getMessage();
 //}
-
-
-
-echo 'index';
+echo add;
 ?>

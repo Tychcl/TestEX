@@ -42,6 +42,7 @@ class UserController{
                     true, // httponly - недоступно через JavaScript
                     'Strict' // samesite
                 );
+                $_SESSION = $payload;
                 return $r;
             }else{
                 return new Response(400, ['error' => 'Invalid login or password']);

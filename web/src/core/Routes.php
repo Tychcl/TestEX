@@ -10,7 +10,7 @@ class Routes{
         'user' => [
             'signup' => ['method' => 'POST','path' => '/api/user/signup', 'handler' => 'Api\UserController@signup'],
             'signin' => ['method' => 'POST', 'path' => '/api/user/signin', 'handler' => 'Api\UserController@signin'],
-            'signout' => ['method' => 'POST', 'path' => '/api/user/signout', 'handler' => 'Api\UserController@signout'],
+            'signout' => ['method' => 'get', 'path' => '/api/user/signout', 'handler' => 'Api\UserController@signout'],
             'passwordChange' => ['method' => 'PUT', 'path' => '/api/user/passwordchange', 'handler' => 'Api\UserController@pwdChange'],
             'delete' => ['method' => 'DELETE', 'path' => '/api/user/delete', 'handler' => 'Api\UserController@userDelete'],
             'find' => ['method' => 'GET', 'path' => '/api/user/find', 'handler' => 'Api\UserController@userFind'],

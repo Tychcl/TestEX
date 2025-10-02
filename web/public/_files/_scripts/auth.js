@@ -49,6 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'same-origin',
                 body: JSON.stringify(data)
             });
             if(!response.ok){
@@ -56,8 +57,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log(await response.json());
                 return;
             }
-
-            window.location.reload()
+            
+            window.location.reload(true);
 
         }catch (error) {
             alert('Ошибка при отправке\nПодробнее в консоли');

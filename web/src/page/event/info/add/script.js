@@ -9,7 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
         submitButton.disabled = true;
         try {
             const response = await fetch('/api/');
-            alert(response.url);
+            const formData = new FormData(form);
+            console.log('Данные формы:', Object.fromEntries(formData.entries()));
+            console.log(response.url);
         }catch (error) {
             console.error('Ошибка при отправке:', error);
         }

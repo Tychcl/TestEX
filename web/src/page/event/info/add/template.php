@@ -1,5 +1,6 @@
 <?php
 $script = file_get_contents(__DIR__.'/script.js');
+$style = file_get_contents(__DIR__.'/styls.css');
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -7,7 +8,7 @@ $script = file_get_contents(__DIR__.'/script.js');
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>info add</title>
-    <script><?= $script ?></script>
+    <script defer ><?= $script ?></script>
 </head>
 <body>
     <form id="infoForm" method="post">

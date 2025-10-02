@@ -33,10 +33,27 @@ class Routes{
     ];
 
     public static $web = [
-        'signin' => '/api/user/signin',
-        'lists' => '/api/list/{list}',
-        'signup' => '/api/user/signup',
-        'passwordchange' => '/api/user/passwordchange'
+        'user' => [
+            'signup' => ['method' => 'GET','path' => '/web/user/signup', 'handler' => 'Api\UserController@signup'],
+            'signin' => ['method' => 'GET', 'path' => '/web/user/signin', 'handler' => 'Api\UserController@signin'],
+            'signout' => ['method' => 'GET', 'path' => '/web/user/signout', 'handler' => 'Api\UserController@signout'],
+            'passwordChange' => ['method' => 'GET', 'path' => '/web/user/passwordchange', 'handler' => 'Api\UserController@pwdChange'],
+            'delete' => ['method' => 'GET', 'path' => '/web/user/delete', 'handler' => 'Api\UserController@userDelete'],
+            'find' => ['method' => 'GET', 'path' => '/web/user/find', 'handler' => 'Api\UserController@userFind'],
+            'role' => [
+                'add' => ['method' => 'GET', 'path' => '/web/user/role/add', 'handler' => 'Api\UserController@roleAdd'],
+                'delete' => ['method' => 'GET', 'path' => '/web/user/role/delete', 'handler' => 'Api\UserController@roleDelete'],
+                'list' => ['method' => 'GET', 'path' => '/web/user/role/list', 'handler' => 'Api\UserController@roleList']
+            ]
+        ],
+        'event' => [
+            'info' => [
+                'add' => ['method' => 'GET', 'path' => '/web/event/info/add', 'handler' => 'Web\ChampionshipController@infoAdd'],
+                'delete' => ['method' => 'GET', 'path' => '/web/event/info/delete', 'handler' => 'Api\ChampionshipController@infoDelete'],
+                'find' => ['method' => 'GET', 'path' => '/web/event/info/find', 'handler' => 'Api\ChampionshipController@infoFind']
+            ],
+            'listShow' => ['method' => 'GET', 'path' => '/web/event/{name}', 'handler' => 'Api\ChampionshipController@showList'],
+        ]
     ];
 
 }

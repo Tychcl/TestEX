@@ -3,9 +3,7 @@ namespace Api;
 
 use Core\Response;
 use Core\Request;
-use DateTime;
 use Exception;
-use GPBMetadata\Google\Type\Datetime as TypeDatetime;
 use Models\Eventawarddegree;
 use Models\EventawarddegreeQuery;
 use Models\Eventinfo;

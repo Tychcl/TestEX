@@ -40,7 +40,7 @@ class AuthMiddleware implements MiddlewareInterface
         return $next($request);
     }
     
-    private function isAuthenticated($payload): bool
+    public static function isAuthenticated($payload): bool
     {
         try{
             $v = TeacherQuery::create()->filterById(intval($payload['id']))->

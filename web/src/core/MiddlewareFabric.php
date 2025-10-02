@@ -20,7 +20,7 @@ class MiddlewareFabric
 
         // Место для мидлваров веба
 
-
+        $dispatcher->add(new AuthMiddleware([], []));
         $dispatcher->add(new RouterMiddleware($router));
         return $dispatcher;
     }

@@ -19,6 +19,7 @@ class UserController{
         $pwd = $params['password'] ?? null;
 
         if(!$login || !$pwd){
+            $j = file_get_contents('php://input');
             return new Response(400, ['error' => 'Login and password required']);
         }
         try{

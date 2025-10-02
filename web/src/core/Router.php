@@ -33,6 +33,9 @@ class Router {
             $path = '/';
         }
         
+        $json = file_get_contents('php://input');
+        $jsonData = json_decode($json, true) ?? [];
+        
         $queryParams = [];
         $queryString = parse_url($uri, PHP_URL_QUERY);
         if ($queryString) {
@@ -45,10 +48,12 @@ class Router {
             }
             
             $routePath = rtrim($route['path'], '/');
-            
+
             if (strpos($routePath, '{') === false) {
                 if ($routePath === $path) {
-                    return $this->executeHandler($route, $queryParams, $request);
+                    $params = array_merge($queryParams, $jsonData);
+                    $params = $this->filterParams($params);
+                    return $this->executeHandler($route, $params, $request);
                 }
                 continue;
             }
@@ -64,7 +69,8 @@ class Router {
                     $params[$paramNames[1][$i]] = $matches[$i + 1] ?? null;
                 }
                 
-                $params = array_merge($params, $queryParams);
+                $params = array_merge($params, $queryParams, $jsonData);
+
                 $params = $this->filterParams($params);
                 
                 return $this->executeHandler($route, $params, $request);
@@ -74,9 +80,9 @@ class Router {
         return new Response(404, [
             'error' => 'Wrong api route', 
             'uri' => $uri,
-            'method' => $method,
-            'path' => $path,
-            'routes' => array_column($this->routes, 'path')
+            //'method' => $method,
+            'path' => $path
+            //'routes' => array_column($this->routes, 'path')
         ]);
     }
     

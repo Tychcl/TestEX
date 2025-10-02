@@ -43,9 +43,22 @@ document.addEventListener('DOMContentLoaded', function() {
         
         try {
             const formData = new FormData(form);
-            console.log('Данные формы:', Object.fromEntries(formData.entries()));
-            const response = await fetch('/api/');
-            console.log(response.url);
+            const data = Object.fromEntries(formData.entries());
+            const response = await fetch('/api/user/signin', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            });
+            if(!response.ok){
+                alert('Ошибка ответа\nПодробнее в консоли');
+                console.log(await response.json());
+                return;
+            }
+
+            window.location.reload()
+
         }catch (error) {
             alert('Ошибка при отправке\nПодробнее в консоли');
             console.log(error);

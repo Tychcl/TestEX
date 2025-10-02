@@ -27,7 +27,7 @@
                     <p class="auth-subtitle">Введите ваши учетные данные для входа в систему</p>
                 </div>
                 
-                <form id="auth-form" class="auth-form">
+                <form id="auth-form" class="auth-form" method="POST">
                     <div class="form-group-authorization">
                         <label for="login" class="form-label">Логин</label>
                         <input 

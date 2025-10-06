@@ -4,48 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!--РУСУРСЫ-->
-    <link rel="icon" href="_files/_images/a.svg" type="image/x-icon">
+    <link rel="icon" href="_files/_images/Logo.svg" type="image/x-icon">
     <!--СТИЛИ-->
     <link rel="stylesheet" href="_files/_styles/base.css">
     <link rel="stylesheet" href="_files/_styles/main.css">
     <!--СКРИПТЫ-->
-    <script src="_files/_scripts/auth.js"></script>
+    <script src="_files/_scripts/main.js"></script>
     <title>Главная</title>
 </head>
 <body>
-        <!-- Боковая панель навигации -->
+    <header>
+        <div class="logo">
+            <a href="/">ПЕРМСКИЙ<br>АВИАЦИОННЫЙ<br>ТЕХНИКУМ<br>им. А.Д. Швецова</a>
+        </div>
+         <div class="user-container">
+           
+        </div>
+    </header>
+    <main>
         <aside class="sidebar">
             <div class="sidebar-content">
-                <div class="logo">
-                    <img src="_files/_images/a.svg" alt="logo"/>
-                    <a href="/">ПЕРМСКИЙ<br>АВИАЦИОННЫЙ<br>ТЕХНИКУМ<br>им. А.Д. Швецова</a>
-                </div>
                 <nav class="main-nav">
                     <div class="folder">
-                        <p>Чемпионаты</p>
-                        <button class="nav-el">
-                            <img srс="_files/_images/_sidebar/plus.svg"/>
-                            <p>Добавить</p>                         
+                        <p>Чемпионат</p>
+                        <button class="nav-link" onclick="infoadd()">
+                            <img src="_files/_images/_sidebar/plus.svg" alt="plus"/>                         
+                            <p>Добавить</p>
                         </button>
-                        <button class="nav-el">
-                            <img srс="_files/_images/_sidebar/championship.svg"/>
-                            <p>Участие</p>                      
+                        <button class="nav-link">
+                            <img src="_files/_images/_sidebar/championship.svg"/>                         
+                            <p>Участие</p>
+                        </button>
+                    </div>
+                    <div class="folder">
+                        <p>Чемпионат</p>
+                        <button class="nav-link">
+                            <img src="_files/_images/_sidebar/plus.svg" alt="plus"/>                         
+                            <p>Добавить</p>
+                        </button>
+                        <button class="nav-link">
+                            <img src="_files/_images/_sidebar/championship.svg"/>                         
+                            <p>Участие</p>
                         </button>
                     </div>
                 </nav>
             </div>
         </aside>
-   
-        <!-- Контейнер пользователя с аватаркой -->
-        <div class="user-container">
-            <div class="user-info">
-                <span class="user-name"><a href="">Имя пользователя</a></span>
-                <svg  alt="Аватар" class="user-avatar" width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M25.2783 28.5581C25.2318 28.5581 25.162 28.5581 25.1155 28.5581C25.0457 28.5581 24.9527 28.5581 24.8829 28.5581C19.6039 28.3953 15.6504 24.279 15.6504 19.2093C15.6504 14.0465 19.8597 9.83716 25.0225 9.83716C30.1853 9.83716 34.3946 14.0465 34.3946 19.2093C34.3713 24.3023 30.3946 28.3953 25.3481 28.5581C25.3016 28.5581 25.3016 28.5581 25.2783 28.5581ZM24.9992 13.3023C21.7434 13.3023 19.1155 15.9534 19.1155 19.186C19.1155 22.372 21.6039 24.9534 24.7667 25.0697C24.8364 25.0465 25.069 25.0465 25.3016 25.0697C28.4178 24.9069 30.8597 22.3488 30.8829 19.186C30.8829 15.9534 28.255 13.3023 24.9992 13.3023Z" fill="#292D32"/>
-                    <path d="M24.9998 49.9999C18.744 49.9999 12.7672 47.6743 8.13933 43.4418C7.72073 43.0697 7.53468 42.5115 7.5812 41.9766C7.88352 39.2092 9.60445 36.6278 12.4649 34.7208C19.3951 30.1162 30.6277 30.1162 37.5347 34.7208C40.3951 36.6511 42.1161 39.2092 42.4184 41.9766C42.4882 42.5348 42.2789 43.0697 41.8603 43.4418C37.2324 47.6743 31.2556 49.9999 24.9998 49.9999ZM11.2324 41.5115C15.0928 44.7441 19.9533 46.5115 24.9998 46.5115C30.0463 46.5115 34.9068 44.7441 38.7672 41.5115C38.3486 40.0929 37.2324 38.7208 35.5812 37.6045C29.8603 33.7906 20.1626 33.7906 14.3951 37.6045C12.744 38.7208 11.651 40.0929 11.2324 41.5115Z" fill="#292D32"/>
-                    <path d="M25 50C11.2093 50 0 38.7907 0 25C0 11.2093 11.2093 0 25 0C38.7907 0 50 11.2093 50 25C50 38.7907 38.7907 50 25 50ZM25 3.48837C13.1395 3.48837 3.48837 13.1395 3.48837 25C3.48837 36.8605 13.1395 46.5116 25 46.5116C36.8605 46.5116 46.5116 36.8605 46.5116 25C46.5116 13.1395 36.8605 3.48837 25 3.48837Z" fill="#292D32"/>
-                    </svg>
-            </div>
+        <div id="page">
+            <!--динамически загружаемая страница-->
         </div>
+    </main>
+    <footer>
+
+    </footer>
 </body>
 </html>

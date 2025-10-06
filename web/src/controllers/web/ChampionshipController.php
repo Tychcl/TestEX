@@ -17,7 +17,7 @@ class ChampionshipController{
             }
             //echo json_encode($options);
             //<option value="">-- Выберите категорию --</option>
-            $html = Render::renderTemplate('event/info/add', ['options' => $options]);
+            $html = Render::renderTemplate('event/info/add', ['script' => '_files/_scripts/championship.js','options' => $options]);
             return new Response(200, ['html'=>$html]);
         }catch(Exception $e){
             return new Response(500, ['error'=>$e->getMessage()]);

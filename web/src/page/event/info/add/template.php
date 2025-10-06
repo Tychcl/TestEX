@@ -1,26 +1,54 @@
-<?php
-$script = file_get_contents(__DIR__.'/script.js');
-$style = file_get_contents(__DIR__.'/styls.css');
-?>
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>info add</title>
-    <script defer ><?= $script ?></script>
-</head>
-<body>
-    <form id="infoForm" method="post">
-        <label for="name">Имя: <input name="name" id="name" type="text" required></label>
-        <label for="start">Начало: <input name="start" id="start" type="date" required></label>
-        <label for="end">Конец: <input name="end" id="end" type="date" required></label>
-        <label for="level">Выберите категорию:</label>
-            <select id="level" name="levelid" required>
-                <option value="">-- Выберите категорию --</option>
+<script src="<?= $script ?>"></script>
+<div class="form-container">
+    <div class="form-header">
+        <h1 class="form-title">Добавление чемпионата</h1>
+        <p class="form-subtitle">Введите данные чемпионата</p>
+    </div>
+    <form id="form" class="auth-form" method="POST">
+        <div class="form-group">
+            <label for="name" class="form-label">Логин</label>
+            <input 
+                name="name"
+                id="name" 
+                type="text" 
+                class="form-input"
+                placeholder="Наименование"
+                required>
+        </div>
+        <div class="form-group">
+            <label for="start" class="form-label">Начало</label>
+            <input 
+                name="start"
+                id="start" 
+                type="date" 
+                class="form-input"
+                placeholder="Дата начала"
+                required>
+        </div>
+        <div class="form-group">
+            <label for="end" class="form-label">Конец</label>
+            <input 
+                name="end"
+                id="end" 
+                type="date" 
+                class="form-input"
+                placeholder="Дата окончания"
+                required>
+        </div>
+        <div class="form-group">
+            <label for="level" class="form-label">Уровень проведения</label>
+            <select
+                name="level"
+                id="level" 
+                class="form-input"
+                required>
+                <option value="">Выберите</option>
                 <?= $options ?>
             </select>
-        <button type="submit">Отправить</button>
+        </div>
+        <button type="submit" class="form-button">
+            <span class="button-text">Добавить</span>
+            <span class="button-loader" style="display: none;">⏳</span>
+        </button>
     </form>
-</body>
-</html>
+</div>

@@ -1,46 +1,38 @@
 /* Базовые стили */
+
+html {
+  overflow-x: hidden;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-family: "Montserrat-Medium", serif;
 }
 
 body {
     background-color: #E4E2E2;
-    font-family: "Montserrat-Medium", serif;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px 20px;
 }
 
-/* Боковая панель навигации */
-.sidebar {
+header{
     position: fixed;
     left: 0;
     top: 0;
-    height: 100vh;
-    width: 330px; 
-    background-color: transparent;
-    z-index: 1000;
-    padding: 15px;
+    padding: 10px;
+    z-index: 100;
 }
 
-.sidebar-content {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    margin: 0px;
+main{
+    position: fixed;
+    top: 100px;
 }
 
 .logo {
+    width: 160px;
     display: flex;
-    gap:10px;
-    box-sizing: border;
     align-items: center;
-    padding: 10px 31px 10px 10px;
-    margin-bottom: 15px;
+    padding: 10px 31px 10px 15px;
     background-color: #F7F7F7;
     border-radius: 10px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);

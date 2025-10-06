@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     const authForm = document.querySelector('.auth-form');
-    const authButton = document.querySelector('.auth-button');
+    const authButton = authForm.querySelector('.auth-button');
     
     // Функция переключения видимости пароля
     window.togglePassword = function() {

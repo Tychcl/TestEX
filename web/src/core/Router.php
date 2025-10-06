@@ -78,9 +78,10 @@ class Router {
         }
     
         return new Response(404, [
-            'error' => 'Wrong api route', 
+            'error' => 'Wrong api route or method',
+            'request' =>[ 
             'uri' => $uri,
-            //'method' => $method,
+            'method' => $method],
             'path' => $path
             //'routes' => array_column($this->routes, 'path')
         ]);

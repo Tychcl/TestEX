@@ -6,7 +6,7 @@
     align-items: flex-start;
 }
 
-.nav-link {
+.nav-el {
     font-size: 24px;
     font-family: "Montserrat-Medium", serif;
     text-decoration: none;
@@ -19,13 +19,13 @@
     background-color: transparent;
 }
 
-.nav-link:hover {
+.nav-el:hover {
     background: #EA4747;
     color: white;
     transform: translateX(5px);
 }
 
-.nav-link::after {
+.nav-el::after {
     content: '';
     position: absolute;
     bottom: -5px;
@@ -37,7 +37,7 @@
     transform: translateX(-50%);
 }
 
-.nav-link:hover::after {
+.nav-el:hover::after {
     width: 80%;
     background: white;
 }

@@ -16,11 +16,14 @@ class Routes{
             'find' => ['method' => 'GET', 'path' => '/api/user/find', 'handler' => 'Api\UserController@userFind'],
             'role' => [
                 'add' => ['method' => 'POST', 'path' => '/api/user/role/add', 'handler' => 'Api\UserController@roleAdd'],
+                'find' => ['method' => 'GET', 'path' => '/api/user/role/find', 'handler' => 'Api\UserController@roleFind'],
                 'delete' => ['method' => 'DELETE', 'path' => '/api/user/role/delete', 'handler' => 'Api\UserController@roleDelete'],
-                'list' => ['method' => 'GET', 'path' => '/api/user/role/list', 'handler' => 'Api\UserController@roleList']
-            ]
+                ]
         ],
         'event' => [
+            'add' => [],
+            'find' => [],
+            'delete' => [],
             'info' => [
                 'add' => ['method' => 'POST', 'path' => '/api/event/info/add', 'handler' => 'Api\ChampionshipController@infoAdd'],
                 'delete' => ['method' => 'DELETE', 'path' => '/api/event/info/delete', 'handler' => 'Api\ChampionshipController@infoDelete'],

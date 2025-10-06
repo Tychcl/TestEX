@@ -20,7 +20,7 @@ $router->add($r['user']['find']);
 //user role
 $router->add($r['user']['role']['add']);
 $router->add($r['user']['role']['delete']);
-$router->add($r['user']['role']['list']);
+$router->add($r['user']['role']['find']);
 //event info
 $router->add($r['event']['info']['add']);
 $router->add($r['event']['info']['delete']);

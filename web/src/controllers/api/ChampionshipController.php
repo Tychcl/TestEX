@@ -100,6 +100,10 @@ class ChampionshipController{
     public function eventAdd($params){
         $infoid = $params['info'] ?? null;
         $teacher = $params['teacher'] ?? null;
+        $role = $params['role'] ?? null;
+        $students = $params['students'] ?? null;
+        $awards = $params['awards'] ?? null;
+        
         
     }
 

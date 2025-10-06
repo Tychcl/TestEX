@@ -212,6 +212,28 @@ class UserController{
         }
     }
 
+    public function roleFind($params){
+        try{
+
+            $colums = ['id', 'name'];
+            $by = strtolower($params['by']) ?? null;
+            $value = $params['value'] ?? null;
+
+            if($by && in_array($by, $colums) && $value){ 
+                $e = UserroleQuery::create()->findOneBy($by, $value);
+                if($e){
+                    return new Response(200, $e);
+                }
+                return new Response(400, ['error' => 'not found']);
+            }elseif($by || $value){
+                return new Response(400, ['error' => 'wrong by or value', 'by' => $colums]);
+            }
+            return new Response(200, ['list' => UserroleQuery::create()->find()->toArray()]);
+        }catch(Exception $e){
+            return new Response(500, ['error' => $e->getMessage()]);
+        }
+    }
+
     public function roleDelete($params){
          try{
 
@@ -240,27 +262,7 @@ class UserController{
         }
     }
 
-    public function roleList($params){
-        try{
-
-            $colums = ['id', 'name'];
-            $by = strtolower($params['by']) ?? null;
-            $value = $params['value'] ?? null;
-
-            if($by && in_array($by, $colums) && $value){ 
-                $e = UserroleQuery::create()->findOneBy($by, $value);
-                if($e){
-                    return new Response(200, $e);
-                }
-                return new Response(400, ['error' => 'not found']);
-            }elseif($by || $value){
-                return new Response(400, ['error' => 'wrong by or value', 'by' => $colums]);
-            }
-            return new Response(200, ['list' => UserroleQuery::create()->find()->toArray()]);
-        }catch(Exception $e){
-            return new Response(500, ['error' => $e->getMessage()]);
-        }
-    }
+    
 
 }
 ?>

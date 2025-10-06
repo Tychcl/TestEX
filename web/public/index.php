@@ -10,10 +10,10 @@ require_once dirname(__DIR__) . '/propel/generated/conf/config.php';
 //echo trim('///user/signin', '/');
 
 if(AuthMiddleware::isAuthenticated($_SESSION)){
-    echo json_encode($_SESSION);
+    //echo json_encode($_SESSION);
     echo Render::renderTemplate(null,[], 'main.php');
 }else{
-    echo json_encode($_SESSION);
+    //echo json_encode($_SESSION);
     echo Render::renderTemplate('user/signin');
 }
 ?>

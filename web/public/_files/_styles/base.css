@@ -1,0 +1,104 @@
+/* Базовые стили */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #E4E2E2;
+    font-family: "Montserrat-Medium", serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+/* Боковая панель навигации */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    height: 100vh;
+    width: 330px; 
+    background-color: transparent;
+    z-index: 1000;
+    padding: 15px;
+}
+
+.sidebar-content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 0px;
+}
+
+.logo {
+    display: flex;
+    gap:10px;
+    box-sizing: border;
+    align-items: center;
+    padding: 10px 31px 10px 10px;
+    margin-bottom: 15px;
+    background-color: #F7F7F7;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.logo img{
+    width: 60px;
+    height: auto;
+}
+
+.logo a {
+    font-family: 'Montserrat-Medium', sans-serif;
+    color: #7e8184;
+    font-size: 12px;
+    font-weight: bolder;
+    text-decoration: none;
+    vertical-align: top;
+}
+
+/* Анимации */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Шрифты */
+@font-face {
+    font-family: "Montserrat-SemiBold";
+    src: url(/_files/_fonts/Montserrat-SemiBold.ttf) format("truetype");
+}
+
+@font-face {
+    font-family: "Montserrat-Medium";
+    src: url(/_files/_fonts/Montserrat-Medium.ttf) format("truetype");
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+        padding: 20px;
+    }
+    
+    .sidebar {
+        position: relative;
+        height: auto;
+        width: 100%;
+        padding: 10px 0;
+    }
+    
+    .sidebar-content {
+        margin-left: 0;
+        align-items: center;
+    }
+}

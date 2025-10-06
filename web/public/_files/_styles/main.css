@@ -1,0 +1,100 @@
+/* Стили для меню навигации */
+.main-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+}
+
+.nav-link {
+    font-size: 24px;
+    font-family: "Montserrat-Medium", serif;
+    text-decoration: none;
+    color: #212121;
+    padding: 10px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    position: relative;
+    white-space: nowrap;
+    background-color: transparent;
+}
+
+.nav-link:hover {
+    background: #EA4747;
+    color: white;
+    transform: translateX(5px);
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: #EA4747;
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+}
+
+.nav-link:hover::after {
+    width: 80%;
+    background: white;
+}
+
+/* Контейнер пользователя с аватаркой */
+.user-container {
+    position: fixed;
+    top: 15px;
+    right: 160px;
+    z-index: 1001;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 5px;
+    border-radius: 12px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.user-name {
+    font-family: "Montserrat-Medium";
+    font-size: 16px;
+    color: #212121;
+    white-space: nowrap;
+}
+
+.user-avatar,
+.user-name {
+    cursor: pointer;
+}
+
+/* Стили для ссылок внутри user-name */
+.user-name a {
+    text-decoration: none;
+    color: #212121;
+    transition: color 0.3s ease;
+}
+
+.user-name a:hover {
+    color: #EA4747;
+}
+
+/* Стили для активной ссылки */
+.nav-link.active {
+    background: #EA4747;
+    color: white;
+}
+
+.nav-link.active::after {
+    width: 80%;
+    background: white;
+}

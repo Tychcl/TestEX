@@ -3,19 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="_files/_styles/auth.css">
+    <!--РУСУРСЫ-->
     <link rel="icon" href="_files/_images/Logo.svg" type="image/x-icon">
+    <!--СТИЛИ-->
+    <link rel="stylesheet" href="_files/_styles/auth.css">
+    <link rel="stylesheet" href="_files/_styles/base.css">
+    <!--СКРИПТЫ-->
     <script src="_files/_scripts/auth.js"></script>
     <title>Авторизация</title>
 </head>
 <body>
-           <!-- Боковая панель навигации -->
-           <aside class="sidebar">
+        <!-- Боковая панель навигации -->
+        <aside class="sidebar">
             <div class="sidebar-content">
                 <div class="logo">
-                    <h1>
-                        <a href="/">ПЕРМСКИЙ АВИАЦИОННЫЙ ТЕХНИКУМ<br>им. А.Д. Швецова</a>
-                    </h1>
+                    <img href="_files/_images/Logo.svg" alt="logo"/>
+                    <a href="/">ПЕРМСКИЙ<br>АВИАЦИОННЫЙ<br>ТЕХНИКУМ<br>им. А.Д. Швецова</a>
                 </div>
             </div>
         </aside>

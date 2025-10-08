@@ -1,11 +1,9 @@
 #page{
     height: auto;
-    padding: 10px;
+    padding: 0px;
     margin-right: 10px;
     width: 100%;
-    background-color: #F7F7F7;
     border-radius: 10px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 main{
@@ -148,13 +146,29 @@ main{
     background: white;
 }
 
-/* Основная область авторизации */
 .main-form-container {
     flex: 1;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 40px;
+}
+
+fieldset{
+    border: 0px;
+    margin-bottom: 15px;
+    padding: 10px;
+    box-sizing: content-box;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+fieldset p{
+    font-family: "Montserrat-SemiBold";
+    font-size: 16px;
+    color: black;
+    margin-bottom: 10px;
 }
 
 .form-container {
@@ -191,7 +205,7 @@ main{
 }
 
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
 }
 
 .form-group.mult {
@@ -208,9 +222,9 @@ main{
 .form-label{
     display: block;
     font-family: "Montserrat-SemiBold";
-    font-size: 16px;
+    font-size: 14px;
     color: #545151;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
 }
 
 .form-input {
@@ -294,11 +308,11 @@ main{
     background: #007bff;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 12px;
     font-size: 16px;
     cursor: pointer;
     transition: background 0.3s;
-    height: 42px;
+    height: 56px;
     line-height: 22px;
 }
 .file-input-button:hover {

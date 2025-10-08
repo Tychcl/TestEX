@@ -21,6 +21,9 @@ async function loadPage(route) {
                 method: 'GET',
                 credentials: 'same-origin'
             });
+        if(response.status == 401){
+            location.reload()
+        }
         if(!response.ok){
             alert('Ошибка ответа\nПодробнее в консоли');
             console.log(await response.json());

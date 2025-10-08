@@ -5,6 +5,7 @@ use Core\Response;
 use Exception;
 use Models\EventlevelQuery;
 use Classes\Render;
+use Models\EventawarddegreeQuery;
 use Models\EventinfoQuery;
 use Models\EventroleQuery;
 
@@ -37,15 +38,20 @@ class ChampionshipController{
             $i = EventinfoQuery::create()->find()->toArray();
             $infos = '';
             foreach($i as $e){
-                $infos = $infos.'<option value="'.$e['Id'].'">'.$e['Name'].'</option>';
+                $l = EventlevelQuery::create()->findOneById($e['Level'])->getName();
+                $infos = $infos.'<option value="'.$e['Id'].'">'.$e['Name'].'</option>'; //$e['Start'].' '.$l.
             }
             $r =  EventroleQuery::create()->find()->toArray();
             $roles = '';
             foreach($r as $e){
                 $roles = $roles.'<option value="'.$e['Id'].'">'.$e['Name'].'</option>';
             }
-
-            $html = Render::renderTemplate('event/add', ['infos' => $infos, 'roles' => $roles]);
+            $a =  EventawarddegreeQuery::create()->find()->toArray();
+            $awards = '';
+            foreach($a as $e){
+                $awards = $awards.'<option value="'.$e['Id'].'">'.$e['Name'].'</option>';
+            }
+            $html = Render::renderTemplate('event/add', ['infos' => $infos, 'roles' => $roles, 'awards' => $awards]);
             return new Response(200, ['html'=>$html, 'js' => '_files/_scripts/_pages/championship.js']);
         }catch(Exception $e){
             return new Response(500, ['error'=>$e->getMessage()]);

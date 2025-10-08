@@ -46,7 +46,7 @@
             </select>
         </div>
         <button type="submit" class="form-button">
-            <span class="button-text">Добавить</span>
+            <span class="button-text">Отправить</span>
             <span class="button-loader" style="display: none;">⏳</span>
         </button>
     </form>

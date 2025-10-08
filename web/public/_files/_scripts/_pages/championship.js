@@ -2,30 +2,55 @@
 let studentCount = 1;
 
 function addStudent() {
-    const container = document.getElementById('students-container');
-    const newBlock = document.createElement('div');
-    newBlock.className = 'student-block';
-    newBlock.innerHTML = `
-        <h4>Студент #${studentCount + 1}</h4>
-        <label>ФИО студента: <input type="text" name="students[${studentCount}][fio]" required></label>
-        <label>Степень награды: 
-            <select name="students[${studentCount}][award_degree]" required>
-                <option value="1">1 место</option>
-                <option value="2">2 место</option>
-                <option value="3">3 место</option>
-            </select>
-        </label>
-        <label>Документ студента: <input type="file" name="student_documents[${studentCount}]" required></label>
-        <button type="button" onclick="removeStudent(this)">Удалить</button>
-    `;
-    container.appendChild(newBlock);
     studentCount++;
+    const container = document.getElementById('students');
+    const newBlock = document.createElement('fieldset');
+    newBlock.className = 'student';
+    newBlock.innerHTML = `
+        <p>Студент #${studentCount}</p>
+        <button class="delete-student" onclick="removeStudent(this)">Удалить</button>
+        <div class="form-group">
+            <label class="form-label">ФИО</label>
+            <input 
+                name="student[${studentCount}][fio]" 
+                type="text" 
+                class="form-input"
+                placeholder="Фамилия Имя Отчество" required>
+        </div>
+        <div class="form-group-mult">
+            <div class="form-group.mult">
+                <label for="role" class="form-label">Степень награды</label>
+                <select
+                    name="student[${studentCount}][award]"
+                    id="role" 
+                    class="form-input"
+                    required>
+                    <option value="">Выберите</option>
+                    <?= $roles ?>
+                </select>
+            </div>
+            <div class="file-input-wrapper">
+                <label class="form-label">Документ</label>
+                <button class="file-input-button" id="fileButtonText">Выберите файл</button>
+                <input type="file" name="student[${studentCount}][file]" id="fileInput" onchange="updateButtonText(this)" required>
+                <script>
+                    function updateButtonText(input) {
+                        const button = document.getElementById('fileButtonText');
+                        if (input.files.length > 0) {
+                            button.textContent = input.files[0].name;
+                        } else {
+                            button.textContent = 'Выберите файл';
+                        }
+                    }
+                </script>
+            </div>
+        </div>`;
+    container.appendChild(newBlock);
 }
 
 function removeStudent(button) {
-    if (document.querySelectorAll('.student-block').length > 1) {
-        button.closest('.student-block').remove();
-        // Обновляем индексы после удаления
+    if (document.querySelectorAll('fieldset.student').length > 1) {
+        button.closest('fieldset.student').remove();
         updateStudentIndexes();
     } else {
         alert('Должен остаться хотя бы один студент');
@@ -33,11 +58,10 @@ function removeStudent(button) {
 }
 
 function updateStudentIndexes() {
-    const blocks = document.querySelectorAll('.student-block');
+    const blocks = document.querySelectorAll('fieldset.student');
     studentCount = 0;
     blocks.forEach((block, index) => {
-        block.querySelector('h4').textContent = `Студент #${index + 1}`;
-        // Обновляем индексы в полях ввода
+        block.querySelector('p').textContent = `Студент #${index + 1}`;
         const inputs = block.querySelectorAll('input, select');
         inputs.forEach(input => {
             const name = input.getAttribute('name');
@@ -48,30 +72,92 @@ function updateStudentIndexes() {
     });
     studentCount = blocks.length;
 }
-document.addEventListener('DOMContentLoaded', function() {
 
-    const chamForm = document.querySelector('.cham-form');
-    const chamButton = document.querySelector('.button');
-    
-    // Валидация формы
-    chamForm.addEventListener('submit', async function(e) {
+function updateButtonText(input) {
+    console.log(input.parentNode);
+    const button = input.parentNode.querySelector('button');
+    if (input.files.length > 0) {
+        button.textContent = input.files[0].name;
+    } else {
+        button.textContent = 'Выберите файл';
+    }
+}
+
+function init() {
+    const Form = document.querySelector('.form');
+    const Button = Form.querySelector('.form-button');
+    console.log("aboba")
+
+    Form.addEventListener('submit', async function(e) {
         e.preventDefault();
+
+        clearError(Button);
+
+        const form = e.target;
+        const name = document.getElementById('name');
+        const start = document.getElementById('start');
+        const end = document.getElementById('end');
+        const level = document.getElementById('level');
+
+        if (!name.value.trim()) {
+            showError(name, 'Введите наименования');
+            return;
+        } else {
+            clearError(name);
+        }
+
+        if (!start.value.trim()) {
+            showError(start, 'Введите дату начала');
+            return;
+        } else {
+            clearError(start);
+        }
+
+        if (!end.value.trim()) {
+            showError(end, 'Введите дату окончания');
+            return;
+        } else {
+            clearError(end);
+        }
+
+        if (!level.value.trim()) {
+            showError(level, 'Выберите уровень проведения');
+            return;
+        } else {
+            clearError(level);
+        }
         
+        const time_start = new Date(start.value);
+        const time_end = new Date(end.value);
+
+        if(time_end < time_start){
+            showError(end, 'Должно быть > или = начала');
+            return;
+        } else {
+            clearError(level);
+        }
+
         try {
-            const formData = new FormData(this);
-            //const data = Object.fromEntries(formData.entries());
-            //console.log(data)
-            const response = await fetch('/api/user/signin', {
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            data['start'] = time_start.getTime();
+            data['end'] = time_end.getTime();
+            const response = await fetch('/api/event/info/add', {
                 method: 'POST',
-                body: formData
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'same-origin',
+                body: JSON.stringify(data)
             });
             if(!response.ok){
-                alert('Ошибка ответа\nПодробнее в консоли');
-                console.log(await response.json());
+                r = await response.json();
+                console.log(r);
+                showError(Form, r['error'])
                 return;
             }
-            
-            //window.location.reload(true);
+
+            showError(Button, "Чемпионат успешно добавлен")
 
         }catch (error) {
             alert('Ошибка при отправке\nПодробнее в консоли');
@@ -96,4 +182,4 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         input.classList.remove('invalid');
     }
-});
+}

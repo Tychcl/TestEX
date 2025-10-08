@@ -1,12 +1,11 @@
-<script src="<?= $script ?>"></script>
 <div class="form-container">
     <div class="form-header">
         <h1 class="form-title">Добавление чемпионата</h1>
         <p class="form-subtitle">Введите данные чемпионата</p>
     </div>
-    <form id="form" class="auth-form" method="POST">
+    <form id="form" class="form" method="POST">
         <div class="form-group">
-            <label for="name" class="form-label">Логин</label>
+            <label for="name" class="form-label">Наименование</label>
             <input 
                 name="name"
                 id="name" 

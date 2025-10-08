@@ -9,9 +9,9 @@ class LoggingMiddleware implements MiddlewareInterface
 {
     public function handle(Request $request, callable $next): Response
     {
-        error_log("Request: {$request->method} {$request->uri}");
+        error_log("Request: {$request->method} {$request->uri} {$request->body}");
         $response = $next($request);
-        error_log("Response: {$response->status}");
+        error_log("Response: {$response->status} ");
         return $response;
     }
 }

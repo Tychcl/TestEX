@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="_files/_styles/base.css">
     <link rel="stylesheet" href="_files/_styles/auth.css">
     <!--СКРИПТЫ-->
-    <script src="_files/_scripts/auth.js"></script>
+    <script src="_files/_scripts/_pages/auth.js"></script>
     <title>Авторизация</title>
 </head>
 <body>

@@ -3,6 +3,7 @@ namespace Api;
 
 use Core\Response;
 use Core\Request;
+use DateTime;
 use Exception;
 use Models\Eventawarddegree;
 use Models\EventawarddegreeQuery;
@@ -25,9 +26,9 @@ class ChampionshipController{
     public function infoAdd($params){
         try{
             $name = $params['name'] ?? null;
-            $start = $params['start'] ?? null;
-            $end = $params['end'] ?? null;
-            $level = $params['levelid'] ?? null;
+            $start = date("Y-m-d", $params['start']) ?? null;
+            $end = date("Y-m-d", $params['end']) ?? null;
+            $level = $params['level'] ?? null;
 
             if(!$name || !$start|| !$end|| !$level){
                 return new Response(400, ['error' => 'name, start(Timestamp), end(Timestamp) and levelid required. end bigger or equals start']);
@@ -41,7 +42,8 @@ class ChampionshipController{
                 return new Response(400, ['error' => 'wrong levelid', 'list' => EventlevelQuery::create()->find()->toArray()]);
             }
 
-            if(EventinfoQuery::create()->filterByName($name)->filterByStart($start)->filterByEnd($end)->findOneByLevel($level)){
+            $e = EventinfoQuery::create()->filterByName($name)->filterByStart($start)->filterByEnd($end)->findOneByLevel($level);
+            if($e){
                 return new Response(400, ['error' => 'already exists']);
             }
 
@@ -100,11 +102,7 @@ class ChampionshipController{
     public function eventAdd($params){
         $infoid = $params['info'] ?? null;
         $teacher = $params['teacher'] ?? null;
-        $role = $params['role'] ?? null;
         $students = $params['students'] ?? null;
-        $awards = $params['awards'] ?? null;
-        
-        
     }
 
     public function showList($params){

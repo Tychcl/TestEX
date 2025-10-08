@@ -31,7 +31,7 @@
                             <img src="_files/_images/_sidebar/plus.svg" alt="plus"/>                         
                             <p>Добавить</p>
                         </button>
-                        <button class="nav-link">
+                        <button class="nav-link" onclick="eventadd()">
                             <img src="_files/_images/_sidebar/championship.svg"/>                         
                             <p>Участие</p>
                         </button>

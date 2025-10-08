@@ -55,6 +55,7 @@ class Routes{
                 'delete' => ['method' => 'GET', 'path' => '/web/event/info/delete', 'handler' => 'Api\ChampionshipController@infoDelete'],
                 'find' => ['method' => 'GET', 'path' => '/web/event/info/find', 'handler' => 'Api\ChampionshipController@infoFind']
             ],
+            'add' => ['method' => 'GET', 'path' => '/web/event/add', 'handler' => 'Web\ChampionshipController@eventAdd'],
             'listShow' => ['method' => 'GET', 'path' => '/web/event/{name}', 'handler' => 'Api\ChampionshipController@showList'],
         ]
     ];

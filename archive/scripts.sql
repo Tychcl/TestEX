@@ -54,46 +54,74 @@ END //
 
 DELIMITER ;
 
--- Триггер для таблицы skill (повышение квалификации)
+-- Триггер для INSERT
 DELIMITER //
 
-CREATE TRIGGER after_skill_change 
-AFTER INSERT OR UPDATE OR DELETE ON skill
+CREATE TRIGGER after_skill_insert 
+AFTER INSERT ON skill
 FOR EACH ROW
 BEGIN
-    DECLARE affected_teacher INT;
-    
-    IF INSERTING THEN
-        SET affected_teacher = NEW.teacherId;
-    ELSEIF UPDATING THEN
-        SET affected_teacher = NEW.teacherId;
-    ELSEIF DELETING THEN
-        SET affected_teacher = OLD.teacherId;
-    END IF;
-    
-    CALL UpdateTeacherFlags(affected_teacher);
+    CALL UpdateTeacherFlags(NEW.teacherId);
 END //
 
 DELIMITER ;
 
--- Триггер для таблицы category (категории)
+-- Триггер для UPDATE
 DELIMITER //
 
-CREATE TRIGGER after_category_change 
-AFTER INSERT OR UPDATE OR DELETE ON category
+CREATE TRIGGER after_skill_update 
+AFTER UPDATE ON skill
 FOR EACH ROW
 BEGIN
-    DECLARE affected_teacher INT;
-    
-    IF INSERTING THEN
-        SET affected_teacher = NEW.teacherId;
-    ELSEIF UPDATING THEN
-        SET affected_teacher = NEW.teacherId;
-    ELSEIF DELETING THEN
-        SET affected_teacher = OLD.teacherId;
-    END IF;
-    
-    CALL UpdateTeacherFlags(affected_teacher);
+    CALL UpdateTeacherFlags(NEW.teacherId);
+END //
+
+DELIMITER ;
+
+-- Триггер для DELETE
+DELIMITER //
+
+CREATE TRIGGER after_skill_delete 
+AFTER DELETE ON skill
+FOR EACH ROW
+BEGIN
+    CALL UpdateTeacherFlags(OLD.teacherId);
+END //
+
+DELIMITER ;
+
+-- Триггер для INSERT
+DELIMITER //
+
+CREATE TRIGGER after_category_insert 
+AFTER INSERT ON category
+FOR EACH ROW
+BEGIN
+    CALL UpdateTeacherFlags(NEW.teacherId);
+END //
+
+DELIMITER ;
+
+-- Триггер для UPDATE
+DELIMITER //
+
+CREATE TRIGGER after_category_update 
+AFTER UPDATE ON category
+FOR EACH ROW
+BEGIN
+    CALL UpdateTeacherFlags(NEW.teacherId);
+END //
+
+DELIMITER ;
+
+-- Триггер для DELETE
+DELIMITER //
+
+CREATE TRIGGER after_category_delete 
+AFTER DELETE ON category
+FOR EACH ROW
+BEGIN
+    CALL UpdateTeacherFlags(OLD.teacherId);
 END //
 
 DELIMITER ;

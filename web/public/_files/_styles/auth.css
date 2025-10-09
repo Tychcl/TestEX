@@ -103,14 +103,14 @@
     transform: translateY(-50%);
     width: 24px;
     height: 24px;
-    background: url(/_files/_images/eye.svg) center/contain no-repeat;
+    background: url(/_files/_images/_forms/eye.svg) center/contain no-repeat;
     cursor: pointer;
     text-decoration: none;
     border: none;
 }
 
 .password-control.view {
-    background: url(/_files/_images/eye_slash.svg) center/contain no-repeat;
+    background: url(/_files/_images/_forms/eye_slash.svg) center/contain no-repeat;
 }
 
 /* Кнопка */

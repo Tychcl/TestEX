@@ -21,6 +21,8 @@ $router->add($r['user']['find']);
 $router->add($r['user']['role']['add']);
 $router->add($r['user']['role']['delete']);
 $router->add($r['user']['role']['find']);
+//event
+$router->add($r['event']['add']);
 //event info
 $router->add($r['event']['info']['add']);
 $router->add($r['event']['info']['delete']);

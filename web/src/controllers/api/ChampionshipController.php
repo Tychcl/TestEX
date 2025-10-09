@@ -99,10 +99,13 @@ class ChampionshipController{
         
     }
 
-    public function eventAdd($params){
+    public function eventAdd($params, $r){
         $infoid = $params['info'] ?? null;
         $teacher = $params['teacher'] ?? null;
         $students = $params['students'] ?? null;
+
+        //$r = new Request();
+        //return new Response(400, ['file' => $r->files, 'params' => $params] );
     }
 
     public function showList($params){

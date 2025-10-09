@@ -1,0 +1,16 @@
+.delete-student{
+    border: 0px;
+    background: none;
+}
+
+.student div.label {
+    position: relative;
+    width: 100%;
+    height: fit-content;
+}
+
+.student div.label img {
+    position: absolute;
+    top: -2px;
+    right: 0px;
+}

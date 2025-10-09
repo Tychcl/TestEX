@@ -3,6 +3,7 @@
 namespace Core;
 
 use Core\Routes;
+use Exception;
 
 class Router {
     private $routes = [];
@@ -33,8 +34,7 @@ class Router {
             $path = '/';
         }
         
-        $json = file_get_contents('php://input');
-        $jsonData = json_decode($json, true) ?? [];
+        $jsonData = json_decode($request->body, true) ?? [];
         
         $queryParams = [];
         $queryString = parse_url($uri, PHP_URL_QUERY);
@@ -51,7 +51,7 @@ class Router {
 
             if (strpos($routePath, '{') === false) {
                 if ($routePath === $path) {
-                    $params = array_merge($queryParams, $jsonData);
+                    $params = array_merge($queryParams, $jsonData, $request->params);
                     $params = $this->filterParams($params);
                     return $this->executeHandler($route, $params, $request);
                 }
@@ -69,7 +69,7 @@ class Router {
                     $params[$paramNames[1][$i]] = $matches[$i + 1] ?? null;
                 }
                 
-                $params = array_merge($params, $queryParams, $jsonData);
+                $params = array_merge($params, $queryParams, $jsonData, $request->params);
 
                 $params = $this->filterParams($params);
                 
@@ -88,19 +88,23 @@ class Router {
     }
     
     private function executeHandler($route, $params, $request) {
-        list($controller, $action) = explode('@', $route['handler']);
-    
-        if (strpos($controller, '\\') === false) {
-            $controller = "Api\\{$controller}";
-        }
-        
-        $controllerInstance = new $controller();
-        $result = $controllerInstance->$action($params, $request);
-        
-        if ($result instanceof Response) {
-            return $result;
-        }
+        try{
+            list($controller, $action) = explode('@', $route['handler']);
+            
+            if (strpos($controller, '\\') === false) {
+                $controller = "Api\\{$controller}";
+            }
 
-        return $result;
+            $controllerInstance = new $controller();
+            $result = $controllerInstance->$action($params, $request);
+
+            if ($result instanceof Response) {
+                return $result;
+            }
+
+            return $result;
+        }catch(Exception $e){
+            return new Response(500, ['error' => $e->getMessage()]);
+        }
     }
 }

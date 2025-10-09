@@ -1,50 +1,46 @@
 
 let studentCount = 1;
 
+let awards;
+
 function addStudent() {
-    studentCount++;
     const container = document.getElementById('students');
     const newBlock = document.createElement('fieldset');
     newBlock.className = 'student';
     newBlock.innerHTML = `
-        <p>Студент #${studentCount}</p>
-        <button class="delete-student" onclick="removeStudent(this)">Удалить</button>
+        <div class="label">
+            <p>Студент #${studentCount+1}</p>
+            <img src="_files/_images/_forms/close.svg" onclick="removeStudent(this)">
+        </div>
         <div class="form-group">
             <label class="form-label">ФИО</label>
             <input 
-                name="student[${studentCount}][fio]" 
+                id="fio"
+                name="students[${studentCount}][fio]" 
                 type="text" 
                 class="form-input"
-                placeholder="Фамилия Имя Отчество" required>
+                placeholder="Фамилия Имя Отчество" required
+                pattern="[А-Я]{1}[a-я]* [А-Я]{1}[a-я]* [А-Я]{1}[a-я]*">
         </div>
         <div class="form-group-mult">
             <div class="form-group.mult">
                 <label for="role" class="form-label">Степень награды</label>
                 <select
-                    name="student[${studentCount}][award]"
+                    name="students[${studentCount}][award]"
                     id="role" 
                     class="form-input"
                     required>
                     <option value="">Выберите</option>
-                    <?= $roles ?>
+                    ${awards}
                 </select>
             </div>
             <div class="file-input-wrapper">
                 <label class="form-label">Документ</label>
                 <button class="file-input-button" id="fileButtonText">Выберите файл</button>
-                <input type="file" name="student[${studentCount}][file]" id="fileInput" onchange="updateButtonText(this)" required>
-                <script>
-                    function updateButtonText(input) {
-                        const button = document.getElementById('fileButtonText');
-                        if (input.files.length > 0) {
-                            button.textContent = input.files[0].name;
-                        } else {
-                            button.textContent = 'Выберите файл';
-                        }
-                    }
-                </script>
+                <input type="file" name="students[${studentCount}][file]" id="file" class="form-input" onchange="updateButtonText(this)" required>
             </div>
         </div>`;
+        studentCount++;
     container.appendChild(newBlock);
 }
 
@@ -74,7 +70,6 @@ function updateStudentIndexes() {
 }
 
 function updateButtonText(input) {
-    console.log(input.parentNode);
     const button = input.parentNode.querySelector('button');
     if (input.files.length > 0) {
         button.textContent = input.files[0].name;
@@ -83,73 +78,65 @@ function updateButtonText(input) {
     }
 }
 
-function init() {
+async function getawards() {
+    try{
+        const response = await fetch('/api/event/award', {
+            method: 'GET',
+            credentials: 'same-origin'
+        });
+        r = await response.json();
+        if(response.status == 401){
+            location.reload()
+        }
+        if(!response.ok){
+            alert('Ошибка при отправке\nПодробнее в консоли');
+            console.log(r['error']);
+        }
+        option = '';
+        r['list'].forEach((e) => {
+            option += `<option value="${e['Id']}">${e['Name']}</option>`
+        });
+        return option;
+    }catch(error){
+        alert('Ошибка при отправке\nПодробнее в консоли');
+        console.log(error);
+    }
+}
+
+async function init() {
+
+    awards = await getawards();
+
     const Form = document.querySelector('.form');
     const Button = Form.querySelector('.form-button');
     console.log("aboba")
 
     Form.addEventListener('submit', async function(e) {
         e.preventDefault();
-
         clearError(Button);
 
-        const form = e.target;
-        const name = document.getElementById('name');
-        const start = document.getElementById('start');
-        const end = document.getElementById('end');
-        const level = document.getElementById('level');
+        const inputs = document.querySelectorAll('.form-input');
 
-        if (!name.value.trim()) {
-            showError(name, 'Введите наименования');
-            return;
-        } else {
-            clearError(name);
-        }
-
-        if (!start.value.trim()) {
-            showError(start, 'Введите дату начала');
-            return;
-        } else {
-            clearError(start);
-        }
-
-        if (!end.value.trim()) {
-            showError(end, 'Введите дату окончания');
-            return;
-        } else {
-            clearError(end);
-        }
-
-        if (!level.value.trim()) {
-            showError(level, 'Выберите уровень проведения');
-            return;
-        } else {
-            clearError(level);
-        }
+        inputs.forEach((e) => {
+            if(e.id != 'tfio' && !e.value.trim()){
+                showError(e, 'Неправильное заполнение');
+                return;
+            } else {
+                clearError(e);
+            }
+        });
         
-        const time_start = new Date(start.value);
-        const time_end = new Date(end.value);
-
-        if(time_end < time_start){
-            showError(end, 'Должно быть > или = начала');
-            return;
-        } else {
-            clearError(level);
-        }
-
         try {
-            const formData = new FormData(form);
+            const formData = new FormData(Form);
             const data = Object.fromEntries(formData.entries());
-            data['start'] = time_start.getTime();
-            data['end'] = time_end.getTime();
-            const response = await fetch('/api/event/info/add', {
+            const response = await fetch('/api/event/add', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                
                 credentials: 'same-origin',
-                body: JSON.stringify(data)
+                body: formData
             });
+            console.log(await response.json());
+            return;
             if(!response.ok){
                 r = await response.json();
                 console.log(r);
@@ -157,7 +144,7 @@ function init() {
                 return;
             }
 
-            showError(Button, "Чемпионат успешно добавлен")
+            
 
         }catch (error) {
             alert('Ошибка при отправке\nПодробнее в консоли');

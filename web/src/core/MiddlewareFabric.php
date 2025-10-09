@@ -27,6 +27,7 @@ class MiddlewareFabric
     
     public static function createForApi(Router $router): MiddlewareDispatcher
     {
+        //header("Access-Control-Allow-Origin: *");
         $dispatcher = new MiddlewareDispatcher();
         // Место для общих мидваров
         $dispatcher->add(new LoggingMiddleware());

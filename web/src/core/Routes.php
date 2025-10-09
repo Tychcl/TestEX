@@ -21,7 +21,7 @@ class Routes{
                 ]
         ],
         'event' => [
-            'add' => [],
+            'add' => ['method' => 'POST', 'path' => '/api/event/add', 'handler' => 'Api\ChampionshipController@eventAdd'],
             'find' => [],
             'delete' => [],
             'info' => [

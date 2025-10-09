@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="_files/_styles/championship.css">
 <div class="form-container">
     <div class="form-header">
         <h1 class="form-title">Участие в чемпионате</h1>
@@ -21,10 +22,11 @@
                     <label for="fio" class="form-label">ФИО</label>
                     <input 
                         name="teacher[fio]"
-                        id="fio" 
+                        id="tfio" 
                         type="text" 
                         class="form-input"
-                        placeholder="Фамилия Имя Отчество">
+                        placeholder="Фамилия Имя Отчество"
+                        pattern="[А-Я]{1}[a-я]* [А-Я]{1}[a-я]* [А-Я]{1}[a-я]*">
                 </div>
             <div class="form-group-mult">
                 <div class="form-group.mult">
@@ -41,28 +43,32 @@
                 <div class="file-input-wrapper">
                     <label for="fileInput" class="form-label">Документ</label>
                     <button class="file-input-button">Выберите файл</button>
-                    <input type="file" name="teacher[file]" id="fileInput" onchange="updateButtonText(this)" required>
+                    <input type="file" name="teacher[file]" id="file" class="form-input" onchange="updateButtonText(this)" required>
                 </div>
             </div>
             
         </fieldset>
         <div id="students">
             <fieldset class="student">
-                <p>Студент #1</p>
-                <button class="delete-student" onclick="removeStudent(this)">Удалить</button>
+                <div class="label">
+                    <p>Студент #1</p>
+                    <img src="_files/_images/_forms/close.svg" onclick="removeStudent(this)">
+                </div>
                 <div class="form-group">
                     <label class="form-label">ФИО</label>
                     <input 
-                        name="student[0][fio]" 
+                        id="fio"
+                        name="students[0][fio]" 
                         type="text" 
                         class="form-input"
-                        placeholder="Фамилия Имя Отчество" required>
+                        placeholder="Фамилия Имя Отчество" required
+                        pattern="[А-Я]{1}[a-я]* [А-Я]{1}[a-я]* [А-Я]{1}[a-я]*">
                 </div>
                 <div class="form-group-mult">
                     <div class="form-group.mult">
                         <label for="role" class="form-label">Степень награды</label>
                         <select
-                            name="student[0][award]"
+                            name="students[0][award]"
                             id="role" 
                             class="form-input"
                             required>
@@ -73,7 +79,7 @@
                     <div class="file-input-wrapper">
                         <label class="form-label">Документ</label>
                         <button class="file-input-button">Выберите файл</button>
-                        <input type="file" name="student[0][file]" id="fileInput" onchange="updateButtonText(this)" required>
+                        <input type="file" name="students[0][file]" id="file" class="form-input" onchange="updateButtonText(this)" required>
                     </div>
                 </div>
             </fieldset>

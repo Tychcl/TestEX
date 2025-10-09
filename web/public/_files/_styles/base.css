@@ -11,8 +11,18 @@
     font-family: "Montserrat-Medium", serif;
 }
 
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
 body {
     background-color: #E4E2E2;
+    min-height: 100vh;
+    position: relative;
+    padding-top: 100px;
 }
 
 header{

@@ -9,6 +9,8 @@ class Request
     public $headers;
     public $body;
     public $cookie;
+    public $files;
+    public $params;
     
     public function __construct()
     {
@@ -17,6 +19,8 @@ class Request
         $this->headers = getallheaders();
         $this->body = file_get_contents('php://input');
         $this->cookie = $_COOKIE;
+        $this->files = $_FILES;
+        $this->params = $_REQUEST;
     }
 }
 ?>

@@ -124,19 +124,11 @@ async function init() {
         e.preventDefault();
 
         clearError(Button);
-        localStorage.removeItem(nameBackup);
-
-        const inputs = document.querySelectorAll('.form-input');
-
-        inputs.forEach((e) => {
-            if(e.id != 'tfio' && !e.value.trim()){
-                showError(e, 'Неправильное заполнение');
-                return;
-            } else {
-                clearError(e);
-            }
-        });
         
+        if(!check(['tfio'])){
+            return;
+        }
+
         try {
             const formData = new FormData(Form);
             const data = Object.fromEntries(formData.entries());
@@ -151,33 +143,17 @@ async function init() {
             if(!response.ok){
                 r = await response.json();
                 console.log(r);
-                showError(Form, r['error'])
+                showError(Button, r['error'])
                 return;
             }
-
-            
-
+            else{
+                localStorage.removeItem(nameBackup);
+                showError(Button, "успешно")
+            }
         }catch (error) {
             alert('Ошибка при отправке\nПодробнее в консоли');
             console.log(error);
         }
 
     });
-    
-    function showError(input, message) {
-        clearError(input);
-        const errorElement = document.createElement('span');
-        errorElement.className = 'error-message';
-        errorElement.textContent = message;
-        input.parentNode.appendChild(errorElement);
-        input.classList.add('invalid');
-    }
-    
-    function clearError(input) {
-        const errorElement = input.parentNode.querySelector('.error-message');
-        if (errorElement) {
-            errorElement.remove();
-        }
-        input.classList.remove('invalid');
-    }
 }

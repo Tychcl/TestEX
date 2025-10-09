@@ -14,48 +14,18 @@ function init() {
     Form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
-        localStorage.removeItem(nameBackup);
         clearError(Button);
 
-        const form = e.target;
-        const name = document.getElementById('name');
+        if(!check(['end'])){
+            return;
+        }
+
         const start = document.getElementById('start');
         const end = document.getElementById('end');
-        const level = document.getElementById('level');
-
-        // Валидация логина
-        if (!name.value.trim()) {
-            showError(name, 'Введите наименования');
-            return;
-        } else {
-            clearError(name);
-        }
-
-        if (!start.value.trim()) {
-            showError(start, 'Введите дату начала');
-            return;
-        } else {
-            clearError(start);
-        }
-
-        if (!end.value.trim()) {
-            showError(end, 'Введите дату окончания');
-            return;
-        } else {
-            clearError(end);
-        }
-
-        if (!level.value.trim()) {
-            showError(level, 'Выберите уровень проведения');
-            return;
-        } else {
-            clearError(level);
-        }
-        
         const time_start = new Date(start.value);
         const time_end = new Date(end.value);
 
-        if(time_end < time_start){
+        if(!end.value.trim() && time_end < time_start){
             showError(end, 'Должно быть > или = начала');
             return;
         } else {
@@ -78,12 +48,12 @@ function init() {
             if(!response.ok){
                 r = await response.json();
                 console.log(r);
-                showError(Form, r['error'])
+                showError(Button, r['error'])
                 return;
+            }else{
+                localStorage.removeItem(nameBackup);
+                showError(Button, "Чемпионат успешно добавлен")
             }
-
-            showError(Button, "Чемпионат успешно добавлен")
-
         }catch (error) {
             alert('Ошибка при отправке\nПодробнее в консоли');
             console.log(error);

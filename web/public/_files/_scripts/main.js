@@ -71,3 +71,35 @@ function LoadForm(form, nameBackup){
         });
     }
 }
+
+function check(IdExceptions = []){
+    const inputs = document.querySelectorAll('.form-input');
+    value = true;
+    inputs.forEach((e) => {
+        console.log(e.id);
+        if(!IdExceptions.includes(e.id) && !e.value.trim()){
+            value = false;
+            showError(e, 'Неправильное заполнение');
+        } else {
+            clearError(e);
+        }
+    });
+    return value;
+}
+
+function showError(input, message) {
+    clearError(input);
+    const errorElement = document.createElement('span');
+    errorElement.className = 'error-message';
+    errorElement.textContent = message;
+    input.parentNode.appendChild(errorElement);
+    input.classList.add('invalid');
+}
+    
+function clearError(input) {
+    const errorElement = input.parentNode.querySelector('.error-message');
+    if (errorElement) {
+        errorElement.remove();
+    }
+    input.classList.remove('invalid');
+}

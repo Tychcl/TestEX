@@ -28,15 +28,17 @@ class ChampionshipController{
         try{
             $name = $params['name'] ?? null;
             $start = date("Y-m-d", $params['start']) ?? null;
-            $end = date("Y-m-d", $params['end']) ?? null;
+            $end = $params['end'] ?? null;
             $level = $params['level'] ?? null;
 
-            if(!$name || !$start|| !$end|| !$level){
+            if(!$name || !$start|| !$level){
                 return new Response(400, ['error' => 'name, start(Timestamp), end(Timestamp) and levelid required. end bigger or equals start']);
             }
 
-            if($end < $start){
+            if($end && $end < $start){
                 return new Response(400, ['error' => 'end < start']);
+            }elseif(!$end){
+                $end = null;
             }
 
             if(!EventlevelQuery::create()->findOneById($level)){

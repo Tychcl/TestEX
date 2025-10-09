@@ -31,8 +31,7 @@
                 id="end" 
                 type="date" 
                 class="form-input"
-                placeholder="Дата окончания"
-                required>
+                placeholder="Дата окончания">
         </div>
         <div class="form-group">
             <label for="level" class="form-label">Уровень проведения</label>

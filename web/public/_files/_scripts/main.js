@@ -1,9 +1,9 @@
 const pageLoadEvent = new CustomEvent('pageLoaded', {
-            detail: {
-                target: this,
-                url: this.href
-            }
-        });
+    detail: {
+        target: this,
+        url: this.href
+    }
+});
 
 function loadScript(src, element) {
     return new Promise((resolve, reject) => {
@@ -48,6 +48,26 @@ async function eventadd(){
     await loadPage('/web/event/add')
 }
 
-document.addEventListener('pageLoaded', function() {
-    console.log("main")
-});
+function SaveForm(form, nameBackup){
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData);
+    localStorage.setItem(nameBackup, JSON.stringify(data));
+}
+
+function LoadForm(form, nameBackup){
+    const savedData = localStorage.getItem(nameBackup);
+    if (savedData) {
+        const data = JSON.parse(savedData);
+        Object.keys(data).forEach(key => {
+            const element = form.elements[key];
+            console.log();
+            if (element && element.type != 'file') {
+                if (element.type === 'checkbox') {
+                    element.checked = data[key] === 'on';
+                } else {
+                    element.value = data[key];
+                }
+            }
+        });
+    }
+}

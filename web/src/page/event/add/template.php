@@ -43,7 +43,7 @@
                 <div class="file-input-wrapper">
                     <label for="fileInput" class="form-label">Документ</label>
                     <button class="file-input-button">Выберите файл</button>
-                    <input type="file" name="teacher[file]" id="file" class="form-input" onchange="updateButtonText(this)" required>
+                    <input type="file" name="teacher[file]" id="file" class="form-input" onchange="updateButtonText(this)" required accept=".pdf,.doc,.docx">
                 </div>
             </div>
             
@@ -79,7 +79,7 @@
                     <div class="file-input-wrapper">
                         <label class="form-label">Документ</label>
                         <button class="file-input-button">Выберите файл</button>
-                        <input type="file" name="students[0][file]" id="file" class="form-input" onchange="updateButtonText(this)" required>
+                        <input type="file" name="students[0][file]" id="file" class="form-input" onchange="updateButtonText(this)" required accept=".pdf,.doc,.docx">
                     </div>
                 </div>
             </fieldset>

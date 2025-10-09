@@ -1,12 +1,20 @@
+const nameBackup = 'infoBackup';
+
 function init() {
     const Form = document.querySelector('.form');
     const Button = Form.querySelector('.form-button');
     console.log("aboba")
 
-    // Валидация формы
+    LoadForm(Form, nameBackup);
+
+    Form.addEventListener('input', function() {
+        SaveForm(Form, nameBackup);
+    });
+
     Form.addEventListener('submit', async function(e) {
         e.preventDefault();
 
+        localStorage.removeItem(nameBackup);
         clearError(Button);
 
         const form = e.target;

@@ -1,6 +1,5 @@
-
+const nameBackup = 'chamBackup';
 let studentCount = 1;
-
 let awards;
 
 function addStudent() {
@@ -37,17 +36,19 @@ function addStudent() {
             <div class="file-input-wrapper">
                 <label class="form-label">Документ</label>
                 <button class="file-input-button" id="fileButtonText">Выберите файл</button>
-                <input type="file" name="students[${studentCount}][file]" id="file" class="form-input" onchange="updateButtonText(this)" required>
+                <input type="file" name="students[${studentCount}][file]" id="file" class="form-input" onchange="updateButtonText(this)" required accept=".pdf,.doc,.docx">
             </div>
         </div>`;
         studentCount++;
     container.appendChild(newBlock);
+    localStorage.setItem('lastStudentCount', studentCount);
 }
 
 function removeStudent(button) {
     if (document.querySelectorAll('fieldset.student').length > 1) {
         button.closest('fieldset.student').remove();
         updateStudentIndexes();
+        localStorage.setItem('lastStudentCount', studentCount);
     } else {
         alert('Должен остаться хотя бы один студент');
     }
@@ -104,16 +105,26 @@ async function getawards() {
 }
 
 async function init() {
-
     awards = await getawards();
-
     const Form = document.querySelector('.form');
     const Button = Form.querySelector('.form-button');
     console.log("aboba")
+    lastStudentCount = localStorage.getItem('lastStudentCount');
+    while(document.querySelectorAll('fieldset.student').length != lastStudentCount){
+        addStudent()
+    }
+
+    LoadForm(Form, nameBackup);
+
+    Form.addEventListener('input', function() {
+        SaveForm(Form, nameBackup);
+    });
 
     Form.addEventListener('submit', async function(e) {
         e.preventDefault();
+
         clearError(Button);
+        localStorage.removeItem(nameBackup);
 
         const inputs = document.querySelectorAll('.form-input');
 

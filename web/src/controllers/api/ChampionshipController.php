@@ -1,6 +1,7 @@
 <?php
 namespace Api;
 
+use Classes\Validate;
 use Core\Response;
 use Core\Request;
 use DateTime;
@@ -100,12 +101,65 @@ class ChampionshipController{
     }
 
     public function eventAdd($params, $r){
-        $infoid = $params['info'] ?? null;
-        $teacher = $params['teacher'] ?? null;
-        $students = $params['students'] ?? null;
+        function check($a, $s){
+            if(!$a['fio'] || !Validate::fio($a['fio']) || !$a[$s]){
+                return false;
+            }
+            return true;
+        }
+        try{
+            $info = $params['info'] ?? null;
+            $teacher = $params['teacher'] ?? null;
+            $students = $params['students'] ?? null;
+            return new Response(400, ['file' => $r->files, 'params' => $params] );
 
-        //$r = new Request();
-        //return new Response(400, ['file' => $r->files, 'params' => $params] );
+            if(!$info || !$teacher || !$students 
+            || !$r->files['teacher'] || !$r->files['students'] || count($r->files['students']['error']) != count($students)){
+                return new Response(400, ['error' => 'not all data']);
+            }
+
+            foreach(array_values($students) as $i => $s){
+                if(!check($s, 'award')){
+                    $i += 1;
+                    return new Response(400, ['error' => "wrong student $i data"]);
+                }
+            }
+
+            if(!check($teacher, 'role')){
+                return new Response(400, ['error' => 'wrong teacher data']);
+            }
+
+            foreach(array_values($r->files['students']['type']) as $i => $f){
+                if(!Validate::appformat($f)){
+                    $i += 1;
+                    return new Response(400, ['error' => "wrong student $i file type"]);
+                }
+            }
+
+            if(!Validate::appformat($r->files['teacher']['type'])){
+                $i += 1;
+                return new Response(400, ['error' => "wrong teacher file type"]);
+            }
+
+            if(!TeacherQuery::create()->findOneByFio($teacher['fio'])){
+                return new Response(400, ['error' => $teacher['fio'].' teacher not exists']);
+            }
+
+
+            //foreach(array_values($students) as $i => $s){
+            //    if(!check($s, 'award')){
+            //        $i += 1;
+            //        return new Response(400, ['error' => "wrong student $i data"]);
+            //    }
+            //}
+
+        }catch(Exception $e){
+            return new Response(500, ['error' => $e->getMessage()]);
+        }
+        
+
+
+        
     }
 
     public function showList($params){

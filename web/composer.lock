@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "558ce11450678e43e4009c7e62cf6e10",
+    "content-hash": "b166d4137a85b7eaab8b59af930b7085",
     "packages": [
         {
             "name": "beste/clock",
@@ -638,16 +638,16 @@
         },
         {
             "name": "google/longrunning",
-            "version": "0.5.0",
+            "version": "0.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/googleapis/php-longrunning.git",
-                "reference": "715519ab4aaf3c4268adb2b551ee0f34135c8c5f"
+                "reference": "226d3b5166eaa13754cc5e452b37872478e23375"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/googleapis/php-longrunning/zipball/715519ab4aaf3c4268adb2b551ee0f34135c8c5f",
-                "reference": "715519ab4aaf3c4268adb2b551ee0f34135c8c5f",
+                "url": "https://api.github.com/repos/googleapis/php-longrunning/zipball/226d3b5166eaa13754cc5e452b37872478e23375",
+                "reference": "226d3b5166eaa13754cc5e452b37872478e23375",
                 "shasum": ""
             },
             "require-dev": {
@@ -676,9 +676,9 @@
             ],
             "description": "Google LongRunning Client for PHP",
             "support": {
-                "source": "https://github.com/googleapis/php-longrunning/tree/v0.5.0"
+                "source": "https://github.com/googleapis/php-longrunning/tree/v0.6.0"
             },
-            "time": "2025-09-20T01:29:44+00:00"
+            "time": "2025-10-07T18:41:09+00:00"
         },
         {
             "name": "google/protobuf",
@@ -4102,9 +4102,7 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "beta",
-    "stability-flags": {
-        "propel/propel": 10
-    },
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {},

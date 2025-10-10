@@ -85,7 +85,7 @@
     <column name="id" phpName="Id" type="INTEGER" description="Идентификатор" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="name" phpName="Name" type="VARCHAR" size="255" description="Наименование" required="true"/>
     <column name="start" phpName="Start" type="DATE" description="Дата начала " required="true"/>
-    <column name="end" phpName="End" type="DATE" description="Дата окончания" required="true"/>
+    <column name="end" phpName="End" type="DATE" description="Дата окончания"/>
     <column name="level" phpName="Level" type="INTEGER" description="Уровень проведения"/>
     <foreign-key foreignTable="eventLevel" name="eventinfo_ibfk_1" onDelete="SET NULL" onUpdate="CASCADE">
       <reference local="level" foreign="id"/>

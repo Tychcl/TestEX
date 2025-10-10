@@ -6,15 +6,23 @@ use Core\Response;
 use Core\Request;
 use DateTime;
 use Exception;
+use Models\Event;
 use Models\Eventawarddegree;
 use Models\EventawarddegreeQuery;
 use Models\Eventinfo;
 use Models\EventinfoQuery;
+use Models\Eventlevel;
 use Models\EventlevelQuery;
 use Models\EventQuery;
+use Models\EventroleQuery;
 use Models\Map\EventinfoTableMap;
 use Models\Map\TeacherTableMap;
+use Models\Student;
+use Models\StudentQuery;
 use Models\TeacherQuery;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use ZipArchive;
 
 class ChampionshipController{
 
@@ -112,12 +120,20 @@ class ChampionshipController{
         try{
             $info = $params['info'] ?? null;
             $teacher = $params['teacher'] ?? null;
+            $teacherid = $params['teacher']['id'] ?? false;
+            $teacherrole = $params['teacher']['role'] ?? null;
             $students = $params['students'] ?? null;
-            return new Response(400, ['file' => $r->files, 'params' => $params] );
+            //return new Response(400, ['file' => $r->files, 'params' => $params] );
 
-            if(!$info || !$teacher || !$students 
+            if(!$info || !$students || !$teacher || !$teacherrole
             || !$r->files['teacher'] || !$r->files['students'] || count($r->files['students']['error']) != count($students)){
                 return new Response(400, ['error' => 'not all data']);
+            }
+
+            
+            $eventinfo = EventinfoQuery::create()->findOneById(intval($info));
+            if(!$eventinfo){
+                return new Response(400, ['error' => "info with $info id dont exists"]);
             }
 
             foreach(array_values($students) as $i => $s){
@@ -127,41 +143,95 @@ class ChampionshipController{
                 }
             }
 
-            if(!check($teacher, 'role')){
-                return new Response(400, ['error' => 'wrong teacher data']);
-            }
-
             foreach(array_values($r->files['students']['type']) as $i => $f){
-                if(!Validate::appformat($f)){
+                if(!Validate::appformat($f['file'])){
                     $i += 1;
-                    return new Response(400, ['error' => "wrong student $i file type"]);
+                    return new Response(400, ['error' => "wrong student $i file type", 'type' => $f, 'access types' => array_keys(Validate::$formats)]);
                 }
             }
 
-            if(!Validate::appformat($r->files['teacher']['type'])){
+            if(!Validate::appformat($r->files['teacher']['type']['file'])){
                 $i += 1;
                 return new Response(400, ['error' => "wrong teacher file type"]);
             }
 
-            if(!TeacherQuery::create()->findOneByFio($teacher['fio'])){
-                return new Response(400, ['error' => $teacher['fio'].' teacher not exists']);
+            if(!$teacher['role'] || !EventroleQuery::create()->findOneById($teacher['role'])){
+                return new Response(400, ['error' => 'wrong teacher role data']);
             }
 
+            $teacherinfo = TeacherQuery::create()->findOneById($teacherid);
+            if(!empty($teacherid) & !$teacherinfo){
+                return new Response(400, ['error' => $teacher['id'].' wrong teacher id, profile not exists', 'teacher' => $teacherinfo]);
+            }elseif(!$teacher['id']){
+                session_start();
+                $teacherinfo = TeacherQuery::create()->findOneById($_SESSION['id']);
+            }
 
-            //foreach(array_values($students) as $i => $s){
-            //    if(!check($s, 'award')){
-            //        $i += 1;
-            //        return new Response(400, ['error' => "wrong student $i data"]);
-            //    }
-            //}
+            $directory = dirname(__DIR__,3).'/files/events/';
+            $teacherFolder = $teacherinfo->getFio();
 
+            $zipFileName = $eventinfo->getName().'_'.
+            $eventinfo->getStart('Y-m-d').'_'.
+            $eventinfo->getEnd('Y-m-d').'_'.
+            EventlevelQuery::create()->findOneById($eventinfo->getLevel())->getName().'.zip';
+
+            $zipPath = $directory . $zipFileName;
+            $zip = new ZipArchive();
+            //return new Response(400, $zipPath);
+            if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
+                try{
+                    $teacherFileName = $r->files['teacher']['name']['file'];
+                    $teacherTempPath = $r->files['teacher']['tmp_name']['file'];
+                    $zip->addFile($teacherTempPath, $teacherFolder . '/' . $teacherFileName);
+                    
+                    $studentFiles = $r->files['students'];
+                    foreach ($students as $i => $student) {
+                       $studentFolder = $teacherFolder . '/' . $student['fio'] . '/';
+
+                        if (isset($studentFiles['name'][$i]['file'])) {
+                            $studentFileName = $studentFiles['name'][$i]['file'];
+                            $studentTempPath = $studentFiles['tmp_name'][$i]['file'];
+                            $zip->addFile($studentTempPath, $studentFolder . $studentFileName);
+                        }
+
+                        if(!StudentQuery::create()->findOneByFio($student['fio'])){
+                            $s = new Student();
+                            $s->setFio($student['fio'])->save();
+                        }
+
+                        $s = StudentQuery::create()->findOneByFio($student['fio'])->getId();
+                        if(!EventQuery::create()->filterByInfoid($info)->
+                            filterByTeacherid($teacherinfo->getId())->
+                            filterByTeacherroleid($teacherrole)->
+                            filterByStudentid($s)->
+                            filterByAwardid($student['award'])->
+                            findOneByDocument($zipPath)){
+
+                            $event = new Event();
+                            $event->setInfoid($info)->
+                            setTeacherid($teacherinfo->getId())->
+                            setTeacherroleid($teacherrole)->
+                            setStudentid($s)->
+                            setAwardid($student['award'])->
+                            setDocument($zipPath)->save();
+                        }
+                        
+                    }
+                    $zip->close();
+                }catch(Exception $e){
+                    $zip->close();
+                    if (file_exists($zipPath)) {
+                        unlink($zipPath);
+                    }
+                    throw $e;
+                }
+            } else {
+                throw new Exception('Не удалось создать zip-архив');
+            }
+            return new Response(200, ['successfully' => 'Участие добавлено']);
         }catch(Exception $e){
             return new Response(500, ['error' => $e->getMessage()]);
         }
-        
-
-
-        
     }
 
     public function showList($params){

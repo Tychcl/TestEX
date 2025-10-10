@@ -19,7 +19,15 @@
         <fieldset class="form-fieldset">
             <p>Преподаватель</p>
             <div class="form-group">
-                    <label for="fio" class="form-label">ФИО</label>
+                <label for="teacher" class="form-label">ФИО</label>
+                <select
+                    name="teacher[id]"
+                    id="tid" 
+                    class="form-input">
+                    <option value="">Выберите</option>
+                    <?= $teachers ?>
+                </select>
+                    <!--<label for="fio" class="form-label">ФИО</label>
                     <input 
                         name="teacher[fio]"
                         id="tfio" 
@@ -27,7 +35,7 @@
                         class="form-input"
                         placeholder="Фамилия Имя Отчество"
                         pattern="[А-Я]{1}[a-я]* [А-Я]{1}[a-я]* [А-Я]{1}[a-я]*">
-                </div>
+                </div>-->
             <div class="form-group-mult">
                 <div class="form-group.mult">
                 <label for="role" class="form-label">Роль участия</label>

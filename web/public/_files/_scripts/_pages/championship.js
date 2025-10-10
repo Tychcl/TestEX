@@ -1,6 +1,6 @@
-const nameBackup = 'chamBackup';
-let studentCount = 1;
-let awards;
+nameBackup = 'chamBackup';
+studentCount = 1;
+awards = ``;
 
 function addStudent() {
     const container = document.getElementById('students');
@@ -85,14 +85,16 @@ async function getawards() {
             method: 'GET',
             credentials: 'same-origin'
         });
-        r = await response.json();
         if(response.status == 401){
             location.reload()
+            return;
         }
         if(!response.ok){
             alert('Ошибка при отправке\nПодробнее в консоли');
             console.log(r['error']);
+            return;
         }
+        r = await response.json();
         option = '';
         r['list'].forEach((e) => {
             option += `<option value="${e['Id']}">${e['Name']}</option>`
@@ -125,7 +127,7 @@ async function init() {
 
         clearError(Button);
         
-        if(!check(['tfio'])){
+        if(!check(['tid'])){
             return;
         }
 

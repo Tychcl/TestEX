@@ -4,6 +4,8 @@ use Core\Request;
 use Middleware\AuthMiddleware;
 use Classes\Render;
 use Core\JWToken;
+use Models\EventlevelQuery;
+use Models\TeacherQuery;
 
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 require_once dirname(__DIR__) . '/propel/generated/conf/config.php';

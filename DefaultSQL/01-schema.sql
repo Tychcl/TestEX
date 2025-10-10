@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.0
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Хост: 127.0.0.1:3306
--- Время создания: Сен 29 2025 г., 22:56
--- Версия сервера: 8.0.30
--- Версия PHP: 7.4.30
+-- Хост: db:3306
+-- Время создания: Окт 10 2025 г., 09:19
+-- Версия сервера: 8.0.43
+-- Версия PHP: 8.3.26
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,149 @@ SET time_zone = "+00:00";
 --
 -- База данных: `teacherCompetence`
 --
+
+DELIMITER $$
+--
+-- Процедуры
+--
+CREATE DEFINER=`root`@`%` PROCEDURE `GetTeacherDossier` (IN `teacher_id` INT)   BEGIN
+    -- Основная информация о преподавателе
+    SELECT 
+        t.id,
+        t.fio,
+        t.login,
+        ur.name as role_name,
+        t.needUpdSkill,
+        t.canUpdCategory
+    FROM teacher t
+    LEFT JOIN userRole ur ON t.roleId = ur.id
+    WHERE t.id = teacher_id;
+    
+    -- Текущая категория
+    SELECT 
+        cl.name as category_name,
+        c.date as assignment_date,
+        c.organ as assigned_by,
+        c.num as order_number
+    FROM category c
+    LEFT JOIN categoryList cl ON c.categoryId = cl.id
+    WHERE c.teacherId = teacher_id
+    ORDER BY c.date DESC
+    LIMIT 1;
+    
+    -- История категорий
+    SELECT 
+        cl.name as category_name,
+        c.date as assignment_date,
+        c.organ as assigned_by,
+        c.num as order_number,
+        c.place as educational_institution
+    FROM category c
+    LEFT JOIN categoryList cl ON c.categoryId = cl.id
+    WHERE c.teacherId = teacher_id
+    ORDER BY c.date DESC;
+    
+    -- Повышение квалификации (последние 3 года)
+    SELECT 
+        s.theme,
+        s.place,
+        s.start,
+        s.end,
+        s.hours,
+        s.director,
+        DATEDIFF(CURDATE(), s.end) as days_since_completion,
+        CASE 
+            WHEN DATE_ADD(s.end, INTERVAL 3 YEAR) < CURDATE() THEN 'Просрочена'
+            WHEN DATE_ADD(s.end, INTERVAL 3 YEAR) < DATE_ADD(CURDATE(), INTERVAL 6 MONTH) THEN 'Скоро истекает'
+            ELSE 'Действительна'
+        END as status
+    FROM skill s
+    WHERE s.teacherId = teacher_id
+    ORDER BY s.end DESC;
+    
+    -- Участие в мероприятиях
+    SELECT 
+        ei.name as event_name,
+        el.name as event_level,
+        ei.start as event_start,
+        ei.end as event_end,
+        er.name as teacher_role,
+        s.fio as student_name,
+        ead.name as student_award
+    FROM event e
+    LEFT JOIN eventInfo ei ON e.infoId = ei.id
+    LEFT JOIN eventLevel el ON ei.level = el.id
+    LEFT JOIN eventRole er ON e.teacherRoleId = er.id
+    LEFT JOIN student s ON e.studentId = s.id
+    LEFT JOIN eventAwardDegree ead ON e.awardId = ead.id
+    WHERE e.teacherId = teacher_id
+    AND ei.start >= DATE_SUB(CURDATE(), INTERVAL 2 YEAR)
+    ORDER BY ei.start DESC;
+    
+    -- Статистика по мероприятиям
+    SELECT 
+        COUNT(e.id) as total_events,
+        COUNT(DISTINCT ei.level) as different_levels,
+        COUNT(CASE WHEN er.id IN (1,2,3) THEN 1 END) as award_events, -- Дипломы 1-3 степени
+        COUNT(DISTINCT e.studentId) as unique_students
+    FROM event e
+    LEFT JOIN eventInfo ei ON e.infoId = ei.id
+    LEFT JOIN eventRole er ON e.teacherRoleId = er.id
+    WHERE e.teacherId = teacher_id
+    AND ei.start >= DATE_SUB(CURDATE(), INTERVAL 3 YEAR);
+    
+END$$
+
+CREATE DEFINER=`root`@`%` PROCEDURE `UpdateAllTeachersFlags` ()   BEGIN
+    DECLARE done INT DEFAULT FALSE;
+    DECLARE teacher_id INT;
+    DECLARE cur CURSOR FOR SELECT id FROM teacher;
+    DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+    
+    OPEN cur;
+    
+    read_loop: LOOP
+        FETCH cur INTO teacher_id;
+        IF done THEN
+            LEAVE read_loop;
+        END IF;
+        CALL UpdateTeacherFlags(teacher_id);
+    END LOOP;
+    
+    CLOSE cur;
+END$$
+
+CREATE DEFINER=`root`@`%` PROCEDURE `UpdateTeacherFlags` (IN `teacher_id` INT)   BEGIN
+    DECLARE last_skill_date DATE;
+    DECLARE last_category_date DATE;
+    DECLARE current_category_id INT;
+    
+    -- Получаем дату последнего повышения квалификации
+    SELECT MAX(end) INTO last_skill_date 
+    FROM skill 
+    WHERE teacherId = teacher_id;
+    
+    -- Получаем дату и id последней категории
+    SELECT MAX(date), categoryId INTO last_category_date, current_category_id
+    FROM category 
+    WHERE teacherId = teacher_id;
+    
+    -- Обновляем флаги
+    UPDATE teacher SET
+        needUpdSkill = CASE 
+            WHEN last_skill_date IS NULL OR DATE_ADD(last_skill_date, INTERVAL 3 YEAR) < CURDATE() 
+            THEN 1 ELSE 0 
+        END,
+        canUpdCategory = CASE
+            WHEN current_category_id = 3 THEN 0 -- Высшая категория - нельзя повысить
+            WHEN last_category_date IS NULL OR DATEDIFF(CURDATE(), last_category_date) > 365 
+            THEN 1 ELSE 0 -- Можно повысить если прошло больше года
+        END
+    WHERE id = teacher_id;
+    
+END$$
+
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -37,6 +180,28 @@ CREATE TABLE `category` (
   `place` text NOT NULL COMMENT 'Образовательная организация',
   `categoryId` int NOT NULL COMMENT 'Присвоенная категория'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Триггеры `category`
+--
+DELIMITER $$
+CREATE TRIGGER `after_category_delete` AFTER DELETE ON `category` FOR EACH ROW BEGIN
+    CALL UpdateTeacherFlags(OLD.teacherId);
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `after_category_insert` AFTER INSERT ON `category` FOR EACH ROW BEGIN
+    CALL UpdateTeacherFlags(NEW.teacherId);
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `after_category_update` AFTER UPDATE ON `category` FOR EACH ROW BEGIN
+    CALL UpdateTeacherFlags(NEW.teacherId);
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -73,7 +238,7 @@ CREATE TABLE `event` (
   `teacherRoleId` int NOT NULL COMMENT 'Роль участия',
   `studentId` int NOT NULL COMMENT 'Студент',
   `awardId` int NOT NULL COMMENT 'Награда',
-  `document` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Документ'
+  `document` json NOT NULL COMMENT 'Документ'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -107,9 +272,16 @@ CREATE TABLE `eventInfo` (
   `id` int NOT NULL COMMENT 'Идентификатор',
   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'Наименование',
   `start` date NOT NULL COMMENT 'Дата начала ',
-  `end` date NOT NULL COMMENT 'Дата окончания',
+  `end` date DEFAULT NULL COMMENT 'Дата окончания',
   `level` int DEFAULT NULL COMMENT 'Уровень проведения'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Чемпионаты';
+
+--
+-- Дамп данных таблицы `eventInfo`
+--
+
+INSERT INTO `eventInfo` (`id`, `name`, `start`, `end`, `level`) VALUES
+(3, 'test', '2025-09-24', '2025-09-25', 4);
 
 -- --------------------------------------------------------
 
@@ -187,6 +359,28 @@ CREATE TABLE `skill` (
   `docPath` text NOT NULL COMMENT 'Путь до документа'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='Повышение квалификации действует 3 года';
 
+--
+-- Триггеры `skill`
+--
+DELIMITER $$
+CREATE TRIGGER `after_skill_delete` AFTER DELETE ON `skill` FOR EACH ROW BEGIN
+    CALL UpdateTeacherFlags(OLD.teacherId);
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `after_skill_insert` AFTER INSERT ON `skill` FOR EACH ROW BEGIN
+    CALL UpdateTeacherFlags(NEW.teacherId);
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `after_skill_update` AFTER UPDATE ON `skill` FOR EACH ROW BEGIN
+    CALL UpdateTeacherFlags(NEW.teacherId);
+END
+$$
+DELIMITER ;
+
 -- --------------------------------------------------------
 
 --
@@ -219,7 +413,8 @@ CREATE TABLE `teacher` (
 --
 
 INSERT INTO `teacher` (`id`, `fio`, `login`, `password`, `roleId`, `needUpdSkill`, `canUpdCategory`) VALUES
-(1, 'Очень Важная Тучка', 'tychcl', '$2y$10$iOUx/MEm8g1ztoczR/Z1K.bYEBvuoCRtd954NcJAZXACYj5Xqum/i', 1, 1, 1);
+(1, 'Очень Важная Тучка', 'tychcl', '$2y$10$iOUx/MEm8g1ztoczR/Z1K.bYEBvuoCRtd954NcJAZXACYj5Xqum/i', 1, 1, 1),
+(7, 'Фамилия Имя Отчество', 'test', '$2y$10$CLvK0fEjy4G7z1.N8i5Jxee/b8B5DRFTdhEulQ6qTjNI6gijuMQ2S', 2, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -352,7 +547,7 @@ ALTER TABLE `eventAwardDegree`
 -- AUTO_INCREMENT для таблицы `eventInfo`
 --
 ALTER TABLE `eventInfo`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT 'Идентификатор', AUTO_INCREMENT=3;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT 'Идентификатор', AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT для таблицы `eventLevel`
@@ -382,7 +577,7 @@ ALTER TABLE `student`
 -- AUTO_INCREMENT для таблицы `teacher`
 --
 ALTER TABLE `teacher`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT 'Идентификатор', AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT COMMENT 'Идентификатор', AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT для таблицы `userRole`

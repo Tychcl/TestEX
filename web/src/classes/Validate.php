@@ -4,6 +4,12 @@ namespace Classes;
 
 class Validate{
 
+    public static $formats = [
+        'doc' => "application/msword",
+        'docx' => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        'pdf' => "application/pdf"
+    ];
+
     public static function fio($fio, &$matches = null){
         return preg_match('/[А-Я]{1}[a-я]* [А-Я]{1}[a-я]* [А-Я]{1}[a-я]*/', $fio, $matches);
     }
@@ -17,7 +23,7 @@ class Validate{
     }
 
     public static function appformat($format){
-        return in_array($format, ['application/pdf', 'application/doc', 'application/docx']);
+        return in_array($format, array_values(Validate::$formats));
     }
 }
 

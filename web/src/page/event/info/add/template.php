@@ -1,7 +1,7 @@
 <div class="form-container">
     <div class="form-header">
         <h1 class="form-title">Добавление чемпионата</h1>
-        <p class="form-subtitle">Введите данные чемпионата</p>
+        <p class="form-subtitle">Введите данные чемпионата, дату окончания можно не вводить, если чемпионат заканчивается в тот же день</p>
     </div>
     <form id="form" class="form" method="POST">
         <div class="form-group">

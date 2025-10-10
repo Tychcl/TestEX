@@ -1,4 +1,4 @@
-const nameBackup = 'infoBackup';
+nameBackup = 'infoBackup';
 
 function init() {
     const Form = document.querySelector('.form');

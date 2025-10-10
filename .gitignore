@@ -5,3 +5,4 @@ web/propel/generated/*
 /web/src/classes/Models
 /db/data/*
 !/db/data/.gitkeep
+/web/files/events/*.zip

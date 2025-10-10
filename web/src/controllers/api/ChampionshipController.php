@@ -3,25 +3,17 @@ namespace Api;
 
 use Classes\Validate;
 use Core\Response;
-use Core\Request;
-use DateTime;
 use Exception;
 use Models\Event;
-use Models\Eventawarddegree;
-use Models\EventawarddegreeQuery;
 use Models\Eventinfo;
 use Models\EventinfoQuery;
-use Models\Eventlevel;
 use Models\EventlevelQuery;
 use Models\EventQuery;
 use Models\EventroleQuery;
 use Models\Map\EventinfoTableMap;
-use Models\Map\TeacherTableMap;
 use Models\Student;
 use Models\StudentQuery;
 use Models\TeacherQuery;
-use RecursiveDirectoryIterator;
-use RecursiveIteratorIterator;
 use ZipArchive;
 
 class ChampionshipController{

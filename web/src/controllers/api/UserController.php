@@ -3,7 +3,6 @@ namespace Api;
 session_start();
 use Core\Response;
 use Core\JWToken;
-use Core\Request;
 use Models\Teacher;
 use Models\TeacherQuery;
 use Exception;

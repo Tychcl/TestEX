@@ -30,6 +30,10 @@ class Routes{
                 'find' => ['method' => 'GET', 'path' => '/api/event/info/find', 'handler' => 'Api\ChampionshipController@infoFind']
             ],
             'listShow' => ['method' => 'GET', 'path' => '/api/event/{name}', 'handler' => 'Api\ChampionshipController@showList'],
+        ],
+        'category' => ['add' => ['method' => 'POST', 'path' => '/api/event/add', 'handler' => 'Api\ChampionshipController@eventAdd'],
+            'find' => [],
+            'delete' => []
         ]
         //event
         

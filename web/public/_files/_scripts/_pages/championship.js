@@ -136,12 +136,10 @@ async function init() {
             const data = Object.fromEntries(formData.entries());
             const response = await fetch('/api/event/add', {
                 method: 'POST',
-                
                 credentials: 'same-origin',
                 body: formData
             });
-            console.log(await response.json());
-            return;
+            //console.log(await response.json());
             if(!response.ok){
                 r = await response.json();
                 console.log(r);

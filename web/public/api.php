@@ -28,7 +28,8 @@ $router->add($r['event']['info']['add']);
 $router->add($r['event']['info']['delete']);
 $router->add($r['event']['info']['find']);
 $router->add($r['event']['listShow']);//всегда последнее в группе event
-//$router->add($r['lists']);
+//category
+
 
 $dispatcher = MiddlewareFabric::createForApi($router);
 

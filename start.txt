@@ -1,0 +1,29 @@
+так как с компа не получается установить соединение пропеля
+то все команды связаные с ним стоит использовать через докер
+примеры: 
+docker exec teacher_competence composer run-script propel:reverse --working-dir=/var/www/html
+после первой команды добавить namespace="Models" в схему а после выполнять вторую
+docker exec teacher_competence composer run-script propel:build --working-dir=/var/www/html
+
+если composer update или install выдает ошибку
+Your requirements could not be resolved to an installable set of packages.
+или
+Your lock file does not contain a compatible set of packages. Please run composer update.
+то в php.ini надо раскоментировать ;extension=sodium, мб починится
+
+Запуск
+скачать php
+скачать composer, если выдает ошибку в переменных сред сделать компосер выше php
+создать .env с данными среды из web в docker-compose
+composer install
+в web\propel\generated\conf закинуть propel-config-docker.php и назвать config.php
+composer run-script propel:reverse
+в web\propel\schema\schema.xml самом первом теге Database написать namespace="Models"
+composer run-script propel:build
+замень 
+docker-compose up -d --build
+ну по идее и можно запускать
+
+Примечания
+После обновления бд сохранить экспортом в скл и перенести в archive
+также в DefaultSQL под названием 01-schema

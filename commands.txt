@@ -1,6 +1,0 @@
-так как с компа не получается установить соединение пропеля
-то все команды связаные с ним стоит использовать через докер
-примеры: 
-docker exec teacher_competence composer run-script propel:reverse --working-dir=/var/www/html
-после первой команды добавить namespace="Models" в схему а после выполнять вторую
-docker exec teacher_competence composer run-script propel:build --working-dir=/var/www/html

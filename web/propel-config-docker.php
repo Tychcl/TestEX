@@ -1,12 +1,26 @@
 <?php
+use Dotenv\Dotenv;
+
+require_once dirname(__DIR__,3) . '/vendor/autoload.php';
+
+$dotenv = Dotenv::createImmutable(dirname(__DIR__,3));
+$dotenv->load(); 
+
+$host = $_ENV['DATABASE_HOST'];
+$port = $_ENV['DATABASE_PORT'];
+$dbname = $_ENV['DATABASE_NAME'];
+$user = $_ENV['DATABASE_USER'];
+$pwd = $_ENV['DATABASE_PASSWORD'];
+$dsn = "mysql:host={$host};port={$port};dbname={$dbname}";
+
 $serviceContainer = \Propel\Runtime\Propel::getServiceContainer();
 $serviceContainer->checkVersion(2);
 $serviceContainer->setAdapterClass('default', 'mysql');
 $manager = new \Propel\Runtime\Connection\ConnectionManagerSingle('default');
 $manager->setConfiguration(array (
-  'dsn' => 'mysql:host=' . getenv('DATABASE_HOST') . ';port=' . getenv('DATABASE_PORT') . ';dbname=' . getenv('DATABASE_NAME'),
-  'user' => getenv('DATABASE_USER'),
-  'password' => getenv('DATABASE_PASSWORD'),
+  'dsn' => $dsn,
+  'user' => $user,
+  'password' => $pwd,
   'settings' =>
   array (
     'charset' => 'utf8',

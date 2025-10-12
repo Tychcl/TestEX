@@ -20,47 +20,9 @@ function init() {
             return;
         }
 
-        try {
-            const formData = new FormData(Form);
-            const data = Object.fromEntries(formData.entries());
-            const response = await fetch('/api/event/info/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'same-origin',
-                body: JSON.stringify(data)
-            });
-            if(!response.ok){
-                r = await response.json();
-                console.log(r);
-                showError(Button, r['error']);
-                return;
-            }else{
-                localStorage.removeItem(nameBackup);
-                showError(Button, "Успешно");
-            }
-        }catch (error) {
-            alert('Ошибка при отправке\nПодробнее в консоли');
-            console.log(error);
+        if(await requestAPI('/api/category/add', Form, Button)){
+            localStorage.removeItem(nameBackup);
         }
 
     });
-    
-    function showError(input, message) {
-        clearError(input);
-        const errorElement = document.createElement('span');
-        errorElement.className = 'error-message';
-        errorElement.textContent = message;
-        input.parentNode.appendChild(errorElement);
-        input.classList.add('invalid');
-    }
-    
-    function clearError(input) {
-        const errorElement = input.parentNode.querySelector('.error-message');
-        if (errorElement) {
-            errorElement.remove();
-        }
-        input.classList.remove('invalid');
-    }
 }

@@ -3,6 +3,7 @@ namespace Api;
 
 use Classes\Validate;
 use Core\Response;
+use DateTime;
 use Exception;
 use Models\Event;
 use Models\Eventinfo;
@@ -16,7 +17,9 @@ use Models\StudentQuery;
 use Models\TeacherQuery;
 use ZipArchive;
 
-class ChampionshipController{
+class EventController{
+    public static $base = '/api/event/';
+    public static $method = ['add' => 'POST', 'delete' => 'DELETE','find' => 'GET'];
 
     private $models = [
                 'award' => 'Models\EventawarddegreeQuery',
@@ -24,85 +27,7 @@ class ChampionshipController{
                 'role' => 'Models\EventroleQuery'
             ];
 
-    public function infoAdd($params){
-        try{
-            $name = $params['name'] ?? null;
-            $start = date("Y-m-d", $params['start']) ?? null;
-            $end = $params['end'] ?? null;
-            $level = $params['level'] ?? null;
-
-            if(!$name || !$start|| !$level){
-                return new Response(400, ['error' => 'name, start(Timestamp), end(Timestamp) and levelid required. end bigger or equals start']);
-            }
-
-            if($end && $end < $start){
-                return new Response(400, ['error' => 'end < start']);
-            }elseif(!$end){
-                $end = null;
-            }
-
-            if(!EventlevelQuery::create()->findOneById($level)){
-                return new Response(400, ['error' => 'wrong levelid', 'list' => EventlevelQuery::create()->find()->toArray()]);
-            }
-
-            $e = EventinfoQuery::create()->filterByName($name)->filterByStart($start)->filterByEnd($end)->findOneByLevel($level);
-            if($e){
-                return new Response(400, ['error' => 'already exists']);
-            }
-
-            $event = new Eventinfo();
-            $event->setName($name)->setStart($start)->setEnd($end)->setLevel($level)->save();
-            return new Response(200, ['success']);
-        }catch(Exception $e){
-            return new Response(500, ['error' => $e->getMessage()]);
-        }
-    }
-
-    public function infoFind($params){
-        try{
-            $colums = array_keys(EventinfoTableMap::getTableMap()->getColumns());
-            $by = strtoupper($params['by']) ?? null;
-            $value = $params['value'] ?? null;
-            if($by && in_array($by, $colums) && $value){ 
-                $e = EventinfoQuery::create()->select($colums)->findOneBy($by, $value);
-                if($e){
-                    return new Response(200, ['info' => $e]);
-                }
-                return new Response(400, ['error' => 'not found']);
-            }elseif($by || $value){
-                return new Response(400, ['error' => 'wrong by or value, can be lower or upper case', 'by' => $colums]);
-            }
-            return new Response(200, ['info' => EventinfoQuery::create()->find()->toArray()]);
-        }catch(Exception $e){
-            return new Response(500, ['error' => $e->getMessage()]);
-        }
-    }
-
-    public function infoDelete($params){
-        try{
-
-            $id = $params['id'] ?? null;
-
-            if(!$id){
-                return new Response(400, ['error' => 'id required']);
-            }
-
-            $e = EventinfoQuery::create()->findOneById($id);
-
-            if(!$e){
-                return new Response(400, ['error' => 'not found']);
-            }
-            
-            $e->delete();
-            return new Response(200, ['deleted']);
-
-        }catch(Exception $e){
-            return new Response(500, ['error' => $e->getMessage()]);
-        }
-        
-    }
-
-    public function eventAdd($params, $r){
+    public function add($params, $r){
         function check($a, $s){
             if(!$a['fio'] || !Validate::fio($a['fio']) || !$a[$s]){
                 return false;
@@ -159,15 +84,9 @@ class ChampionshipController{
                 $teacherinfo = TeacherQuery::create()->findOneById($_SESSION['id']);
             }
 
-            $directory = dirname(__DIR__,3).'/files/events/';
             $teacherFolder = $teacherinfo->getFio();
 
-            $zipFileName = $eventinfo->getName().'_'.
-            $eventinfo->getStart('Y-m-d').'_'.
-            $eventinfo->getEnd('Y-m-d').'_'.
-            EventlevelQuery::create()->findOneById($eventinfo->getLevel())->getName().'.zip';
-
-            $zipPath = $directory . $zipFileName;
+            $zipPath = $eventinfo->getZip();
             $zip = new ZipArchive();
             //return new Response(400, $zipPath);
             if ($zip->open($zipPath, ZipArchive::CREATE) === TRUE) {
@@ -196,16 +115,14 @@ class ChampionshipController{
                             filterByTeacherid($teacherinfo->getId())->
                             filterByTeacherroleid($teacherrole)->
                             filterByStudentid($s)->
-                            filterByAwardid($student['award'])->
-                            findOneByDocument($zipPath)){
+                            findOneByAwardid($student['award'])){
 
                             $event = new Event();
                             $event->setInfoid($info)->
                             setTeacherid($teacherinfo->getId())->
                             setTeacherroleid($teacherrole)->
                             setStudentid($s)->
-                            setAwardid($student['award'])->
-                            setDocument($zipPath)->save();
+                            setAwardid($student['award'])->save();
                         }
                         
                     }
@@ -226,7 +143,7 @@ class ChampionshipController{
         }
     }
 
-    public function showList($params){
+    public function _name_($params){
         try{
             $colums = ['id', 'name'];
             $by = strtolower($params['by']) ?? null;

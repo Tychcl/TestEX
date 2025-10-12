@@ -40,14 +40,6 @@ async function loadPage(route) {
     }
 }
 
-async function infoadd(){
-    await loadPage('/web/event/info/add')
-}
-
-async function eventadd(){
-    await loadPage('/web/event/add')
-}
-
 function SaveForm(form, nameBackup){
     const formData = new FormData(form);
     const data = Object.fromEntries(formData);
@@ -102,4 +94,65 @@ function clearError(input) {
         errorElement.remove();
     }
     input.classList.remove('invalid');
+}
+
+async function requestAPI(api_url, form, Button, method = 'POST'){
+    try {
+        const formData = new FormData(form);
+        const response = await fetch(api_url, {
+            method: method,
+            credentials: 'same-origin',
+            body: formData
+        });
+        if(!response.ok){
+            r = await response.json();
+            console.log(r['error']);
+            showError(Button, r['error'])
+            return false;
+        }else{
+            showError(Button, "Успешно");
+            return true;
+        }
+    }catch (error) {
+        console.log(error);
+        return false;
+    }
+}
+
+function updateButtonText(input) {
+    const button = input.parentNode.querySelector('button');
+    if (input.files.length > 0) {
+        button.textContent = input.files[0].name;
+    } else {
+        button.textContent = 'Выберите файл';
+    }
+}
+
+//кнопки
+
+async function infoadd(){
+    await loadPage('/web/event/info/add');
+}
+
+async function eventadd(){
+    await loadPage('/web/event/add');
+}
+
+async function catadd(){
+    await loadPage('/web/category/add');
+}
+
+async function signout(params) {
+    try{
+        const response = await fetch('/api/user/signout', {
+            method: 'GET'
+        });
+        if(response.ok){
+            window.location.reload(true);
+        }else{
+            console.log(r['error']);
+        }
+    }catch (error) {
+        console.log(error);
+    }
 }

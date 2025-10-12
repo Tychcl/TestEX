@@ -12,7 +12,12 @@ use Models\Map\TeacherTableMap;
 use Models\Userrole;
 
 class UserController{
-    
+    public static $base = '/api/user/';
+    public static $method = [
+        'signin' => 'POST', 'signup' => 'POST',
+        'signout' => 'GET', 'passwordChange' => 'PUT',
+        'delete' => 'DELETE', 'find' => 'GET'];
+
     public function signin($params){
         $login = strtolower($params['login']) ?? null;
         $pwd = $params['password'] ?? null;
@@ -86,7 +91,28 @@ class UserController{
         }
     }
 
-    public function pwdChange($params){
+    public function signout(){
+        try{
+            session_destroy();
+            $_SESSION = array();
+            $r = new Response(200, ['success']);
+            $r->setCook(
+                'jwt', 
+                '', 
+                time(), // 0 часов
+                '/', 
+                '', 
+                false, // secure - только HTTPS если пустить сайт в работу нужно true
+                true, // httponly - недоступно через JavaScript
+                'Strict' // samesite
+            );
+            return $r;
+        }catch(Exception $e){
+            return new Response(500, ['error' => $e->getMessage()]);
+        }
+    }
+
+    public function passwordChange($params){
         try{
 
             $password = $params['password'] ?? null;
@@ -120,28 +146,7 @@ class UserController{
         }
     }
 
-    public function signout(){
-        try{
-            session_destroy();
-            $_SESSION = array();
-            $r = new Response(200, ['success']);
-            $r->setCook(
-                'jwt', 
-                '', 
-                time(), // 0 часов
-                '/', 
-                '', 
-                false, // secure - только HTTPS если пустить сайт в работу нужно true
-                true, // httponly - недоступно через JavaScript
-                'Strict' // samesite
-            );
-            return $r;
-        }catch(Exception $e){
-            return new Response(500, ['error' => $e->getMessage()]);
-        }
-    }
-
-    public function userDelete($params){
+    public function delete($params){
         try{
 
             $id = $params['id'] ?? null;
@@ -168,7 +173,7 @@ class UserController{
         
     }
 
-    public function userFind($params){
+    public function find($params){
         try{
             $colums = TeacherTableMap::getTableMap()->getColumns();
             unset($colums["PASSWORD"]);

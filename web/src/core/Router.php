@@ -8,12 +8,17 @@ use Exception;
 class Router {
     private $routes = [];
 
-    public function add($r) {
-        $this->routes[] = [
-            'method' => strtoupper($r['method']),
-            'path' => strtolower($r['path']),
-            'handler' => $r['handler']
-        ];
+    public function addController($controller) {
+        $methods = get_class_methods($controller);
+        $path = $controller::$base;
+        foreach($methods as $m){
+            $this->routes[] = [
+                'method' => strtoupper($controller::$method[$m]),
+                'path' => strtolower($path.preg_replace('/_([^_]+)_/', '{$1}', $m)),
+                'handler' => $controller.'@'.$m
+            ];
+        }
+        
     }
 
     public function filterParams($params){

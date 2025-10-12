@@ -1,7 +1,7 @@
 <div class="form-container">
     <div class="form-header">
         <h1 class="form-title">Учет категорий</h1>
-        <p class="form-subtitle">Введите данные категории, ФИО преподавателя может быть пустым</p>
+        <p class="form-subtitle">Введите данные категории, ФИО преподавателя может быть пустым<br>Если ФИО пустое, то учет присвоется вам</p>
     </div>
     <form id="form" class="form" method="POST">
         <div class="form-group">
@@ -46,7 +46,7 @@
             <input 
                 id="post"
                 name="post" 
-                type="number" 
+                type="text" 
                 class="form-input"
                 required>
         </div>
@@ -55,20 +55,27 @@
             <input 
                 id="place"
                 name="place" 
-                type="number" 
+                type="text" 
                 class="form-input"
                 required>
         </div>
-        <div class="form-group">
-            <label for="categoryid" class="form-label">Присвоенная категория</label>
-            <select
-                name="categoryid"
-                id="categoryid" 
-                class="form-input"
-                required>
-                <option value="">Выберите</option>
-                <?= $categorys ?>
-            </select>
+        <div class="form-group-mult">
+            <div class="form-group.mult">
+                <label for="categoryid" class="form-label">Присвоенная категория</label>
+                <select
+                    name="categoryid"
+                    id="categoryid" 
+                    class="form-input"
+                    required>
+                    <option value="">Выберите</option>
+                    <?= $categorys ?>
+                </select>
+            </div>
+            <div class="file-input-wrapper">
+                <label class="form-label">Документ</label>
+                <button class="file-input-button">Выберите файл</button>
+                <input type="file" name="document" id="file" class="form-input" onchange="updateButtonText(this)" required accept=".pdf,.doc,.docx">
+            </div>
         </div>
         <button type="submit" class="form-button">
             <span class="button-text">Отправить</span>

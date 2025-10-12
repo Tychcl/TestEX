@@ -39,7 +39,6 @@
     <column name="teacherRoleId" phpName="Teacherroleid" type="INTEGER" description="Роль участия" required="true"/>
     <column name="studentId" phpName="Studentid" type="INTEGER" description="Студент" required="true"/>
     <column name="awardId" phpName="Awardid" type="INTEGER" description="Награда" required="true"/>
-    <column name="document" phpName="Document" type="LONGVARCHAR" description="Документ" required="true"/>
     <foreign-key foreignTable="eventInfo" name="event_ibfk_1" onDelete="RESTRICT" onUpdate="CASCADE">
       <reference local="infoId" foreign="id"/>
     </foreign-key>
@@ -87,6 +86,7 @@
     <column name="start" phpName="Start" type="DATE" description="Дата начала " required="true"/>
     <column name="end" phpName="End" type="DATE" description="Дата окончания"/>
     <column name="level" phpName="Level" type="INTEGER" description="Уровень проведения"/>
+    <column name="zip" phpName="Zip" type="LONGVARCHAR" required="true"/>
     <foreign-key foreignTable="eventLevel" name="eventinfo_ibfk_1" onDelete="SET NULL" onUpdate="CASCADE">
       <reference local="level" foreign="id"/>
     </foreign-key>

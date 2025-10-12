@@ -31,32 +31,9 @@ function init() {
         } else {
             clearError(level);
         }
-
-        try {
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-            data['start'] = time_start.getTime();
-            data['end'] = time_end.getTime();
-            const response = await fetch('/api/event/info/add', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'same-origin',
-                body: JSON.stringify(data)
-            });
-            if(!response.ok){
-                r = await response.json();
-                console.log(r);
-                showError(Button, r['error'])
-                return;
-            }else{
-                localStorage.removeItem(nameBackup);
-                showError(Button, "Чемпионат успешно добавлен")
-            }
-        }catch (error) {
-            alert('Ошибка при отправке\nПодробнее в консоли');
-            console.log(error);
+        
+        if(await requestAPI('/api/event/info/add', Form, Button)){
+            localStorage.removeItem(nameBackup);
         }
 
     });

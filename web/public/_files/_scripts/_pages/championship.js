@@ -70,15 +70,6 @@ function updateStudentIndexes() {
     studentCount = blocks.length;
 }
 
-function updateButtonText(input) {
-    const button = input.parentNode.querySelector('button');
-    if (input.files.length > 0) {
-        button.textContent = input.files[0].name;
-    } else {
-        button.textContent = 'Выберите файл';
-    }
-}
-
 async function getawards() {
     try{
         const response = await fetch('/api/event/award', {
@@ -131,28 +122,8 @@ async function init() {
             return;
         }
 
-        try {
-            const formData = new FormData(Form);
-            const data = Object.fromEntries(formData.entries());
-            const response = await fetch('/api/event/add', {
-                method: 'POST',
-                credentials: 'same-origin',
-                body: formData
-            });
-            //console.log(await response.json());
-            if(!response.ok){
-                r = await response.json();
-                console.log(r);
-                showError(Button, r['error'])
-                return;
-            }
-            else{
-                localStorage.removeItem(nameBackup);
-                showError(Button, "успешно")
-            }
-        }catch (error) {
-            alert('Ошибка при отправке\nПодробнее в консоли');
-            console.log(error);
+        if(await requestAPI('/api/event/add', Form, Button)){
+            localStorage.removeItem(nameBackup);
         }
 
     });

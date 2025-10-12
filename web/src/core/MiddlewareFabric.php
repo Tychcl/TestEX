@@ -19,8 +19,9 @@ class MiddlewareFabric
         $dispatcher->add(new LoggingMiddleware());
 
         // Место для мидлваров веба
-
-        $dispatcher->add(new AuthMiddleware([], []));
+        $ex = []; //массив исключений для проверки аунтефикации
+        $admin = ['/web/event/info/add'];
+        $dispatcher->add(new AuthMiddleware($ex, $admin));
         $dispatcher->add(new RouterMiddleware($router));
         return $dispatcher;
     }

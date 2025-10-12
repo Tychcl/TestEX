@@ -68,7 +68,6 @@ function check(IdExceptions = []){
     const inputs = document.querySelectorAll('.form-input');
     value = true;
     inputs.forEach((e) => {
-        console.log(e.id);
         if(!IdExceptions.includes(e.id) && !e.value.trim()){
             value = false;
             showError(e, 'Неправильное заполнение');

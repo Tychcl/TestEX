@@ -32,21 +32,21 @@
                             <p>Добавить</p>
                         </button>
                         <button class="nav-link" onclick="eventadd()">
-                            <img src="_files/_images/_sidebar/championship.svg"/>                         
+                            <img src="_files/_images/_sidebar/championship.svg" alt="championship"/>                         
                             <p>Учет</p>
                         </button>
                     </div>
                     <div class="folder">
                         <p>Категории</p>
                         <button class="nav-link" onclick="catadd()">
-                            <img src="_files/_images/_sidebar/file.svg" alt="plus"/>                         
+                            <img src="_files/_images/_sidebar/file.svg" alt="file"/>                         
                             <p>Учет</p>
                         </button>
                     </div>
                     <div class="folder">
                         <p>Пользователь</p>
                         <button class="nav-link" onclick="signout()">
-                            <img src="_files/_images/_sidebar/file.svg" alt="plus"/>                         
+                            <img src="_files/_images/_sidebar/logout.svg" alt="logout"/>                         
                             <p>Выйти</p>
                         </button>
                     </div>

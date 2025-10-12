@@ -6,3 +6,5 @@ web/propel/generated/*
 /db/data/*
 !/db/data/.gitkeep
 /web/files/events/*.zip
+/web/files/cats/*.zip
+/web/files/skills/*.zip

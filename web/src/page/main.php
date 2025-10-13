@@ -25,7 +25,8 @@
         <aside class="sidebar">
             <div class="sidebar-content">
                 <nav class="main-nav">
-                    <div class="folder">
+                    <?= $nav ?>
+                    <!--<div class="folder">
                         <p>Чемпионат</p>
                         <button class="nav-link" onclick="infoadd()">
                             <img src="_files/_images/_sidebar/plus.svg" alt="plus"/>                         
@@ -37,8 +38,15 @@
                         </button>
                     </div>
                     <div class="folder">
-                        <p>Категории</p>
+                        <p>Категория</p>
                         <button class="nav-link" onclick="catadd()">
+                            <img src="_files/_images/_sidebar/file.svg" alt="file"/>                         
+                            <p>Учет</p>
+                        </button>
+                    </div>
+                    <div class="folder">
+                        <p>Квалификация</p>
+                        <button class="nav-link" onclick="skilladd()">
                             <img src="_files/_images/_sidebar/file.svg" alt="file"/>                         
                             <p>Учет</p>
                         </button>
@@ -49,7 +57,7 @@
                             <img src="_files/_images/_sidebar/logout.svg" alt="logout"/>                         
                             <p>Выйти</p>
                         </button>
-                    </div>
+                    </div>-->
                 </nav>
             </div>
         </aside>

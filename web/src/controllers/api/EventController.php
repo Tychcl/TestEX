@@ -19,7 +19,7 @@ use ZipArchive;
 
 class EventController{
     public static $base = '/api/event/';
-    public static $method = ['add' => 'POST', 'delete' => 'DELETE','find' => 'GET'];
+    public static $method = ['add' => 'POST', 'delete' => 'DELETE','_name_' => 'GET'];
 
     private $models = [
                 'award' => 'Models\EventawarddegreeQuery',

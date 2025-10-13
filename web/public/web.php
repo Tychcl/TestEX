@@ -11,6 +11,7 @@ $router = new Router();
 $router->addController('Web\InfoController');
 $router->addController('Web\EventController');
 $router->addController('Web\CategoryController');
+$router->addController('Web\SkillController');
 
 $dispatcher = MiddlewareFabric::createForWeb($router);
 

@@ -30,6 +30,8 @@ main {
     position: sticky;
     top: 0px;
     align-self: flex-start;
+    max-width: 160px;
+    padding-right: 30px;
 }
 
 .sidebar-content {
@@ -216,15 +218,17 @@ fieldset p{
     margin-bottom: 15px;
 }
 
-.form-group.mult {
+.form-group {
     flex: 1;
 }
 
 .form-group-mult {
     display: flex;
     gap: 10px;
-    align-items: center;
-    margin-bottom: 20px;
+}
+
+.form-group-mult .form-group, .form-group-mult .file-input-wrapper {
+    flex: 1;
 }
 
 .form-label{

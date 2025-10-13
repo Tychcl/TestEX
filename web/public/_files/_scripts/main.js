@@ -141,6 +141,10 @@ async function catadd(){
     await loadPage('/web/category/add');
 }
 
+async function skilladd(){
+    await loadPage('/web/skill/add');
+}
+
 async function signout(params) {
     try{
         const response = await fetch('/api/user/signout', {

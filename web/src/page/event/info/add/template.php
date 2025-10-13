@@ -14,24 +14,26 @@
                 placeholder="Наименование"
                 required>
         </div>
-        <div class="form-group">
-            <label for="start" class="form-label">Начало</label>
-            <input 
-                name="start"
-                id="start" 
-                type="date" 
-                class="form-input"
-                placeholder="Дата начала"
-                required>
-        </div>
-        <div class="form-group">
-            <label for="end" class="form-label">Конец</label>
-            <input 
-                name="end"
-                id="end" 
-                type="date" 
-                class="form-input"
-                placeholder="Дата окончания">
+        <div class="form-group-mult">
+            <div class="form-group">
+                <label for="start" class="form-label">Начало</label>
+                <input 
+                    name="start"
+                    id="start" 
+                    type="date" 
+                    class="form-input"
+                    placeholder="Дата начала"
+                    required>
+            </div>
+            <div class="form-group">
+                <label for="end" class="form-label">Конец</label>
+                <input 
+                    name="end"
+                    id="end" 
+                    type="date" 
+                    class="form-input"
+                    placeholder="Дата окончания">
+            </div>
         </div>
         <div class="form-group">
             <label for="level" class="form-label">Уровень проведения</label>

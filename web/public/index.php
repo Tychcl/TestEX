@@ -11,8 +11,30 @@ use Api\TestController;
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 require_once dirname(__DIR__) . '/propel/generated/conf/config.php';
 
-$user = [
-
+$navar = [
+    'Чемпионат' => [
+        ['func' => 'infoadd()',
+        'svg' => 'plus',
+        'name' => 'Добавить'],
+        ['func' => 'eventadd()',
+        'svg' => 'championship',
+        'name' => 'Учет'],
+    ],
+    'Категория' => [
+        ['func' => 'catadd()',
+        'svg' => 'file',
+        'name' => 'Учет'],
+    ],
+    'Квалификация' => [
+        ['func' => 'skilladd()',
+        'svg' => 'file',
+        'name' => 'Учет'],
+    ],
+    'Пользователь' => [
+        ['func' => 'signout()',
+        'svg' => 'logout',
+        'name' => 'Выйти'],
+    ]
 ];
 
 $admin = [
@@ -32,5 +54,17 @@ if(empty($_SESSION)){
     echo Render::renderTemplate('user/signin');
     return;
 }
-echo Render::renderTemplate(null,[], 'main.php');
+
+//if($_SESSION['roleid'] == 1){
+//    $navar = $admin;
+//}
+$nav = '';
+foreach(array_keys($navar) as $name){
+    $buttons = '';
+    foreach($navar[$name] as $button){
+        $buttons = $buttons.Render::renderTemplate('sidebar', $button, '/button.php');
+    }
+    $nav = $nav.Render::renderTemplate('sidebar', ['name' => $name, 'buttons' => $buttons], '/folder.php');
+}
+echo Render::renderTemplate(null,['nav' => $nav], 'main.php');
 ?>

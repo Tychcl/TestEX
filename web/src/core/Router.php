@@ -87,8 +87,8 @@ class Router {
             'request' =>[ 
             'uri' => $uri,
             'method' => $method],
-            'path' => $path
-            //'routes' => array_column($this->routes, 'path')
+            'path' => $path,
+            'routes' => array_column($this->routes, 'path')
         ]);
     }
     

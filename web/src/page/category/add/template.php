@@ -60,7 +60,7 @@
                 required>
         </div>
         <div class="form-group-mult">
-            <div class="form-group.mult">
+            <div class="form-group">
                 <label for="categoryid" class="form-label">Присвоенная категория</label>
                 <select
                     name="categoryid"

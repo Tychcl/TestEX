@@ -13,13 +13,13 @@ class Render{
         return $str;
     }
 
-    public static function renderTemplate($templatedir = null, $data = [], $name = '/template.php') {
+    public static function renderTemplate($templatedir = null, $data = [], $fileName = '/template.php') {
         extract($data);
         ob_start();
         if(!$templatedir){
-            $name = trim($name, '/');
+            $fileName = trim($fileName, '/');
         }
-        include dirname(__DIR__).'/page/'.trim($templatedir, '/').$name;
+        include dirname(__DIR__).'/page/'.trim($templatedir, '/').$fileName;
         return ob_get_clean();
     }
 

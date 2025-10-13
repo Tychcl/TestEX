@@ -125,7 +125,6 @@
     <column name="hours" phpName="Hours" type="INTEGER" description="Объем в часах" required="true"/>
     <column name="director" phpName="Director" type="VARCHAR" size="65" description="Руководитель" required="true"/>
     <column name="secretary" phpName="Secretary" type="VARCHAR" size="65" description="Секретарь" required="true"/>
-    <column name="docPath" phpName="Docpath" type="LONGVARCHAR" description="Путь до документа" required="true"/>
     <foreign-key foreignTable="teacher" name="skill_ibfk_1" onDelete="RESTRICT" onUpdate="CASCADE">
       <reference local="teacherId" foreign="id"/>
     </foreign-key>

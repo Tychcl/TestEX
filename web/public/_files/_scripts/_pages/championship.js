@@ -22,7 +22,7 @@ function addStudent() {
                 pattern="[А-Я]{1}[a-я]* [А-Я]{1}[a-я]* [А-Я]{1}[a-я]*">
         </div>
         <div class="form-group-mult">
-            <div class="form-group.mult">
+            <div class="form-group">
                 <label for="role" class="form-label">Степень награды</label>
                 <select
                     name="students[${studentCount}][award]"

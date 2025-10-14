@@ -159,3 +159,7 @@ async function signout(params) {
         console.log(error);
     }
 }
+
+async function profile(){
+    await loadPage('/web/user/profile');
+}

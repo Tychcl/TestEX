@@ -32,7 +32,8 @@
                     id="end" 
                     type="date" 
                     class="form-input"
-                    placeholder="Дата окончания">
+                    placeholder="Дата окончания"
+                    required>
             </div>
         </div>
         <div class="form-group">

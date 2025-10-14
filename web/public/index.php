@@ -31,6 +31,9 @@ $navar = [
         'name' => 'Учет'],
     ],
     'Пользователь' => [
+        ['func' => 'profile()',
+        'svg' => 'logout',
+        'name' => 'Профиль'],
         ['func' => 'signout()',
         'svg' => 'logout',
         'name' => 'Выйти'],

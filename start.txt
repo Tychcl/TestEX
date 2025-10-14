@@ -16,12 +16,12 @@ Your lock file does not contain a compatible set of packages. Please run compose
 скачать composer, если выдает ошибку в переменных сред сделать компосер выше php
 создать .env с данными среды из web в docker-compose
 composer install
+docker-compose up -d --build
 в web\propel\generated\conf закинуть propel-config-docker.php и назвать config.php
 composer run-script propel:reverse
 в web\propel\schema\schema.xml самом первом теге Database написать namespace="Models"
 composer run-script propel:build
 замень 
-docker-compose up -d --build
 ну по идее и можно запускать
 
 Примечания

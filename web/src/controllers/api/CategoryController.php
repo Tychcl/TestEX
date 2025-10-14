@@ -64,15 +64,16 @@ class CategoryController{
                 return new Response(400, ['error' => 'already exist']);
             }
 
-            $c = new Category();
-            $c->setTeacherId($teacher)->
+            $n = new Category();
+            $n->setTeacherId($teacher)->
             setOrgan($organ)->
             setDate($date)->
             setNum($num)->
             setPost($post)->
             setPlace($place)->
-            setCategoryid($category)->save();
-            
+            setCategoryid($category)->
+            save();
+
             $fio = TeacherQuery::create()->findOneById($teacher)->getFio();
             $directory = dirname(__DIR__,3).'/files/cats/';
             $zipPath = $directory.$fio.'.zip';
@@ -95,15 +96,7 @@ class CategoryController{
             }
             return new Response(200, ['successfully' => 'Category registered']);
         }catch(Exception $e){
-            $previous = $e->getPrevious();
-            if ($previous instanceof PDOException) {
-                $ere = "SQL Error Code: " . $previous->getCode() . "\n"
-                . "SQL Error Message: " . $previous->getMessage() . "\n"
-                . "SQL State: " . $previous->errorInfo[0] . "\n"
-                . "Driver Code: " . $previous->errorInfo[1] . "\n"
-                . "Driver Message: " . $previous->errorInfo[2] . "\n";
-            }
-            return new Response(500, $e);
+            return new Response(500, $e->getMessage());
         }
     }
 }

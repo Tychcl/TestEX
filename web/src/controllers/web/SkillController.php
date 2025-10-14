@@ -15,10 +15,9 @@ class SkillController{
 
     public function add($params){
         try{
-            $categorys = CategorylistQuery::create()->find()->toArray();
             $teachers = TeacherQuery::create()->select(['id', 'fio'])->find()->toArray();
-            $html = Render::renderTemplate('skill/add');
-            return new Response(200, ['html'=>$html, 'js' => '_files/_scripts/_pages/category.js']);
+            $html = Render::renderTemplate('skill/add',['teachers'=>Render::create_options($teachers)]);
+            return new Response(200, ['html'=>$html, 'js' => '_files/_scripts/_pages/skill.js']);
         }catch(Exception $e){
             return new Response(500, ['error'=>$e->getMessage()]);
         }

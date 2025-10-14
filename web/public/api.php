@@ -16,6 +16,8 @@ $router->addController('Api\InfoController');
 $router->addController('Api\EventController');
 //Категории
 $router->addController('Api\CategoryController');
+//Категории
+$router->addController('Api\SkillController');
 
 $dispatcher = MiddlewareFabric::createForApi($router);
 

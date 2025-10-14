@@ -142,11 +142,12 @@ CREATE DEFINER=`root`@`%` PROCEDURE `UpdateTeacherFlags` (IN `teacher_id` INT)  
     FROM skill 
     WHERE teacherId = teacher_id;
     
-    -- Получаем дату и id последней категории
-    SELECT MAX(date), categoryId INTO last_category_date, current_category_id
+    -- ИСПРАВЛЕНИЕ: Получаем дату и id последней категории (одну запись)
+    SELECT date, categoryId INTO last_category_date, current_category_id
     FROM category 
     WHERE teacherId = teacher_id
-    GROUP BY categoryId;
+    ORDER BY date DESC
+    LIMIT 1;
     
     -- Обновляем флаги
     UPDATE teacher SET

@@ -1,6 +1,6 @@
 <?php
 namespace Api;
-session_start();
+
 use Classes\Validate;
 use Core\Response;
 use EmptyIterator;
@@ -14,14 +14,13 @@ use Propel\Runtime\Exception\PropelException;
 use Propel\Runtime\Propel;
 use ZipArchive;
 
-session_start();
 class CategoryController{
     public static $base = '/api/category/';
     public static $method = ['add' => 'POST', 'delete' => 'DELETE','find' => 'GET'];
 
     public function add($params, $r){
         try{
-            $teacher = $params['teacherid'] ?? $_SESSION['id'];
+            $teacher = $params['teacherid'] ?? null;
             $organ = $params['organ'] ?? null;
             $date = $params['date'] ?? null;
             $num = $params['num'] ?? null;
@@ -32,6 +31,7 @@ class CategoryController{
             //return new Response(400, ['error' => $params]);
 
             if(empty($teacher)){
+                session_start();
                 $teacher = $_SESSION['id'];
             }
 

@@ -1,6 +1,6 @@
 <div class="form-container">
     <div class="form-header">
-        <h1 class="form-title">Учет категорий</h1>
+        <h1 class="form-title">Учет квалификаций</h1>
         <p class="form-subtitle">Введите данные категории, ФИО преподавателя может быть пустым<br>Если ФИО пустое, то учет присвоется вам</p>
     </div>
     <form id="form" class="form" method="POST">

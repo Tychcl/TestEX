@@ -11,11 +11,8 @@ use Api\TestController;
 require_once dirname(__DIR__) . '/vendor/autoload.php';
 require_once dirname(__DIR__) . '/propel/generated/conf/config.php';
 
-$navar = [
+$user = [
     'Чемпионат' => [
-        ['func' => 'infoadd()',
-        'svg' => 'plus',
-        'name' => 'Добавить'],
         ['func' => 'eventadd()',
         'svg' => 'championship',
         'name' => 'Учет'],
@@ -32,7 +29,7 @@ $navar = [
     ],
     'Пользователь' => [
         ['func' => 'profile()',
-        'svg' => 'logout',
+        'svg' => 'user',
         'name' => 'Профиль'],
         ['func' => 'signout()',
         'svg' => 'logout',
@@ -41,7 +38,23 @@ $navar = [
 ];
 
 $admin = [
-
+    'Чемпионат' => [
+        ['func' => 'infoadd()',
+        'svg' => 'plus',
+        'name' => 'Добавить']
+    ],
+    'Категория' => [
+    ],
+    'Квалификация' => [
+        ['func' => 'skilladd()',
+        'svg' => 'file',
+        'name' => 'Учет'],
+    ],
+    'Пользователь' => [
+        ['func' => 'useradd()',
+        'svg' => 'useradd',
+        'name' => 'Создать']
+    ]
 ];
 //echo Render::renderTemplate(null,[], 'test.php');
 //
@@ -58,13 +71,16 @@ if(empty($_SESSION)){
     return;
 }
 
-//if($_SESSION['roleid'] == 1){
-//    $navar = $admin;
-//}
+
 $nav = '';
-foreach(array_keys($navar) as $name){
+foreach(array_keys($user) as $name){
     $buttons = '';
-    foreach($navar[$name] as $button){
+    if($_SESSION['roleid'] == 1){
+        $arr = array_merge($user[$name], $admin[$name]);
+    }else{
+        $arr = $user[$name];
+    }
+    foreach($arr as $button){
         $buttons = $buttons.Render::renderTemplate('sidebar', $button, '/button.php');
     }
     $nav = $nav.Render::renderTemplate('sidebar', ['name' => $name, 'buttons' => $buttons], '/folder.php');

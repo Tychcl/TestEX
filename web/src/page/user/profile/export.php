@@ -1,9 +1,9 @@
 <fieldset class="form-fieldset">
     <p>Экспорт файлов</p>
-    <form id="form" class="form" method="POST">
+    <form id="export-form" class="form" method="POST">
         <div class="form-group-mult">
             <div class="form-group">
-                <label for="start" class="form-label">Начало</label>
+                <label for="start" class="form-label">Начало периода</label>
                 <input 
                     name="start"
                     id="start" 
@@ -13,7 +13,7 @@
                     required>
             </div>
             <div class="form-group">
-                <label for="end" class="form-label">Конец</label>
+                <label for="end" class="form-label">Конец периода</label>
                 <input 
                     name="end"
                     id="end" 
@@ -21,6 +21,12 @@
                     class="form-input"
                     placeholder="Дата окончания"
                     required>
+            </div>
+            <div class="form-group" style="align-content: flex-end;">
+                <button type="submit" class="form-button">
+                    <span class="button-text">Экспорт</span>
+                    <span class="button-loader" style="display: none;">⏳</span>
+                </button>
             </div>
         </div>
     </form>

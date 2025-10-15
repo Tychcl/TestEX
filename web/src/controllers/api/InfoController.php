@@ -142,6 +142,5 @@ class InfoController{
         unlink($zipPath);
         exit;
     }
-
 }
 ?>

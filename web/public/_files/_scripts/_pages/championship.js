@@ -124,6 +124,7 @@ async function init() {
 
         if(await requestAPI('/api/event/add', Form, Button)){
             localStorage.removeItem(nameBackup);
+            Form.reset();
         }
 
     });

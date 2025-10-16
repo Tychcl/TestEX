@@ -34,6 +34,7 @@ function init() {
         
         if(await requestAPI('/api/event/info/add', Form, Button)){
             localStorage.removeItem(nameBackup);
+            Form.reset();
         }
 
     });

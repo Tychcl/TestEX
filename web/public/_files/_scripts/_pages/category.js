@@ -22,6 +22,7 @@ function init() {
 
         if(await requestAPI('/api/category/add', Form, Button)){
             localStorage.removeItem(nameBackup);
+            Form.reset();
         }
 
     });

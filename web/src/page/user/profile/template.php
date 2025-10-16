@@ -1,3 +1,4 @@
+<link rel="stylesheet" href="_files/_styles/championship.css">
 <div class="form-container">
     <div class="form-header" style="margin-bottom: 15px;">
         <h1 class="form-title">Профиль <?= $role ?></h1>
@@ -11,11 +12,19 @@
             value="<?= $fio?>"
             disabled>
     </div>
-    <fieldset class="form-fieldset">
-        <p>Квалификация: <?= $skill?></p>
+    <fieldset class="student">
+        <div class="label">
+            <p>Категория: <?= $cat?></p>
+            <img src="_files/_images/_forms/openac.svg" onclick="showhide(this)">
+        </div>
+        <div id="hide" class="content"><?= $files ?? 'Нет файлов'?></div>
     </fieldset>
-    <fieldset class="form-fieldset">
-        <p>Категория: <?= $cat?></p>
+    <fieldset class="student">
+        <div class="label">
+            <p>Квалификация: <?= $skill?></p>
+            <img src="_files/_images/_forms/openac.svg" onclick="showhide(this)">
+        </div>
+        <div id="hide" class="content"><?= $files ?? 'Нет файлов'?></div>
     </fieldset>
     <?= $export?>
 </div>

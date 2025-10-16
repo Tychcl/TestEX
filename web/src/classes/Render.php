@@ -5,6 +5,9 @@ namespace Classes;
 class Render{
 
     public static function create_options($array){
+        if(empty($array)){
+            return '';
+        }
         $keys = array_keys($array[0]);
         $str = '';
         foreach($array as $e){

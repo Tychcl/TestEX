@@ -16,7 +16,7 @@ class EventController{
 
     public function add(){
         try{
-            $infos = EventinfoQuery::create()->find()->toArray();
+            $infos = EventinfoQuery::create()->select(['id', 'name'])->find()->toArray();
             $teachers = TeacherQuery::create()->select(['id', 'fio'])->find()->toArray();
             $roles =  EventroleQuery::create()->find()->toArray();
             $awards =  EventawarddegreeQuery::create()->find()->toArray();

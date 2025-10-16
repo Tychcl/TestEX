@@ -13,7 +13,7 @@ use ZipArchive;
 
 class InfoController{
     public static $base = '/api/event/info/';
-    public static $method = ['add' => 'POST', 'delete' => 'DELETE','find' => 'GET','getZip' => 'GET'];
+    public static $method = ['add' => 'POST', 'delete' => 'DELETE','find' => 'GET','getZip' => 'POST'];
 
     public function add($params){
         try{

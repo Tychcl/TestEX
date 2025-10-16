@@ -46,9 +46,6 @@ $admin = [
     'Категория' => [
     ],
     'Квалификация' => [
-        ['func' => 'skilladd()',
-        'svg' => 'file',
-        'name' => 'Учет'],
     ],
     'Пользователь' => [
         ['func' => 'useradd()',
@@ -76,7 +73,7 @@ $nav = '';
 foreach(array_keys($user) as $name){
     $buttons = '';
     if($_SESSION['roleid'] == 1){
-        $arr = array_merge($user[$name], $admin[$name]);
+        $arr = array_merge($admin[$name], $user[$name]);
     }else{
         $arr = $user[$name];
     }

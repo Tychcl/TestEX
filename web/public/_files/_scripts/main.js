@@ -103,17 +103,19 @@ async function requestAPI(api_url, form, Button, method = 'POST'){
             credentials: 'same-origin',
             body: formData
         });
+        
         if(!response.ok){
-            r = await response.json();
+            const r = await response.json();
             console.log(r['error']);
             showError(Button, r['error'])
             return false;
-        }else{
+        } else {
             showError(Button, "Успешно");
-            return true;
+            return response; 
         }
-    }catch (error) {
+    } catch (error) {
         console.log(error);
+        showError(Button, 'Сетевая ошибка');
         return false;
     }
 }
@@ -145,7 +147,7 @@ async function skilladd(){
     await loadPage('/web/skill/add');
 }
 
-async function signout(params) {
+async function signout() {
     try{
         const response = await fetch('/api/user/signout', {
             method: 'GET'
@@ -162,4 +164,8 @@ async function signout(params) {
 
 async function profile(){
     await loadPage('/web/user/profile');
+}
+
+async function useradd(){
+    await loadPage('/web/user/add');
 }

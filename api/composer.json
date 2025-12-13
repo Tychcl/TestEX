@@ -12,5 +12,24 @@
     "propel/propel": "*"
   },
   "minimum-stability": "beta",
-  "prefer-stable": true
+  "prefer-stable": true,
+  "scripts": {
+    "post-update-cmd": [
+        "@propel:reverse",
+        "@propel:build"
+    ],
+    "schema-update": [
+        "@propel:reverse",
+        "@propel:build",
+        "@propel:diff",
+        "@propel:migrate"
+    ],
+    "propel:reverse": "vendor/bin/propel database:reverse --config-dir=propel/config --output-dir=propel/schema",
+    "propel:build": "vendor/bin/propel model:build --config-dir=propel/config",
+    "propel:diff": "vendor/bin/propel diff --config-dir=propel/config",
+    "propel:migrate": "vendor/bin/propel migrate --config-dir=propel/config",
+    "propel:sql-build": "vendor/bin/propel sql:build --config-dir=propel/config",
+    "propel:sql-insert": "vendor/bin/propel sql:insert --config-dir=propel/config",
+    "propel:status": "vendor/bin/propel migration:status --config-dir=propel/config"
+  }
 }

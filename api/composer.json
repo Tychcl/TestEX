@@ -4,9 +4,9 @@
   "type": "project",
   "autoload": {
       "psr-4": {
-        "Classes":"src/classes/",
-        "Models":"src/classes/models/",
-        "Controllers":"src/controllers/"
+        "Classes\\":"src/classes/",
+        "Models\\":"src/classes/models/",
+        "Controllers\\":"src/controllers/"
     }
   },
   "require": {

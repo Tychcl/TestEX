@@ -12,18 +12,18 @@ class Router {
 
     public function addController($controller) {
         #Получаем атрибут route для пути из контроллера
-        $Reflect = new ReflectionClass($controller::class);
+        $Reflect = new ReflectionClass($controller);
         $Route = $Reflect->getAttributes(Route::class)[0]->newInstance();
         $ConPath = $Route->path;
 
         $methods = get_class_methods($controller);
         foreach($methods as $m){
-            $Reflect = new ReflectionMethod($m);
+            $Reflect = new ReflectionMethod($controller,$m);
             $Route = $Reflect->getAttributes(Route::class)[0]->newInstance();
 
             $this->routes[] = [
                 'method' => strtoupper($Route->method),
-                'path' => strtolower($ConPath + $Route->path),
+                'path' => strtolower($ConPath.$Route->path),
                 'handler' => $controller.'@'.$m
             ];
         }

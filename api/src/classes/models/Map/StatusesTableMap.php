@@ -2,8 +2,8 @@
 
 namespace Models\Map;
 
-use Models\Tasks;
-use Models\TasksQuery;
+use Models\Statuses;
+use Models\StatusesQuery;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\InstancePoolTrait;
@@ -16,7 +16,7 @@ use Propel\Runtime\Map\TableMapTrait;
 
 
 /**
- * This class defines the structure of the 'Tasks' table.
+ * This class defines the structure of the 'Statuses' table.
  *
  *
  *
@@ -25,7 +25,7 @@ use Propel\Runtime\Map\TableMapTrait;
  * ORDER BY clause to know whether it needs to apply SQL to make the ORDER BY case-insensitive
  * (i.e. if it's a text column type).
  */
-class TasksTableMap extends TableMap
+class StatusesTableMap extends TableMap
 {
     use InstancePoolTrait;
     use TableMapTrait;
@@ -33,7 +33,7 @@ class TasksTableMap extends TableMap
     /**
      * The (dot-path) name of this class
      */
-    public const CLASS_NAME = 'Models.Map.TasksTableMap';
+    public const CLASS_NAME = 'Models.Map.StatusesTableMap';
 
     /**
      * The default database name for this class
@@ -43,27 +43,27 @@ class TasksTableMap extends TableMap
     /**
      * The table name for this class
      */
-    public const TABLE_NAME = 'Tasks';
+    public const TABLE_NAME = 'Statuses';
 
     /**
      * The PHP name of this class (PascalCase)
      */
-    public const TABLE_PHP_NAME = 'Tasks';
+    public const TABLE_PHP_NAME = 'Statuses';
 
     /**
      * The related Propel class for this table
      */
-    public const OM_CLASS = '\\Models\\Tasks';
+    public const OM_CLASS = '\\Models\\Statuses';
 
     /**
      * A class that can be returned by this tableMap
      */
-    public const CLASS_DEFAULT = 'Models.Tasks';
+    public const CLASS_DEFAULT = 'Models.Statuses';
 
     /**
      * The total number of columns
      */
-    public const NUM_COLUMNS = 4;
+    public const NUM_COLUMNS = 2;
 
     /**
      * The number of lazy-loaded columns
@@ -73,27 +73,17 @@ class TasksTableMap extends TableMap
     /**
      * The number of columns to hydrate (NUM_COLUMNS - NUM_LAZY_LOAD_COLUMNS)
      */
-    public const NUM_HYDRATE_COLUMNS = 4;
+    public const NUM_HYDRATE_COLUMNS = 2;
 
     /**
      * the column name for the Id field
      */
-    public const COL_ID = 'Tasks.Id';
+    public const COL_ID = 'Statuses.Id';
 
     /**
-     * the column name for the Title field
+     * the column name for the Name field
      */
-    public const COL_TITLE = 'Tasks.Title';
-
-    /**
-     * the column name for the Description field
-     */
-    public const COL_DESCRIPTION = 'Tasks.Description';
-
-    /**
-     * the column name for the Status field
-     */
-    public const COL_STATUS = 'Tasks.Status';
+    public const COL_NAME = 'Statuses.Name';
 
     /**
      * The default string format for model objects of the related table
@@ -109,11 +99,11 @@ class TasksTableMap extends TableMap
      * @var array<string, mixed>
      */
     protected static $fieldNames = [
-        self::TYPE_PHPNAME       => ['Id', 'Title', 'Description', 'Status', ],
-        self::TYPE_CAMELNAME     => ['id', 'title', 'description', 'status', ],
-        self::TYPE_COLNAME       => [TasksTableMap::COL_ID, TasksTableMap::COL_TITLE, TasksTableMap::COL_DESCRIPTION, TasksTableMap::COL_STATUS, ],
-        self::TYPE_FIELDNAME     => ['Id', 'Title', 'Description', 'Status', ],
-        self::TYPE_NUM           => [0, 1, 2, 3, ]
+        self::TYPE_PHPNAME       => ['Id', 'Name', ],
+        self::TYPE_CAMELNAME     => ['id', 'name', ],
+        self::TYPE_COLNAME       => [StatusesTableMap::COL_ID, StatusesTableMap::COL_NAME, ],
+        self::TYPE_FIELDNAME     => ['Id', 'Name', ],
+        self::TYPE_NUM           => [0, 1, ]
     ];
 
     /**
@@ -125,11 +115,11 @@ class TasksTableMap extends TableMap
      * @var array<string, mixed>
      */
     protected static $fieldKeys = [
-        self::TYPE_PHPNAME       => ['Id' => 0, 'Title' => 1, 'Description' => 2, 'Status' => 3, ],
-        self::TYPE_CAMELNAME     => ['id' => 0, 'title' => 1, 'description' => 2, 'status' => 3, ],
-        self::TYPE_COLNAME       => [TasksTableMap::COL_ID => 0, TasksTableMap::COL_TITLE => 1, TasksTableMap::COL_DESCRIPTION => 2, TasksTableMap::COL_STATUS => 3, ],
-        self::TYPE_FIELDNAME     => ['Id' => 0, 'Title' => 1, 'Description' => 2, 'Status' => 3, ],
-        self::TYPE_NUM           => [0, 1, 2, 3, ]
+        self::TYPE_PHPNAME       => ['Id' => 0, 'Name' => 1, ],
+        self::TYPE_CAMELNAME     => ['id' => 0, 'name' => 1, ],
+        self::TYPE_COLNAME       => [StatusesTableMap::COL_ID => 0, StatusesTableMap::COL_NAME => 1, ],
+        self::TYPE_FIELDNAME     => ['Id' => 0, 'Name' => 1, ],
+        self::TYPE_NUM           => [0, 1, ]
     ];
 
     /**
@@ -139,29 +129,17 @@ class TasksTableMap extends TableMap
      */
     protected $normalizedColumnNameMap = [
         'Id' => 'ID',
-        'Tasks.Id' => 'ID',
+        'Statuses.Id' => 'ID',
         'id' => 'ID',
-        'tasks.id' => 'ID',
-        'TasksTableMap::COL_ID' => 'ID',
+        'statuses.id' => 'ID',
+        'StatusesTableMap::COL_ID' => 'ID',
         'COL_ID' => 'ID',
-        'Title' => 'TITLE',
-        'Tasks.Title' => 'TITLE',
-        'title' => 'TITLE',
-        'tasks.title' => 'TITLE',
-        'TasksTableMap::COL_TITLE' => 'TITLE',
-        'COL_TITLE' => 'TITLE',
-        'Description' => 'DESCRIPTION',
-        'Tasks.Description' => 'DESCRIPTION',
-        'description' => 'DESCRIPTION',
-        'tasks.description' => 'DESCRIPTION',
-        'TasksTableMap::COL_DESCRIPTION' => 'DESCRIPTION',
-        'COL_DESCRIPTION' => 'DESCRIPTION',
-        'Status' => 'STATUS',
-        'Tasks.Status' => 'STATUS',
-        'status' => 'STATUS',
-        'tasks.status' => 'STATUS',
-        'TasksTableMap::COL_STATUS' => 'STATUS',
-        'COL_STATUS' => 'STATUS',
+        'Name' => 'NAME',
+        'Statuses.Name' => 'NAME',
+        'name' => 'NAME',
+        'statuses.name' => 'NAME',
+        'StatusesTableMap::COL_NAME' => 'NAME',
+        'COL_NAME' => 'NAME',
     ];
 
     /**
@@ -174,17 +152,15 @@ class TasksTableMap extends TableMap
     public function initialize(): void
     {
         // attributes
-        $this->setName('Tasks');
-        $this->setPhpName('Tasks');
+        $this->setName('Statuses');
+        $this->setPhpName('Statuses');
         $this->setIdentifierQuoting(false);
-        $this->setClassName('\\Models\\Tasks');
+        $this->setClassName('\\Models\\Statuses');
         $this->setPackage('Models');
         $this->setUseIdGenerator(true);
         // columns
-        $this->addPrimaryKey('Id', 'Id', 'INTEGER', true, null, null);
-        $this->addColumn('Title', 'Title', 'LONGVARCHAR', true, null, null);
-        $this->addColumn('Description', 'Description', 'LONGVARCHAR', true, null, null);
-        $this->addForeignKey('Status', 'Status', 'TINYINT', 'Statuses', 'Id', false, null, null);
+        $this->addPrimaryKey('Id', 'Id', 'TINYINT', true, null, null);
+        $this->addColumn('Name', 'Name', 'VARCHAR', true, 10, null);
     }
 
     /**
@@ -194,13 +170,23 @@ class TasksTableMap extends TableMap
      */
     public function buildRelations(): void
     {
-        $this->addRelation('Statuses', '\\Models\\Statuses', RelationMap::MANY_TO_ONE, array (
+        $this->addRelation('Tasks', '\\Models\\Tasks', RelationMap::ONE_TO_MANY, array (
   0 =>
   array (
     0 => ':Status',
     1 => ':Id',
   ),
-), 'SET NULL', 'CASCADE', null, false);
+), 'SET NULL', 'CASCADE', 'Taskss', false);
+    }
+
+    /**
+     * Method to invalidate the instance pool of all tables related to Statuses     * by a foreign key with ON DELETE CASCADE
+     */
+    public static function clearRelatedInstancePool(): void
+    {
+        // Invalidate objects in related instance pools,
+        // since one or more of them may be deleted by ON DELETE CASCADE/SETNULL rule.
+        TasksTableMap::clearInstancePool();
     }
 
     /**
@@ -260,7 +246,7 @@ class TasksTableMap extends TableMap
      */
     public static function getOMClass(bool $withPrefix = true): string
     {
-        return $withPrefix ? TasksTableMap::CLASS_DEFAULT : TasksTableMap::OM_CLASS;
+        return $withPrefix ? StatusesTableMap::CLASS_DEFAULT : StatusesTableMap::OM_CLASS;
     }
 
     /**
@@ -274,22 +260,22 @@ class TasksTableMap extends TableMap
      *
      * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
      *                         rethrown wrapped into a PropelException.
-     * @return array (Tasks object, last column rank)
+     * @return array (Statuses object, last column rank)
      */
     public static function populateObject(array $row, int $offset = 0, string $indexType = TableMap::TYPE_NUM): array
     {
-        $key = TasksTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
-        if (null !== ($obj = TasksTableMap::getInstanceFromPool($key))) {
+        $key = StatusesTableMap::getPrimaryKeyHashFromRow($row, $offset, $indexType);
+        if (null !== ($obj = StatusesTableMap::getInstanceFromPool($key))) {
             // We no longer rehydrate the object, since this can cause data loss.
             // See http://www.propelorm.org/ticket/509
             // $obj->hydrate($row, $offset, true); // rehydrate
-            $col = $offset + TasksTableMap::NUM_HYDRATE_COLUMNS;
+            $col = $offset + StatusesTableMap::NUM_HYDRATE_COLUMNS;
         } else {
-            $cls = TasksTableMap::OM_CLASS;
-            /** @var Tasks $obj */
+            $cls = StatusesTableMap::OM_CLASS;
+            /** @var Statuses $obj */
             $obj = new $cls();
             $col = $obj->hydrate($row, $offset, false, $indexType);
-            TasksTableMap::addInstanceToPool($obj, $key);
+            StatusesTableMap::addInstanceToPool($obj, $key);
         }
 
         return [$obj, $col];
@@ -312,18 +298,18 @@ class TasksTableMap extends TableMap
         $cls = static::getOMClass(false);
         // populate the object(s)
         while ($row = $dataFetcher->fetch()) {
-            $key = TasksTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
-            if (null !== ($obj = TasksTableMap::getInstanceFromPool($key))) {
+            $key = StatusesTableMap::getPrimaryKeyHashFromRow($row, 0, $dataFetcher->getIndexType());
+            if (null !== ($obj = StatusesTableMap::getInstanceFromPool($key))) {
                 // We no longer rehydrate the object, since this can cause data loss.
                 // See http://www.propelorm.org/ticket/509
                 // $obj->hydrate($row, 0, true); // rehydrate
                 $results[] = $obj;
             } else {
-                /** @var Tasks $obj */
+                /** @var Statuses $obj */
                 $obj = new $cls();
                 $obj->hydrate($row);
                 $results[] = $obj;
-                TasksTableMap::addInstanceToPool($obj, $key);
+                StatusesTableMap::addInstanceToPool($obj, $key);
             } // if key exists
         }
 
@@ -345,15 +331,11 @@ class TasksTableMap extends TableMap
     public static function addSelectColumns(Criteria $criteria, ?string $alias = null): void
     {
         if (null === $alias) {
-            $criteria->addSelectColumn(TasksTableMap::COL_ID);
-            $criteria->addSelectColumn(TasksTableMap::COL_TITLE);
-            $criteria->addSelectColumn(TasksTableMap::COL_DESCRIPTION);
-            $criteria->addSelectColumn(TasksTableMap::COL_STATUS);
+            $criteria->addSelectColumn(StatusesTableMap::COL_ID);
+            $criteria->addSelectColumn(StatusesTableMap::COL_NAME);
         } else {
             $criteria->addSelectColumn($alias . '.Id');
-            $criteria->addSelectColumn($alias . '.Title');
-            $criteria->addSelectColumn($alias . '.Description');
-            $criteria->addSelectColumn($alias . '.Status');
+            $criteria->addSelectColumn($alias . '.Name');
         }
     }
 
@@ -372,15 +354,11 @@ class TasksTableMap extends TableMap
     public static function removeSelectColumns(Criteria $criteria, ?string $alias = null): void
     {
         if (null === $alias) {
-            $criteria->removeSelectColumn(TasksTableMap::COL_ID);
-            $criteria->removeSelectColumn(TasksTableMap::COL_TITLE);
-            $criteria->removeSelectColumn(TasksTableMap::COL_DESCRIPTION);
-            $criteria->removeSelectColumn(TasksTableMap::COL_STATUS);
+            $criteria->removeSelectColumn(StatusesTableMap::COL_ID);
+            $criteria->removeSelectColumn(StatusesTableMap::COL_NAME);
         } else {
             $criteria->removeSelectColumn($alias . '.Id');
-            $criteria->removeSelectColumn($alias . '.Title');
-            $criteria->removeSelectColumn($alias . '.Description');
-            $criteria->removeSelectColumn($alias . '.Status');
+            $criteria->removeSelectColumn($alias . '.Name');
         }
     }
 
@@ -393,13 +371,13 @@ class TasksTableMap extends TableMap
      */
     public static function getTableMap(): TableMap
     {
-        return Propel::getServiceContainer()->getDatabaseMap(TasksTableMap::DATABASE_NAME)->getTable(TasksTableMap::TABLE_NAME);
+        return Propel::getServiceContainer()->getDatabaseMap(StatusesTableMap::DATABASE_NAME)->getTable(StatusesTableMap::TABLE_NAME);
     }
 
     /**
-     * Performs a DELETE on the database, given a Tasks or Criteria object OR a primary key value.
+     * Performs a DELETE on the database, given a Statuses or Criteria object OR a primary key value.
      *
-     * @param mixed $values Criteria or Tasks object or primary key or array of primary keys
+     * @param mixed $values Criteria or Statuses object or primary key or array of primary keys
      *              which is used to create the DELETE statement
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).  This includes CASCADE-related rows
@@ -410,27 +388,27 @@ class TasksTableMap extends TableMap
      public static function doDelete($values, ?ConnectionInterface $con = null): int
      {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(TasksTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(StatusesTableMap::DATABASE_NAME);
         }
 
         if ($values instanceof Criteria) {
             // rename for clarity
             $criteria = $values;
-        } elseif ($values instanceof \Models\Tasks) { // it's a model object
+        } elseif ($values instanceof \Models\Statuses) { // it's a model object
             // create criteria based on pk values
             $criteria = $values->buildPkeyCriteria();
         } else { // it's a primary key, or an array of pks
-            $criteria = new Criteria(TasksTableMap::DATABASE_NAME);
-            $criteria->add(TasksTableMap::COL_ID, (array) $values, Criteria::IN);
+            $criteria = new Criteria(StatusesTableMap::DATABASE_NAME);
+            $criteria->add(StatusesTableMap::COL_ID, (array) $values, Criteria::IN);
         }
 
-        $query = TasksQuery::create()->mergeWith($criteria);
+        $query = StatusesQuery::create()->mergeWith($criteria);
 
         if ($values instanceof Criteria) {
-            TasksTableMap::clearInstancePool();
+            StatusesTableMap::clearInstancePool();
         } elseif (!is_object($values)) { // it's a primary key, or an array of pks
             foreach ((array) $values as $singleval) {
-                TasksTableMap::removeInstanceFromPool($singleval);
+                StatusesTableMap::removeInstanceFromPool($singleval);
             }
         }
 
@@ -438,20 +416,20 @@ class TasksTableMap extends TableMap
     }
 
     /**
-     * Deletes all rows from the Tasks table.
+     * Deletes all rows from the Statuses table.
      *
      * @param ConnectionInterface $con the connection to use
      * @return int The number of affected rows (if supported by underlying database driver).
      */
     public static function doDeleteAll(?ConnectionInterface $con = null): int
     {
-        return TasksQuery::create()->doDeleteAll($con);
+        return StatusesQuery::create()->doDeleteAll($con);
     }
 
     /**
-     * Performs an INSERT on the database, given a Tasks or Criteria object.
+     * Performs an INSERT on the database, given a Statuses or Criteria object.
      *
-     * @param mixed $criteria Criteria or Tasks object containing data that is used to create the INSERT statement.
+     * @param mixed $criteria Criteria or Statuses object containing data that is used to create the INSERT statement.
      * @param ConnectionInterface $con the ConnectionInterface connection to use
      * @return mixed The new primary key.
      * @throws \Propel\Runtime\Exception\PropelException Any exceptions caught during processing will be
@@ -460,22 +438,22 @@ class TasksTableMap extends TableMap
     public static function doInsert($criteria, ?ConnectionInterface $con = null)
     {
         if (null === $con) {
-            $con = Propel::getServiceContainer()->getWriteConnection(TasksTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(StatusesTableMap::DATABASE_NAME);
         }
 
         if ($criteria instanceof Criteria) {
             $criteria = clone $criteria; // rename for clarity
         } else {
-            $criteria = $criteria->buildCriteria(); // build Criteria from Tasks object
+            $criteria = $criteria->buildCriteria(); // build Criteria from Statuses object
         }
 
-        if ($criteria->containsKey(TasksTableMap::COL_ID) && $criteria->keyContainsValue(TasksTableMap::COL_ID) ) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key ('.TasksTableMap::COL_ID.')');
+        if ($criteria->containsKey(StatusesTableMap::COL_ID) && $criteria->keyContainsValue(StatusesTableMap::COL_ID) ) {
+            throw new PropelException('Cannot insert a value for auto-increment primary key ('.StatusesTableMap::COL_ID.')');
         }
 
 
         // Set the correct dbName
-        $query = TasksQuery::create()->mergeWith($criteria);
+        $query = StatusesQuery::create()->mergeWith($criteria);
 
         // use transaction because $criteria could contain info
         // for more than one table (I guess, conceivably)

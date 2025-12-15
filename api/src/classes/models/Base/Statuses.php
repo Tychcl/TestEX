@@ -6,13 +6,16 @@ use \Exception;
 use \PDO;
 use Models\Statuses as ChildStatuses;
 use Models\StatusesQuery as ChildStatusesQuery;
+use Models\Tasks as ChildTasks;
 use Models\TasksQuery as ChildTasksQuery;
+use Models\Map\StatusesTableMap;
 use Models\Map\TasksTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
 use Propel\Runtime\ActiveRecord\ActiveRecordInterface;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\BadMethodCallException;
 use Propel\Runtime\Exception\LogicException;
@@ -21,20 +24,20 @@ use Propel\Runtime\Map\TableMap;
 use Propel\Runtime\Parser\AbstractParser;
 
 /**
- * Base class that represents a row from the 'Tasks' table.
+ * Base class that represents a row from the 'Statuses' table.
  *
  *
  *
  * @package    propel.generator.Models.Base
  */
-abstract class Tasks implements ActiveRecordInterface
+abstract class Statuses implements ActiveRecordInterface
 {
     /**
      * TableMap class name
      *
      * @var string
      */
-    public const TABLE_MAP = '\\Models\\Map\\TasksTableMap';
+    public const TABLE_MAP = '\\Models\\Map\\StatusesTableMap';
 
 
     /**
@@ -71,30 +74,18 @@ abstract class Tasks implements ActiveRecordInterface
     protected $id;
 
     /**
-     * The value for the title field.
+     * The value for the name field.
      *
      * @var        string
      */
-    protected $title;
+    protected $name;
 
     /**
-     * The value for the description field.
-     *
-     * @var        string
+     * @var        ObjectCollection|ChildTasks[] Collection to store aggregation of ChildTasks objects.
+     * @phpstan-var ObjectCollection&\Traversable<ChildTasks> Collection to store aggregation of ChildTasks objects.
      */
-    protected $description;
-
-    /**
-     * The value for the status field.
-     *
-     * @var        int|null
-     */
-    protected $status;
-
-    /**
-     * @var        ChildStatuses
-     */
-    protected $aStatuses;
+    protected $collTaskss;
+    protected $collTaskssPartial;
 
     /**
      * Flag to prevent endless save loop, if this object is referenced
@@ -105,7 +96,14 @@ abstract class Tasks implements ActiveRecordInterface
     protected $alreadyInSave = false;
 
     /**
-     * Initializes internal state of Models\Base\Tasks object.
+     * An array of objects scheduled for deletion.
+     * @var ObjectCollection|ChildTasks[]
+     * @phpstan-var ObjectCollection&\Traversable<ChildTasks>
+     */
+    protected $taskssScheduledForDeletion = null;
+
+    /**
+     * Initializes internal state of Models\Base\Statuses object.
      */
     public function __construct()
     {
@@ -198,9 +196,9 @@ abstract class Tasks implements ActiveRecordInterface
     }
 
     /**
-     * Compares this with another <code>Tasks</code> instance.  If
-     * <code>obj</code> is an instance of <code>Tasks</code>, delegates to
-     * <code>equals(Tasks)</code>.  Otherwise, returns <code>false</code>.
+     * Compares this with another <code>Statuses</code> instance.  If
+     * <code>obj</code> is an instance of <code>Statuses</code>, delegates to
+     * <code>equals(Statuses)</code>.  Otherwise, returns <code>false</code>.
      *
      * @param mixed $obj The object to compare to.
      * @return bool Whether equal to the object specified.
@@ -341,33 +339,13 @@ abstract class Tasks implements ActiveRecordInterface
     }
 
     /**
-     * Get the [title] column value.
+     * Get the [name] column value.
      *
      * @return string
      */
-    public function getTitle()
+    public function getName()
     {
-        return $this->title;
-    }
-
-    /**
-     * Get the [description] column value.
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * Get the [status] column value.
-     *
-     * @return int|null
-     */
-    public function getStatus()
-    {
-        return $this->status;
+        return $this->name;
     }
 
     /**
@@ -384,71 +362,27 @@ abstract class Tasks implements ActiveRecordInterface
 
         if ($this->id !== $v) {
             $this->id = $v;
-            $this->modifiedColumns[TasksTableMap::COL_ID] = true;
+            $this->modifiedColumns[StatusesTableMap::COL_ID] = true;
         }
 
         return $this;
     }
 
     /**
-     * Set the value of [title] column.
+     * Set the value of [name] column.
      *
      * @param string $v New value
      * @return $this The current object (for fluent API support)
      */
-    public function setTitle($v)
+    public function setName($v)
     {
         if ($v !== null) {
             $v = (string) $v;
         }
 
-        if ($this->title !== $v) {
-            $this->title = $v;
-            $this->modifiedColumns[TasksTableMap::COL_TITLE] = true;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Set the value of [description] column.
-     *
-     * @param string $v New value
-     * @return $this The current object (for fluent API support)
-     */
-    public function setDescription($v)
-    {
-        if ($v !== null) {
-            $v = (string) $v;
-        }
-
-        if ($this->description !== $v) {
-            $this->description = $v;
-            $this->modifiedColumns[TasksTableMap::COL_DESCRIPTION] = true;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Set the value of [status] column.
-     *
-     * @param int|null $v New value
-     * @return $this The current object (for fluent API support)
-     */
-    public function setStatus($v)
-    {
-        if ($v !== null) {
-            $v = (int) $v;
-        }
-
-        if ($this->status !== $v) {
-            $this->status = $v;
-            $this->modifiedColumns[TasksTableMap::COL_STATUS] = true;
-        }
-
-        if ($this->aStatuses !== null && $this->aStatuses->getId() !== $v) {
-            $this->aStatuses = null;
+        if ($this->name !== $v) {
+            $this->name = $v;
+            $this->modifiedColumns[StatusesTableMap::COL_NAME] = true;
         }
 
         return $this;
@@ -490,17 +424,11 @@ abstract class Tasks implements ActiveRecordInterface
     {
         try {
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : TasksTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 0 + $startcol : StatusesTableMap::translateFieldName('Id', TableMap::TYPE_PHPNAME, $indexType)];
             $this->id = (null !== $col) ? (int) $col : null;
 
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : TasksTableMap::translateFieldName('Title', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->title = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 2 + $startcol : TasksTableMap::translateFieldName('Description', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->description = (null !== $col) ? (string) $col : null;
-
-            $col = $row[TableMap::TYPE_NUM == $indexType ? 3 + $startcol : TasksTableMap::translateFieldName('Status', TableMap::TYPE_PHPNAME, $indexType)];
-            $this->status = (null !== $col) ? (int) $col : null;
+            $col = $row[TableMap::TYPE_NUM == $indexType ? 1 + $startcol : StatusesTableMap::translateFieldName('Name', TableMap::TYPE_PHPNAME, $indexType)];
+            $this->name = (null !== $col) ? (string) $col : null;
 
             $this->resetModified();
             $this->setNew(false);
@@ -509,10 +437,10 @@ abstract class Tasks implements ActiveRecordInterface
                 $this->ensureConsistency();
             }
 
-            return $startcol + 4; // 4 = TasksTableMap::NUM_HYDRATE_COLUMNS.
+            return $startcol + 2; // 2 = StatusesTableMap::NUM_HYDRATE_COLUMNS.
 
         } catch (Exception $e) {
-            throw new PropelException(sprintf('Error populating %s object', '\\Models\\Tasks'), 0, $e);
+            throw new PropelException(sprintf('Error populating %s object', '\\Models\\Statuses'), 0, $e);
         }
     }
 
@@ -532,9 +460,6 @@ abstract class Tasks implements ActiveRecordInterface
      */
     public function ensureConsistency(): void
     {
-        if ($this->aStatuses !== null && $this->status !== $this->aStatuses->getId()) {
-            $this->aStatuses = null;
-        }
     }
 
     /**
@@ -558,13 +483,13 @@ abstract class Tasks implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getReadConnection(TasksTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getReadConnection(StatusesTableMap::DATABASE_NAME);
         }
 
         // We don't need to alter the object instance pool; we're just modifying this instance
         // already in the pool.
 
-        $dataFetcher = ChildTasksQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
+        $dataFetcher = ChildStatusesQuery::create(null, $this->buildPkeyCriteria())->setFormatter(ModelCriteria::FORMAT_STATEMENT)->find($con);
         $row = $dataFetcher->fetch();
         $dataFetcher->close();
         if (!$row) {
@@ -574,7 +499,8 @@ abstract class Tasks implements ActiveRecordInterface
 
         if ($deep) {  // also de-associate any related objects?
 
-            $this->aStatuses = null;
+            $this->collTaskss = null;
+
         } // if (deep)
     }
 
@@ -584,8 +510,8 @@ abstract class Tasks implements ActiveRecordInterface
      * @param ConnectionInterface $con
      * @return void
      * @throws \Propel\Runtime\Exception\PropelException
-     * @see Tasks::setDeleted()
-     * @see Tasks::isDeleted()
+     * @see Statuses::setDeleted()
+     * @see Statuses::isDeleted()
      */
     public function delete(?ConnectionInterface $con = null): void
     {
@@ -594,11 +520,11 @@ abstract class Tasks implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(TasksTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(StatusesTableMap::DATABASE_NAME);
         }
 
         $con->transaction(function () use ($con) {
-            $deleteQuery = ChildTasksQuery::create()
+            $deleteQuery = ChildStatusesQuery::create()
                 ->filterByPrimaryKey($this->getPrimaryKey());
             $ret = $this->preDelete($con);
             if ($ret) {
@@ -633,7 +559,7 @@ abstract class Tasks implements ActiveRecordInterface
         }
 
         if ($con === null) {
-            $con = Propel::getServiceContainer()->getWriteConnection(TasksTableMap::DATABASE_NAME);
+            $con = Propel::getServiceContainer()->getWriteConnection(StatusesTableMap::DATABASE_NAME);
         }
 
         return $con->transaction(function () use ($con) {
@@ -652,7 +578,7 @@ abstract class Tasks implements ActiveRecordInterface
                     $this->postUpdate($con);
                 }
                 $this->postSave($con);
-                TasksTableMap::addInstanceToPool($this);
+                StatusesTableMap::addInstanceToPool($this);
             } else {
                 $affectedRows = 0;
             }
@@ -678,18 +604,6 @@ abstract class Tasks implements ActiveRecordInterface
         if (!$this->alreadyInSave) {
             $this->alreadyInSave = true;
 
-            // We call the save method on the following object(s) if they
-            // were passed to this object by their corresponding set
-            // method.  This object relates to these object(s) by a
-            // foreign key reference.
-
-            if ($this->aStatuses !== null) {
-                if ($this->aStatuses->isModified() || $this->aStatuses->isNew()) {
-                    $affectedRows += $this->aStatuses->save($con);
-                }
-                $this->setStatuses($this->aStatuses);
-            }
-
             if ($this->isNew() || $this->isModified()) {
                 // persist changes
                 if ($this->isNew()) {
@@ -699,6 +613,24 @@ abstract class Tasks implements ActiveRecordInterface
                     $affectedRows += $this->doUpdate($con);
                 }
                 $this->resetModified();
+            }
+
+            if ($this->taskssScheduledForDeletion !== null) {
+                if (!$this->taskssScheduledForDeletion->isEmpty()) {
+                    foreach ($this->taskssScheduledForDeletion as $tasks) {
+                        // need to save related object because we set the relation to null
+                        $tasks->save($con);
+                    }
+                    $this->taskssScheduledForDeletion = null;
+                }
+            }
+
+            if ($this->collTaskss !== null) {
+                foreach ($this->collTaskss as $referrerFK) {
+                    if (!$referrerFK->isDeleted() && ($referrerFK->isNew() || $referrerFK->isModified())) {
+                        $affectedRows += $referrerFK->save($con);
+                    }
+                }
             }
 
             $this->alreadyInSave = false;
@@ -721,27 +653,21 @@ abstract class Tasks implements ActiveRecordInterface
         $modifiedColumns = [];
         $index = 0;
 
-        $this->modifiedColumns[TasksTableMap::COL_ID] = true;
+        $this->modifiedColumns[StatusesTableMap::COL_ID] = true;
         if (null !== $this->id) {
-            throw new PropelException('Cannot insert a value for auto-increment primary key (' . TasksTableMap::COL_ID . ')');
+            throw new PropelException('Cannot insert a value for auto-increment primary key (' . StatusesTableMap::COL_ID . ')');
         }
 
          // check the columns in natural order for more readable SQL queries
-        if ($this->isColumnModified(TasksTableMap::COL_ID)) {
+        if ($this->isColumnModified(StatusesTableMap::COL_ID)) {
             $modifiedColumns[':p' . $index++]  = 'Id';
         }
-        if ($this->isColumnModified(TasksTableMap::COL_TITLE)) {
-            $modifiedColumns[':p' . $index++]  = 'Title';
-        }
-        if ($this->isColumnModified(TasksTableMap::COL_DESCRIPTION)) {
-            $modifiedColumns[':p' . $index++]  = 'Description';
-        }
-        if ($this->isColumnModified(TasksTableMap::COL_STATUS)) {
-            $modifiedColumns[':p' . $index++]  = 'Status';
+        if ($this->isColumnModified(StatusesTableMap::COL_NAME)) {
+            $modifiedColumns[':p' . $index++]  = 'Name';
         }
 
         $sql = sprintf(
-            'INSERT INTO Tasks (%s) VALUES (%s)',
+            'INSERT INTO Statuses (%s) VALUES (%s)',
             implode(', ', $modifiedColumns),
             implode(', ', array_keys($modifiedColumns))
         );
@@ -754,16 +680,8 @@ abstract class Tasks implements ActiveRecordInterface
                         $stmt->bindValue($identifier, $this->id, PDO::PARAM_INT);
 
                         break;
-                    case 'Title':
-                        $stmt->bindValue($identifier, $this->title, PDO::PARAM_STR);
-
-                        break;
-                    case 'Description':
-                        $stmt->bindValue($identifier, $this->description, PDO::PARAM_STR);
-
-                        break;
-                    case 'Status':
-                        $stmt->bindValue($identifier, $this->status, PDO::PARAM_INT);
+                    case 'Name':
+                        $stmt->bindValue($identifier, $this->name, PDO::PARAM_STR);
 
                         break;
                 }
@@ -812,7 +730,7 @@ abstract class Tasks implements ActiveRecordInterface
      */
     public function getByName(string $name, string $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = TasksTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = StatusesTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
         $field = $this->getByPosition($pos);
 
         return $field;
@@ -832,13 +750,7 @@ abstract class Tasks implements ActiveRecordInterface
                 return $this->getId();
 
             case 1:
-                return $this->getTitle();
-
-            case 2:
-                return $this->getDescription();
-
-            case 3:
-                return $this->getStatus();
+                return $this->getName();
 
             default:
                 return null;
@@ -862,16 +774,14 @@ abstract class Tasks implements ActiveRecordInterface
      */
     public function toArray(string $keyType = TableMap::TYPE_PHPNAME, bool $includeLazyLoadColumns = true, array $alreadyDumpedObjects = [], bool $includeForeignObjects = false): array
     {
-        if (isset($alreadyDumpedObjects['Tasks'][$this->hashCode()])) {
+        if (isset($alreadyDumpedObjects['Statuses'][$this->hashCode()])) {
             return ['*RECURSION*'];
         }
-        $alreadyDumpedObjects['Tasks'][$this->hashCode()] = true;
-        $keys = TasksTableMap::getFieldNames($keyType);
+        $alreadyDumpedObjects['Statuses'][$this->hashCode()] = true;
+        $keys = StatusesTableMap::getFieldNames($keyType);
         $result = [
             $keys[0] => $this->getId(),
-            $keys[1] => $this->getTitle(),
-            $keys[2] => $this->getDescription(),
-            $keys[3] => $this->getStatus(),
+            $keys[1] => $this->getName(),
         ];
         $virtualColumns = $this->virtualColumns;
         foreach ($virtualColumns as $key => $virtualColumn) {
@@ -879,20 +789,20 @@ abstract class Tasks implements ActiveRecordInterface
         }
 
         if ($includeForeignObjects) {
-            if (null !== $this->aStatuses) {
+            if (null !== $this->collTaskss) {
 
                 switch ($keyType) {
                     case TableMap::TYPE_CAMELNAME:
-                        $key = 'statuses';
+                        $key = 'taskss';
                         break;
                     case TableMap::TYPE_FIELDNAME:
-                        $key = 'Statuses';
+                        $key = 'Taskss';
                         break;
                     default:
-                        $key = 'Statuses';
+                        $key = 'Taskss';
                 }
 
-                $result[$key] = $this->aStatuses->toArray($keyType, $includeLazyLoadColumns,  $alreadyDumpedObjects, true);
+                $result[$key] = $this->collTaskss->toArray(null, false, $keyType, $includeLazyLoadColumns, $alreadyDumpedObjects);
             }
         }
 
@@ -912,7 +822,7 @@ abstract class Tasks implements ActiveRecordInterface
      */
     public function setByName(string $name, $value, string $type = TableMap::TYPE_PHPNAME)
     {
-        $pos = TasksTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
+        $pos = StatusesTableMap::translateFieldName($name, $type, TableMap::TYPE_NUM);
 
         $this->setByPosition($pos, $value);
 
@@ -934,13 +844,7 @@ abstract class Tasks implements ActiveRecordInterface
                 $this->setId($value);
                 break;
             case 1:
-                $this->setTitle($value);
-                break;
-            case 2:
-                $this->setDescription($value);
-                break;
-            case 3:
-                $this->setStatus($value);
+                $this->setName($value);
                 break;
         } // switch()
 
@@ -966,19 +870,13 @@ abstract class Tasks implements ActiveRecordInterface
      */
     public function fromArray(array $arr, string $keyType = TableMap::TYPE_PHPNAME)
     {
-        $keys = TasksTableMap::getFieldNames($keyType);
+        $keys = StatusesTableMap::getFieldNames($keyType);
 
         if (array_key_exists($keys[0], $arr)) {
             $this->setId($arr[$keys[0]]);
         }
         if (array_key_exists($keys[1], $arr)) {
-            $this->setTitle($arr[$keys[1]]);
-        }
-        if (array_key_exists($keys[2], $arr)) {
-            $this->setDescription($arr[$keys[2]]);
-        }
-        if (array_key_exists($keys[3], $arr)) {
-            $this->setStatus($arr[$keys[3]]);
+            $this->setName($arr[$keys[1]]);
         }
 
         return $this;
@@ -1021,19 +919,13 @@ abstract class Tasks implements ActiveRecordInterface
      */
     public function buildCriteria(): Criteria
     {
-        $criteria = new Criteria(TasksTableMap::DATABASE_NAME);
+        $criteria = new Criteria(StatusesTableMap::DATABASE_NAME);
 
-        if ($this->isColumnModified(TasksTableMap::COL_ID)) {
-            $criteria->add(TasksTableMap::COL_ID, $this->id);
+        if ($this->isColumnModified(StatusesTableMap::COL_ID)) {
+            $criteria->add(StatusesTableMap::COL_ID, $this->id);
         }
-        if ($this->isColumnModified(TasksTableMap::COL_TITLE)) {
-            $criteria->add(TasksTableMap::COL_TITLE, $this->title);
-        }
-        if ($this->isColumnModified(TasksTableMap::COL_DESCRIPTION)) {
-            $criteria->add(TasksTableMap::COL_DESCRIPTION, $this->description);
-        }
-        if ($this->isColumnModified(TasksTableMap::COL_STATUS)) {
-            $criteria->add(TasksTableMap::COL_STATUS, $this->status);
+        if ($this->isColumnModified(StatusesTableMap::COL_NAME)) {
+            $criteria->add(StatusesTableMap::COL_NAME, $this->name);
         }
 
         return $criteria;
@@ -1051,8 +943,8 @@ abstract class Tasks implements ActiveRecordInterface
      */
     public function buildPkeyCriteria(): Criteria
     {
-        $criteria = ChildTasksQuery::create();
-        $criteria->add(TasksTableMap::COL_ID, $this->id);
+        $criteria = ChildStatusesQuery::create();
+        $criteria->add(StatusesTableMap::COL_ID, $this->id);
 
         return $criteria;
     }
@@ -1115,7 +1007,7 @@ abstract class Tasks implements ActiveRecordInterface
      * If desired, this method can also make copies of all associated (fkey referrers)
      * objects.
      *
-     * @param object $copyObj An object of \Models\Tasks (or compatible) type.
+     * @param object $copyObj An object of \Models\Statuses (or compatible) type.
      * @param bool $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
      * @param bool $makeNew Whether to reset autoincrement PKs and make the object new.
      * @throws \Propel\Runtime\Exception\PropelException
@@ -1123,9 +1015,21 @@ abstract class Tasks implements ActiveRecordInterface
      */
     public function copyInto(object $copyObj, bool $deepCopy = false, bool $makeNew = true): void
     {
-        $copyObj->setTitle($this->getTitle());
-        $copyObj->setDescription($this->getDescription());
-        $copyObj->setStatus($this->getStatus());
+        $copyObj->setName($this->getName());
+
+        if ($deepCopy) {
+            // important: temporarily setNew(false) because this affects the behavior of
+            // the getter/setter methods for fkey referrer objects.
+            $copyObj->setNew(false);
+
+            foreach ($this->getTaskss() as $relObj) {
+                if ($relObj !== $this) {  // ensure that we don't try to copy a reference to ourselves
+                    $copyObj->addTasks($relObj->copy($deepCopy));
+                }
+            }
+
+        } // if ($deepCopy)
+
         if ($makeNew) {
             $copyObj->setNew(true);
             $copyObj->setId(NULL); // this is a auto-increment column, so set to default value
@@ -1141,7 +1045,7 @@ abstract class Tasks implements ActiveRecordInterface
      * objects.
      *
      * @param bool $deepCopy Whether to also copy all rows that refer (by fkey) to the current row.
-     * @return \Models\Tasks Clone of current object.
+     * @return \Models\Statuses Clone of current object.
      * @throws \Propel\Runtime\Exception\PropelException
      */
     public function copy(bool $deepCopy = false)
@@ -1154,55 +1058,260 @@ abstract class Tasks implements ActiveRecordInterface
         return $copyObj;
     }
 
+
     /**
-     * Declares an association between this object and a ChildStatuses object.
+     * Initializes a collection based on the name of a relation.
+     * Avoids crafting an 'init[$relationName]s' method name
+     * that wouldn't work when StandardEnglishPluralizer is used.
      *
-     * @param ChildStatuses|null $v
-     * @return $this The current object (for fluent API support)
-     * @throws \Propel\Runtime\Exception\PropelException
+     * @param string $relationName The name of the relation to initialize
+     * @return void
      */
-    public function setStatuses(ChildStatuses $v = null)
+    public function initRelation($relationName): void
     {
-        if ($v === null) {
-            $this->setStatus(NULL);
-        } else {
-            $this->setStatus($v->getId());
+        if ('Tasks' === $relationName) {
+            $this->initTaskss();
+            return;
         }
+    }
 
-        $this->aStatuses = $v;
-
-        // Add binding for other direction of this n:n relationship.
-        // If this object has already been added to the ChildStatuses object, it will not be re-added.
-        if ($v !== null) {
-            $v->addTasks($this);
-        }
-
+    /**
+     * Clears out the collTaskss collection
+     *
+     * This does not modify the database; however, it will remove any associated objects, causing
+     * them to be refetched by subsequent calls to accessor method.
+     *
+     * @return $this
+     * @see addTaskss()
+     */
+    public function clearTaskss()
+    {
+        $this->collTaskss = null; // important to set this to NULL since that means it is uninitialized
 
         return $this;
     }
 
+    /**
+     * Reset is the collTaskss collection loaded partially.
+     *
+     * @return void
+     */
+    public function resetPartialTaskss($v = true): void
+    {
+        $this->collTaskssPartial = $v;
+    }
 
     /**
-     * Get the associated ChildStatuses object
+     * Initializes the collTaskss collection.
      *
-     * @param ConnectionInterface $con Optional Connection object.
-     * @return ChildStatuses|null The associated ChildStatuses object.
-     * @throws \Propel\Runtime\Exception\PropelException
+     * By default this just sets the collTaskss collection to an empty array (like clearcollTaskss());
+     * however, you may wish to override this method in your stub class to provide setting appropriate
+     * to your application -- for example, setting the initial array to the values stored in database.
+     *
+     * @param bool $overrideExisting If set to true, the method call initializes
+     *                                        the collection even if it is not empty
+     *
+     * @return void
      */
-    public function getStatuses(?ConnectionInterface $con = null)
+    public function initTaskss(bool $overrideExisting = true): void
     {
-        if ($this->aStatuses === null && ($this->status != 0)) {
-            $this->aStatuses = ChildStatusesQuery::create()->findPk($this->status, $con);
-            /* The following can be used additionally to
-                guarantee the related object contains a reference
-                to this object.  This level of coupling may, however, be
-                undesirable since it could result in an only partially populated collection
-                in the referenced object.
-                $this->aStatuses->addTaskss($this);
-             */
+        if (null !== $this->collTaskss && !$overrideExisting) {
+            return;
         }
 
-        return $this->aStatuses;
+        $collectionClassName = TasksTableMap::getTableMap()->getCollectionClassName();
+
+        $this->collTaskss = new $collectionClassName;
+        $this->collTaskss->setModel('\Models\Tasks');
+    }
+
+    /**
+     * Gets an array of ChildTasks objects which contain a foreign key that references this object.
+     *
+     * If the $criteria is not null, it is used to always fetch the results from the database.
+     * Otherwise the results are fetched from the database the first time, then cached.
+     * Next time the same method is called without $criteria, the cached collection is returned.
+     * If this ChildStatuses is new, it will return
+     * an empty collection or the current collection; the criteria is ignored on a new object.
+     *
+     * @param Criteria $criteria optional Criteria object to narrow the query
+     * @param ConnectionInterface $con optional connection object
+     * @return ObjectCollection|ChildTasks[] List of ChildTasks objects
+     * @phpstan-return ObjectCollection&\Traversable<ChildTasks> List of ChildTasks objects
+     * @throws \Propel\Runtime\Exception\PropelException
+     */
+    public function getTaskss(?Criteria $criteria = null, ?ConnectionInterface $con = null)
+    {
+        $partial = $this->collTaskssPartial && !$this->isNew();
+        if (null === $this->collTaskss || null !== $criteria || $partial) {
+            if ($this->isNew()) {
+                // return empty collection
+                if (null === $this->collTaskss) {
+                    $this->initTaskss();
+                } else {
+                    $collectionClassName = TasksTableMap::getTableMap()->getCollectionClassName();
+
+                    $collTaskss = new $collectionClassName;
+                    $collTaskss->setModel('\Models\Tasks');
+
+                    return $collTaskss;
+                }
+            } else {
+                $collTaskss = ChildTasksQuery::create(null, $criteria)
+                    ->filterByStatuses($this)
+                    ->find($con);
+
+                if (null !== $criteria) {
+                    if (false !== $this->collTaskssPartial && count($collTaskss)) {
+                        $this->initTaskss(false);
+
+                        foreach ($collTaskss as $obj) {
+                            if (false == $this->collTaskss->contains($obj)) {
+                                $this->collTaskss->append($obj);
+                            }
+                        }
+
+                        $this->collTaskssPartial = true;
+                    }
+
+                    return $collTaskss;
+                }
+
+                if ($partial && $this->collTaskss) {
+                    foreach ($this->collTaskss as $obj) {
+                        if ($obj->isNew()) {
+                            $collTaskss[] = $obj;
+                        }
+                    }
+                }
+
+                $this->collTaskss = $collTaskss;
+                $this->collTaskssPartial = false;
+            }
+        }
+
+        return $this->collTaskss;
+    }
+
+    /**
+     * Sets a collection of ChildTasks objects related by a one-to-many relationship
+     * to the current object.
+     * It will also schedule objects for deletion based on a diff between old objects (aka persisted)
+     * and new objects from the given Propel collection.
+     *
+     * @param Collection $taskss A Propel collection.
+     * @param ConnectionInterface $con Optional connection object
+     * @return $this The current object (for fluent API support)
+     */
+    public function setTaskss(Collection $taskss, ?ConnectionInterface $con = null)
+    {
+        /** @var ChildTasks[] $taskssToDelete */
+        $taskssToDelete = $this->getTaskss(new Criteria(), $con)->diff($taskss);
+
+
+        $this->taskssScheduledForDeletion = $taskssToDelete;
+
+        foreach ($taskssToDelete as $tasksRemoved) {
+            $tasksRemoved->setStatuses(null);
+        }
+
+        $this->collTaskss = null;
+        foreach ($taskss as $tasks) {
+            $this->addTasks($tasks);
+        }
+
+        $this->collTaskss = $taskss;
+        $this->collTaskssPartial = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns the number of related Tasks objects.
+     *
+     * @param Criteria $criteria
+     * @param bool $distinct
+     * @param ConnectionInterface $con
+     * @return int Count of related Tasks objects.
+     * @throws \Propel\Runtime\Exception\PropelException
+     */
+    public function countTaskss(?Criteria $criteria = null, bool $distinct = false, ?ConnectionInterface $con = null): int
+    {
+        $partial = $this->collTaskssPartial && !$this->isNew();
+        if (null === $this->collTaskss || null !== $criteria || $partial) {
+            if ($this->isNew() && null === $this->collTaskss) {
+                return 0;
+            }
+
+            if ($partial && !$criteria) {
+                return count($this->getTaskss());
+            }
+
+            $query = ChildTasksQuery::create(null, $criteria);
+            if ($distinct) {
+                $query->distinct();
+            }
+
+            return $query
+                ->filterByStatuses($this)
+                ->count($con);
+        }
+
+        return count($this->collTaskss);
+    }
+
+    /**
+     * Method called to associate a ChildTasks object to this object
+     * through the ChildTasks foreign key attribute.
+     *
+     * @param ChildTasks $l ChildTasks
+     * @return $this The current object (for fluent API support)
+     */
+    public function addTasks(ChildTasks $l)
+    {
+        if ($this->collTaskss === null) {
+            $this->initTaskss();
+            $this->collTaskssPartial = true;
+        }
+
+        if (!$this->collTaskss->contains($l)) {
+            $this->doAddTasks($l);
+
+            if ($this->taskssScheduledForDeletion and $this->taskssScheduledForDeletion->contains($l)) {
+                $this->taskssScheduledForDeletion->remove($this->taskssScheduledForDeletion->search($l));
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param ChildTasks $tasks The ChildTasks object to add.
+     */
+    protected function doAddTasks(ChildTasks $tasks): void
+    {
+        $this->collTaskss[]= $tasks;
+        $tasks->setStatuses($this);
+    }
+
+    /**
+     * @param ChildTasks $tasks The ChildTasks object to remove.
+     * @return $this The current object (for fluent API support)
+     */
+    public function removeTasks(ChildTasks $tasks)
+    {
+        if ($this->getTaskss()->contains($tasks)) {
+            $pos = $this->collTaskss->search($tasks);
+            $this->collTaskss->remove($pos);
+            if (null === $this->taskssScheduledForDeletion) {
+                $this->taskssScheduledForDeletion = clone $this->collTaskss;
+                $this->taskssScheduledForDeletion->clear();
+            }
+            $this->taskssScheduledForDeletion[]= $tasks;
+            $tasks->setStatuses(null);
+        }
+
+        return $this;
     }
 
     /**
@@ -1214,13 +1323,8 @@ abstract class Tasks implements ActiveRecordInterface
      */
     public function clear()
     {
-        if (null !== $this->aStatuses) {
-            $this->aStatuses->removeTasks($this);
-        }
         $this->id = null;
-        $this->title = null;
-        $this->description = null;
-        $this->status = null;
+        $this->name = null;
         $this->alreadyInSave = false;
         $this->clearAllReferences();
         $this->resetModified();
@@ -1242,9 +1346,14 @@ abstract class Tasks implements ActiveRecordInterface
     public function clearAllReferences(bool $deep = false)
     {
         if ($deep) {
+            if ($this->collTaskss) {
+                foreach ($this->collTaskss as $o) {
+                    $o->clearAllReferences($deep);
+                }
+            }
         } // if ($deep)
 
-        $this->aStatuses = null;
+        $this->collTaskss = null;
         return $this;
     }
 
@@ -1255,7 +1364,7 @@ abstract class Tasks implements ActiveRecordInterface
      */
     public function __toString()
     {
-        return (string) $this->exportTo(TasksTableMap::DEFAULT_STRING_FORMAT);
+        return (string) $this->exportTo(StatusesTableMap::DEFAULT_STRING_FORMAT);
     }
 
     /**

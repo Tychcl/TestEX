@@ -22,11 +22,9 @@
     ],
     "schema-update": [
         "@propel:reverse",
-        "@propel:build",
-        "@propel:diff",
-        "@propel:migrate"
+        "@propel:build"
     ],
-    "propel:reverse": "vendor/bin/propel database:reverse --config-dir=propel/config --output-dir=propel/schema",
+    "propel:reverse": "vendor/bin/propel database:reverse --config-dir=propel/config --output-dir=propel/schema --namespace=Models",
     "propel:build": "vendor/bin/propel model:build --config-dir=propel/config",
     "propel:diff": "vendor/bin/propel diff --config-dir=propel/config",
     "propel:migrate": "vendor/bin/propel migrate --config-dir=propel/config",

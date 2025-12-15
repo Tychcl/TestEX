@@ -10,7 +10,9 @@ use Models\Map\TasksTableMap;
 use Propel\Runtime\Propel;
 use Propel\Runtime\ActiveQuery\Criteria;
 use Propel\Runtime\ActiveQuery\ModelCriteria;
+use Propel\Runtime\ActiveQuery\ModelJoin;
 use Propel\Runtime\Collection\Collection;
+use Propel\Runtime\Collection\ObjectCollection;
 use Propel\Runtime\Connection\ConnectionInterface;
 use Propel\Runtime\Exception\PropelException;
 
@@ -35,13 +37,25 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildTasksQuery rightJoinWith($relation) Adds a RIGHT JOIN clause and with to the query
  * @method     ChildTasksQuery innerJoinWith($relation) Adds a INNER JOIN clause and with to the query
  *
+ * @method     ChildTasksQuery leftJoinStatuses($relationAlias = null) Adds a LEFT JOIN clause to the query using the Statuses relation
+ * @method     ChildTasksQuery rightJoinStatuses($relationAlias = null) Adds a RIGHT JOIN clause to the query using the Statuses relation
+ * @method     ChildTasksQuery innerJoinStatuses($relationAlias = null) Adds a INNER JOIN clause to the query using the Statuses relation
+ *
+ * @method     ChildTasksQuery joinWithStatuses($joinType = Criteria::INNER_JOIN) Adds a join clause and with to the query using the Statuses relation
+ *
+ * @method     ChildTasksQuery leftJoinWithStatuses() Adds a LEFT JOIN clause and with to the query using the Statuses relation
+ * @method     ChildTasksQuery rightJoinWithStatuses() Adds a RIGHT JOIN clause and with to the query using the Statuses relation
+ * @method     ChildTasksQuery innerJoinWithStatuses() Adds a INNER JOIN clause and with to the query using the Statuses relation
+ *
+ * @method     \Models\StatusesQuery endUse() Finalizes a secondary criteria and merges it with its primary Criteria
+ *
  * @method     ChildTasks|null findOne(?ConnectionInterface $con = null) Return the first ChildTasks matching the query
  * @method     ChildTasks findOneOrCreate(?ConnectionInterface $con = null) Return the first ChildTasks matching the query, or a new ChildTasks object populated from the query conditions when no match is found
  *
  * @method     ChildTasks|null findOneById(int $Id) Return the first ChildTasks filtered by the Id column
  * @method     ChildTasks|null findOneByTitle(string $Title) Return the first ChildTasks filtered by the Title column
  * @method     ChildTasks|null findOneByDescription(string $Description) Return the first ChildTasks filtered by the Description column
- * @method     ChildTasks|null findOneByStatus(string $Status) Return the first ChildTasks filtered by the Status column
+ * @method     ChildTasks|null findOneByStatus(int $Status) Return the first ChildTasks filtered by the Status column
  *
  * @method     ChildTasks requirePk($key, ?ConnectionInterface $con = null) Return the ChildTasks by primary key and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildTasks requireOne(?ConnectionInterface $con = null) Return the first ChildTasks matching the query and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
@@ -49,7 +63,7 @@ use Propel\Runtime\Exception\PropelException;
  * @method     ChildTasks requireOneById(int $Id) Return the first ChildTasks filtered by the Id column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildTasks requireOneByTitle(string $Title) Return the first ChildTasks filtered by the Title column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  * @method     ChildTasks requireOneByDescription(string $Description) Return the first ChildTasks filtered by the Description column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
- * @method     ChildTasks requireOneByStatus(string $Status) Return the first ChildTasks filtered by the Status column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
+ * @method     ChildTasks requireOneByStatus(int $Status) Return the first ChildTasks filtered by the Status column and throws \Propel\Runtime\Exception\EntityNotFoundException when not found
  *
  * @method     ChildTasks[]|Collection find(?ConnectionInterface $con = null) Return ChildTasks objects based on current ModelCriteria
  * @psalm-method Collection&\Traversable<ChildTasks> find(?ConnectionInterface $con = null) Return ChildTasks objects based on current ModelCriteria
@@ -60,8 +74,8 @@ use Propel\Runtime\Exception\PropelException;
  * @psalm-method Collection&\Traversable<ChildTasks> findByTitle(string|array<string> $Title) Return ChildTasks objects filtered by the Title column
  * @method     ChildTasks[]|Collection findByDescription(string|array<string> $Description) Return ChildTasks objects filtered by the Description column
  * @psalm-method Collection&\Traversable<ChildTasks> findByDescription(string|array<string> $Description) Return ChildTasks objects filtered by the Description column
- * @method     ChildTasks[]|Collection findByStatus(string|array<string> $Status) Return ChildTasks objects filtered by the Status column
- * @psalm-method Collection&\Traversable<ChildTasks> findByStatus(string|array<string> $Status) Return ChildTasks objects filtered by the Status column
+ * @method     ChildTasks[]|Collection findByStatus(int|array<int> $Status) Return ChildTasks objects filtered by the Status column
+ * @psalm-method Collection&\Traversable<ChildTasks> findByStatus(int|array<int> $Status) Return ChildTasks objects filtered by the Status column
  *
  * @method     ChildTasks[]|\Propel\Runtime\Util\PropelModelPager paginate($page = 1, $maxPerPage = 10, ?ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
  * @psalm-method \Propel\Runtime\Util\PropelModelPager&\Traversable<ChildTasks> paginate($page = 1, $maxPerPage = 10, ?ConnectionInterface $con = null) Issue a SELECT query based on the current ModelCriteria and uses a page and a maximum number of results per page to compute an offset and a limit
@@ -359,20 +373,37 @@ abstract class TasksQuery extends ModelCriteria
      *
      * Example usage:
      * <code>
-     * $query->filterByStatus('fooValue');   // WHERE Status = 'fooValue'
-     * $query->filterByStatus('%fooValue%', Criteria::LIKE); // WHERE Status LIKE '%fooValue%'
-     * $query->filterByStatus(['foo', 'bar']); // WHERE Status IN ('foo', 'bar')
+     * $query->filterByStatus(1234); // WHERE Status = 1234
+     * $query->filterByStatus(array(12, 34)); // WHERE Status IN (12, 34)
+     * $query->filterByStatus(array('min' => 12)); // WHERE Status > 12
      * </code>
      *
-     * @param string|string[] $status The value to use as filter.
+     * @see       filterByStatuses()
+     *
+     * @param mixed $status The value to use as filter.
+     *              Use scalar values for equality.
+     *              Use array values for in_array() equivalent.
+     *              Use associative array('min' => $minValue, 'max' => $maxValue) for intervals.
      * @param string|null $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
      *
      * @return $this The current query, for fluid interface
      */
     public function filterByStatus($status = null, ?string $comparison = null)
     {
-        if (null === $comparison) {
-            if (is_array($status)) {
+        if (is_array($status)) {
+            $useMinMax = false;
+            if (isset($status['min'])) {
+                $this->addUsingAlias(TasksTableMap::COL_STATUS, $status['min'], Criteria::GREATER_EQUAL);
+                $useMinMax = true;
+            }
+            if (isset($status['max'])) {
+                $this->addUsingAlias(TasksTableMap::COL_STATUS, $status['max'], Criteria::LESS_EQUAL);
+                $useMinMax = true;
+            }
+            if ($useMinMax) {
+                return $this;
+            }
+            if (null === $comparison) {
                 $comparison = Criteria::IN;
             }
         }
@@ -380,6 +411,181 @@ abstract class TasksQuery extends ModelCriteria
         $this->addUsingAlias(TasksTableMap::COL_STATUS, $status, $comparison);
 
         return $this;
+    }
+
+    /**
+     * Filter the query by a related \Models\Statuses object
+     *
+     * @param \Models\Statuses|ObjectCollection $statuses The related object(s) to use as filter
+     * @param string|null $comparison Operator to use for the column comparison, defaults to Criteria::EQUAL
+     *
+     * @throws \Propel\Runtime\Exception\PropelException
+     *
+     * @return $this The current query, for fluid interface
+     */
+    public function filterByStatuses($statuses, ?string $comparison = null)
+    {
+        if ($statuses instanceof \Models\Statuses) {
+            return $this
+                ->addUsingAlias(TasksTableMap::COL_STATUS, $statuses->getId(), $comparison);
+        } elseif ($statuses instanceof ObjectCollection) {
+            if (null === $comparison) {
+                $comparison = Criteria::IN;
+            }
+
+            $this
+                ->addUsingAlias(TasksTableMap::COL_STATUS, $statuses->toKeyValue('PrimaryKey', 'Id'), $comparison);
+
+            return $this;
+        } else {
+            throw new PropelException('filterByStatuses() only accepts arguments of type \Models\Statuses or Collection');
+        }
+    }
+
+    /**
+     * Adds a JOIN clause to the query using the Statuses relation
+     *
+     * @param string|null $relationAlias Optional alias for the relation
+     * @param string|null $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this The current query, for fluid interface
+     */
+    public function joinStatuses(?string $relationAlias = null, ?string $joinType = Criteria::LEFT_JOIN)
+    {
+        $tableMap = $this->getTableMap();
+        $relationMap = $tableMap->getRelation('Statuses');
+
+        // create a ModelJoin object for this join
+        $join = new ModelJoin();
+        $join->setJoinType($joinType);
+        $join->setRelationMap($relationMap, $this->useAliasInSQL ? $this->getModelAlias() : null, $relationAlias);
+        if ($previousJoin = $this->getPreviousJoin()) {
+            $join->setPreviousJoin($previousJoin);
+        }
+
+        // add the ModelJoin to the current object
+        if ($relationAlias) {
+            $this->addAlias($relationAlias, $relationMap->getRightTable()->getName());
+            $this->addJoinObject($join, $relationAlias);
+        } else {
+            $this->addJoinObject($join, 'Statuses');
+        }
+
+        return $this;
+    }
+
+    /**
+     * Use the Statuses relation Statuses object
+     *
+     * @see useQuery()
+     *
+     * @param string $relationAlias optional alias for the relation,
+     *                                   to be used as main alias in the secondary query
+     * @param string $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return \Models\StatusesQuery A secondary query class using the current class as primary query
+     */
+    public function useStatusesQuery($relationAlias = null, $joinType = Criteria::LEFT_JOIN)
+    {
+        return $this
+            ->joinStatuses($relationAlias, $joinType)
+            ->useQuery($relationAlias ? $relationAlias : 'Statuses', '\Models\StatusesQuery');
+    }
+
+    /**
+     * Use the Statuses relation Statuses object
+     *
+     * @param callable(\Models\StatusesQuery):\Models\StatusesQuery $callable A function working on the related query
+     *
+     * @param string|null $relationAlias optional alias for the relation
+     *
+     * @param string|null $joinType Accepted values are null, 'left join', 'right join', 'inner join'
+     *
+     * @return $this
+     */
+    public function withStatusesQuery(
+        callable $callable,
+        string $relationAlias = null,
+        ?string $joinType = Criteria::LEFT_JOIN
+    ) {
+        $relatedQuery = $this->useStatusesQuery(
+            $relationAlias,
+            $joinType
+        );
+        $callable($relatedQuery);
+        $relatedQuery->endUse();
+
+        return $this;
+    }
+
+    /**
+     * Use the relation to Statuses table for an EXISTS query.
+     *
+     * @see \Propel\Runtime\ActiveQuery\ModelCriteria::useExistsQuery()
+     *
+     * @param string|null $modelAlias sets an alias for the nested query
+     * @param string|null $queryClass Allows to use a custom query class for the exists query, like ExtendedBookQuery::class
+     * @param string $typeOfExists Either ExistsQueryCriterion::TYPE_EXISTS or ExistsQueryCriterion::TYPE_NOT_EXISTS
+     *
+     * @return \Models\StatusesQuery The inner query object of the EXISTS statement
+     */
+    public function useStatusesExistsQuery($modelAlias = null, $queryClass = null, $typeOfExists = 'EXISTS')
+    {
+        /** @var $q \Models\StatusesQuery */
+        $q = $this->useExistsQuery('Statuses', $modelAlias, $queryClass, $typeOfExists);
+        return $q;
+    }
+
+    /**
+     * Use the relation to Statuses table for a NOT EXISTS query.
+     *
+     * @see useStatusesExistsQuery()
+     *
+     * @param string|null $modelAlias sets an alias for the nested query
+     * @param string|null $queryClass Allows to use a custom query class for the exists query, like ExtendedBookQuery::class
+     *
+     * @return \Models\StatusesQuery The inner query object of the NOT EXISTS statement
+     */
+    public function useStatusesNotExistsQuery($modelAlias = null, $queryClass = null)
+    {
+        /** @var $q \Models\StatusesQuery */
+        $q = $this->useExistsQuery('Statuses', $modelAlias, $queryClass, 'NOT EXISTS');
+        return $q;
+    }
+
+    /**
+     * Use the relation to Statuses table for an IN query.
+     *
+     * @see \Propel\Runtime\ActiveQuery\ModelCriteria::useInQuery()
+     *
+     * @param string|null $modelAlias sets an alias for the nested query
+     * @param string|null $queryClass Allows to use a custom query class for the IN query, like ExtendedBookQuery::class
+     * @param string $typeOfIn Criteria::IN or Criteria::NOT_IN
+     *
+     * @return \Models\StatusesQuery The inner query object of the IN statement
+     */
+    public function useInStatusesQuery($modelAlias = null, $queryClass = null, $typeOfIn = 'IN')
+    {
+        /** @var $q \Models\StatusesQuery */
+        $q = $this->useInQuery('Statuses', $modelAlias, $queryClass, $typeOfIn);
+        return $q;
+    }
+
+    /**
+     * Use the relation to Statuses table for a NOT IN query.
+     *
+     * @see useStatusesInQuery()
+     *
+     * @param string|null $modelAlias sets an alias for the nested query
+     * @param string|null $queryClass Allows to use a custom query class for the NOT IN query, like ExtendedBookQuery::class
+     *
+     * @return \Models\StatusesQuery The inner query object of the NOT IN statement
+     */
+    public function useNotInStatusesQuery($modelAlias = null, $queryClass = null)
+    {
+        /** @var $q \Models\StatusesQuery */
+        $q = $this->useInQuery('Statuses', $modelAlias, $queryClass, 'NOT IN');
+        return $q;
     }
 
     /**

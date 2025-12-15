@@ -55,10 +55,39 @@ class TaskController{
     }
 
     #[Route("","get")]
-    public function TaskGet($params){
+    public function GetTasks(){
         try{
             $response = new Response();
             $response->body = TasksQuery::create()->find()->toArray();
+            return $response;
+        }
+        catch(Exception $ex){
+            $response->status = 500;
+            $response->body = $ex->getMessage();
+            return $response;
+        }
+    }
+
+    #[Route("/{id}","get")]
+    public function GetTaskById($params){
+        try{
+            $response = new Response();
+            $id = $params["id"] ?? null;
+
+            if($id === null){
+                $response->status = 400;
+                $response->body = "required id(int)";
+                return $response;
+            }
+
+            $task = TasksQuery::create()->findById($id)->toArray();
+            if($task == null){
+                $response->status = 400;
+                $response->body = "task with id = ".$id." not found or incorrect id";
+                return $response;
+            }
+
+            $response->body = json_encode($task);
             return $response;
         }
         catch(Exception $ex){

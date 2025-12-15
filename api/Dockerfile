@@ -22,8 +22,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 WORKDIR /var/www/html
 
 # Копирование composer файлов сначала для кеширования зависимостей
-COPY composer.json ./
-#composer.lock ./
+COPY composer.json composer.lock ./
 
 # Установка зависимостей Composer
 RUN composer install --no-dev --optimize-autoloader

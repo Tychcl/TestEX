@@ -82,7 +82,7 @@ class TaskController{
                 return $response;
             }
 
-            $task = TasksQuery::create()->findOneById($id)->toArray();
+            $task = TasksQuery::create()->findOneById($id);
             if($task == null){
                 $response->status = 400;
                 $response->body = "task with id = ".$id." not found or incorrect id";
@@ -138,6 +138,36 @@ class TaskController{
 
             $task->save();
             $response->body = "task successful updated";
+            return $response;
+        }
+        catch(Exception $ex){
+            $response->status = 500;
+            $response->body = $ex->getMessage();
+            return $response;
+        }
+    }
+
+    #[Route("/{id}","DELETE")]
+    public function DeleteTaskById($params){
+        try{
+            $response = new Response();
+            $id = $params["id"] ?? null;
+
+            if($id === null){
+                $response->status = 400;
+                $response->body = "required id(int)";
+                return $response;
+            }
+
+            $task = TasksQuery::create()->findOneById($id);
+            if($task == null){
+                $response->status = 400;
+                $response->body = "task with id = ".$id." not found or incorrect id";
+                return $response;
+            }
+
+            $task->delete();
+            $response->body = "Task deleted";
             return $response;
         }
         catch(Exception $ex){

@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37012.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "nearby_mobile", "nearby_mobile.csproj", "{D4C3A4CB-5374-4BD8-AFFD-68F333932FE5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D4C3A4CB-5374-4BD8-AFFD-68F333932FE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4C3A4CB-5374-4BD8-AFFD-68F333932FE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4C3A4CB-5374-4BD8-AFFD-68F333932FE5}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{D4C3A4CB-5374-4BD8-AFFD-68F333932FE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4C3A4CB-5374-4BD8-AFFD-68F333932FE5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {743DF8D5-9A2A-42A4-BFE6-278D491BF71D}
+	EndGlobalSection
+EndGlobal

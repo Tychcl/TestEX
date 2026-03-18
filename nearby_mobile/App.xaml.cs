@@ -19,7 +19,7 @@ namespace nearby_mobile
             _tokenService = tokenService;
             _serviceProvider = serviceProvider;
 
-            MainPage = new NavigationPage(_serviceProvider.GetRequiredService<LoginPage>());
+            MainPage = new NavigationPage(_serviceProvider.GetRequiredService<LoadingPage>());
         }
 
         protected override async void OnStart()
@@ -28,9 +28,14 @@ namespace nearby_mobile
             var token = await _tokenService.GetTokenAsync();
             if (!string.IsNullOrEmpty(token))
             {
-                await _userService.LoadUserAsync();
-                MainPage = _serviceProvider.GetRequiredService<AppShell>();
+                await _userService.LoadUserByIdAsync();
+                if(_userService.CurrentUser is not null)
+                {
+                    MainPage = _serviceProvider.GetRequiredService<AppShell>();
+                    return;
+                }
             }
+            MainPage = _serviceProvider.GetRequiredService<LoginPage>();
         }
     }
 }

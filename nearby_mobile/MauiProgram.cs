@@ -25,23 +25,33 @@ namespace nearby_mobile
     		builder.Logging.AddDebug();
 #endif
 
-            // Views
-            builder.Services.AddTransient<LoginPage>();
-            builder.Services.AddTransient<RegisterPage>();
-            builder.Services.AddTransient<ProfilePage>();
-            builder.Services.AddSingleton<AppShell>();
+            // Сервисы
+            builder.Services.AddSingleton<HttpClient>();
+            builder.Services.AddSingleton<ITokenService, TokenService>();
+            builder.Services.AddSingleton<ApiClient>();
+            builder.Services.AddSingleton<IUserService, UserService>();
+            builder.Services.AddSingleton<IAuthService, AuthService>();
+            builder.Services.AddSingleton<ITaskService, TaskService>();
 
             // ViewModels
             builder.Services.AddTransient<LoginViewModel>();
             builder.Services.AddTransient<RegisterViewModel>();
             builder.Services.AddTransient<ProfileViewModel>();
+            builder.Services.AddTransient<EditProfileViewModel>();
+            builder.Services.AddTransient<AddEditTaskViewModel>();
+            builder.Services.AddTransient<TaskDetailViewModel>();
+            builder.Services.AddTransient<TasksViewModel>();
 
-            // Сервисы
-            builder.Services.AddSingleton<ITokenService, TokenService>();
-            builder.Services.AddSingleton<HttpClient>();
-            builder.Services.AddSingleton<ApiClient>();
-            builder.Services.AddSingleton<IAuthService, AuthService>();
-            builder.Services.AddSingleton<IUserService, UserService>();
+            // Страницы
+            builder.Services.AddTransient<LoginPage>();
+            builder.Services.AddTransient<LoadingPage>();
+            builder.Services.AddTransient<RegisterPage>();
+            builder.Services.AddTransient<ProfilePage>();
+            builder.Services.AddTransient<EditProfilePage>();
+            builder.Services.AddTransient<AddEditTaskPage>();
+            builder.Services.AddSingleton<AppShell>();
+            builder.Services.AddTransient<TasksPage>();
+            builder.Services.AddTransient<TaskDetailPage>();
 
             return builder.Build();
         }

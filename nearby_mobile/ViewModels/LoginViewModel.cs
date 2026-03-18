@@ -68,7 +68,7 @@ public class LoginViewModel : INotifyPropertyChanged
         var success = await _authService.LoginAsync(Login, Password);
         if (success)
         {
-            await _userService.LoadUserAsync();
+            await _userService.LoadUserByIdAsync();
             Application.Current.MainPage = _serviceProvider.GetRequiredService<AppShell>();
         }
         else

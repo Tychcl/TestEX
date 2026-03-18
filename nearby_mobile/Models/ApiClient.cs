@@ -10,6 +10,7 @@ public class ApiClient
     public ApiClient(HttpClient httpClient, ITokenService tokenService)
     {
         _httpClient = httpClient;
+        _httpClient.Timeout = TimeSpan.FromSeconds(20);
         _httpClient.BaseAddress = new Uri("http://10.0.2.2:8080/api/");
         _tokenService = tokenService;
     }

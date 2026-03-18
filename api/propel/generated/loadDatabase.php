@@ -22,7 +22,6 @@ $serviceContainer->initDatabaseMapFromDumps(array (
       'ratings' => '\\Models\\Map\\RatingsTableMap',
       'task_volunteers' => '\\Models\\Map\\TaskVolunteersTableMap',
       'tasks' => '\\Models\\Map\\TasksTableMap',
-      'user_education' => '\\Models\\Map\\UserEducationTableMap',
       'users' => '\\Models\\Map\\UsersTableMap',
     ),
     'tablesByPhpName' => 
@@ -44,7 +43,6 @@ $serviceContainer->initDatabaseMapFromDumps(array (
       '\\Ratings' => '\\Models\\Map\\RatingsTableMap',
       '\\TaskVolunteers' => '\\Models\\Map\\TaskVolunteersTableMap',
       '\\Tasks' => '\\Models\\Map\\TasksTableMap',
-      '\\UserEducation' => '\\Models\\Map\\UserEducationTableMap',
       '\\Users' => '\\Models\\Map\\UsersTableMap',
     ),
   ),

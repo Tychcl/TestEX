@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="nearby_mobile.Views.AddEditTaskPage"
+             Title="Новая задача">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+            <Label Text="Название" Style="{StaticResource BoldLabel}"/>
+            <Entry Text="{Binding Title}" Placeholder="Например: Помочь с переездом"/>
+
+            <Label Text="Описание" Style="{StaticResource BoldLabel}"/>
+            <Editor Text="{Binding Description}" AutoSize="TextChanges" HeightRequest="80"/>
+
+            <Label Text="Количество волонтёров" Style="{StaticResource BoldLabel}"/>
+            <Entry Text="{Binding NeededVolunteers}" Keyboard="Numeric"/>
+
+            <Label Text="Приоритет" Style="{StaticResource BoldLabel}"/>
+            <Picker ItemsSource="{Binding Priorities}" SelectedItem="{Binding Priority}"/>
+
+            <Label Text="Место" Style="{StaticResource BoldLabel}"/>
+            <Entry Text="{Binding Location}" Placeholder="Адрес"/>
+
+            <Label Text="Награда (нирбики)" Style="{StaticResource BoldLabel}"/>
+            <Entry Text="{Binding Reward}" Keyboard="Numeric"/>
+
+            <Label Text="Дедлайн" Style="{StaticResource BoldLabel}"/>
+            <DatePicker Date="{Binding Deadline}" MinimumDate="{Binding Today}"/>
+
+            <Button Text="Сохранить" Command="{Binding SaveCommand}" BackgroundColor="Green" TextColor="White" Margin="0,10"/>
+            <Button Text="Отмена" Command="{Binding CancelCommand}" BackgroundColor="Gray" TextColor="White"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

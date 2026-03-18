@@ -11,6 +11,7 @@ $routes = new Routes();
 $router = new Router();
 
 $routes->add('Api\UserController');
+$routes->add('Api\TasksController');
 $dispatcher = MiddlewareFabric::createForApi($router, $routes);
 
 $request = new Request();

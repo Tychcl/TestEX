@@ -1,6 +1,6 @@
 ﻿using System.Text;
-using System.Text.Json;
 using nearby_mobile.Interfaces;
+using Newtonsoft.Json;
 
 public class AuthService : IAuthService
 {
@@ -16,7 +16,7 @@ public class AuthService : IAuthService
     public async Task<bool> LoginAsync(string login, string password)
     {
         var request = new { login, password };
-        var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+        var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
         var response = await _apiClient.PostAsync("users/signin", content);
 
         if (response.IsSuccessStatusCode)
@@ -39,7 +39,7 @@ public class AuthService : IAuthService
     public async Task<bool> RegisterAsync(string fullName, string phone, string email, string password)
     {
         var request = new { full_name = fullName, phone, email, password, confirm = password };
-        var content = new StringContent(JsonSerializer.Serialize(request), Encoding.UTF8, "application/json");
+        var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
         var response = await _apiClient.PostAsync("users/register", content);
         return response.IsSuccessStatusCode;
     }

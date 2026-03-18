@@ -1,359 +1,280 @@
--- Создание базы данных
-CREATE DATABASE IF NOT EXISTS NearbyDB
-    CHARACTER SET utf8mb4
-    COLLATE utf8mb4_unicode_ci;
+-- phpMyAdmin SQL Dump
+-- version 5.2.3
+-- https://www.phpmyadmin.net/
+--
+-- Хост: db:3306
+-- Время создания: Мар 13 2026 г., 20:31
+-- Версия сервера: 8.0.43
+-- Версия PHP: 8.3.26
 
-USE NearbyDB;
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
 
--- =====================================================
--- Таблица пользователей (физические лица)
--- =====================================================
-CREATE TABLE users (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    full_name VARCHAR(255) NOT NULL COMMENT 'ФИО',
-    city VARCHAR(100) COMMENT 'Город',
-    birth_year YEAR NULL COMMENT 'Год рождения',
-    about TEXT NULL COMMENT 'Краткая информация о себе',
-    profile_picture VARCHAR(500) NULL COMMENT 'Ссылка на фото профиля',
-    email VARCHAR(255) UNIQUE COMMENT 'Email для входа',
-    phone VARCHAR(20) COMMENT 'Телефон',
-    password_hash VARCHAR(255) COMMENT 'Хеш пароля',
-    vk_id VARCHAR(100) COMMENT 'ID ВКонтакте',
-    tg_id VARCHAR(100) COMMENT 'ID Telegram',
-    balance DECIMAL(10,2) DEFAULT 0.00 COMMENT 'Текущий баланс нирбиков',
-    availability_status ENUM('available', 'busy', 'offline') DEFAULT 'available' COMMENT 'Статус доступности',
-    is_admin BOOLEAN DEFAULT FALSE,
-    is_moderator BOOLEAN DEFAULT FALSE,
-    last_seen_at TIMESTAMP NULL COMMENT 'Последнее посещение',
-    is_online BOOLEAN DEFAULT FALSE COMMENT 'Флаг онлайн',
-    average_rating DECIMAL(3,2) DEFAULT 0.00 COMMENT 'Средний рейтинг (на основе оценок)',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_email (email),
-    INDEX idx_vk (vk_id),
-    INDEX idx_tg (tg_id)
-) ENGINE=InnoDB COMMENT 'Физические лица (пользователи)';
 
--- =====================================================
--- Таблица организаций (юридические лица)
--- =====================================================
-CREATE TABLE organizations (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    name VARCHAR(255) NOT NULL COMMENT 'Название организации',
-    inn VARCHAR(20) NULL COMMENT 'ИНН (может отсутствовать)',
-    contact_person VARCHAR(255) COMMENT 'Контактное лицо (ФИО)',
-    contact_phone VARCHAR(20) COMMENT 'Контактный телефон',
-    contact_email VARCHAR(255) COMMENT 'Контактный email',
-    description TEXT COMMENT 'Описание деятельности',
-    logo VARCHAR(500) NULL COMMENT 'Логотип',
-    verified BOOLEAN DEFAULT FALSE COMMENT 'Подтверждена модератором',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    INDEX idx_name (name)
-) ENGINE=InnoDB COMMENT 'Юридические лица (организации)';
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
 
--- =====================================================
--- Членство пользователей в организациях
--- =====================================================
-CREATE TABLE organization_members (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id INT UNSIGNED NOT NULL COMMENT 'Пользователь',
-    organization_id INT UNSIGNED NOT NULL COMMENT 'Организация',
-    role ENUM('owner', 'manager', 'member') NOT NULL DEFAULT 'member' COMMENT 'Роль внутри организации',
-    status ENUM('pending', 'active') DEFAULT 'pending' COMMENT 'Статус членства (ожидает подтверждения / активен)',
-    added_by INT UNSIGNED COMMENT 'Кто добавил/пригласил (ссылка на users)',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (organization_id) REFERENCES organizations(id) ON DELETE CASCADE,
-    FOREIGN KEY (added_by) REFERENCES users(id) ON DELETE SET NULL,
-    UNIQUE KEY unique_member (user_id, organization_id)
-) ENGINE=InnoDB COMMENT 'Связь пользователей с организациями и роли в них';
+--
+-- База данных: `NearbyDB`
+--
 
--- =====================================================
--- Образование пользователя
--- =====================================================
-CREATE TABLE user_education (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id INT UNSIGNED NOT NULL,
-    institution VARCHAR(255) NOT NULL COMMENT 'Учебное заведение',
-    degree VARCHAR(255) COMMENT 'Уровень образования',
-    field_of_study VARCHAR(255) COMMENT 'Специальность / направление',
-    start_year YEAR NOT NULL,
-    end_year YEAR NULL COMMENT 'Год окончания (если null — учится до сих пор)',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_user (user_id)
-) ENGINE=InnoDB COMMENT 'Образование пользователя';
+-- --------------------------------------------------------
 
--- =====================================================
--- Простые задачи
--- =====================================================
-CREATE TABLE tasks (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
-    needed_volunteers INT UNSIGNED NOT NULL DEFAULT 1 COMMENT 'Сколько волонтеров нужно',
-    priority ENUM('low', 'medium', 'high') DEFAULT 'medium',
-    location VARCHAR(255) COMMENT 'Место выполнения',
-    reward DECIMAL(10,2) DEFAULT 0.00 COMMENT 'Награда в нирбиках',
-    status ENUM('searching', 'in_progress', 'completed', 'cancelled') DEFAULT 'searching',
-    created_by_user_id INT UNSIGNED NULL COMMENT 'Создатель – пользователь (если задача от физлица)',
-    created_by_organization_id INT UNSIGNED NULL COMMENT 'Создатель – организация (если задача от юрлица)',
-    deadline DATETIME NULL COMMENT 'Срок выполнения',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (created_by_user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (created_by_organization_id) REFERENCES organizations(id) ON DELETE CASCADE,
-    INDEX idx_status (status),
-    INDEX idx_creator_user (created_by_user_id),
-    INDEX idx_creator_org (created_by_organization_id),
-    CHECK (created_by_user_id IS NOT NULL OR created_by_organization_id IS NOT NULL)
-) ENGINE=InnoDB COMMENT 'Простые задачи';
+--
+-- Структура таблицы `balance_transactions`
+--
 
--- =====================================================
--- Отклики/назначения на простые задачи (только пользователи)
--- =====================================================
-CREATE TABLE task_volunteers (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    task_id INT UNSIGNED NOT NULL,
-    user_id INT UNSIGNED NOT NULL,
-    status ENUM('pending', 'accepted', 'rejected', 'cancelled') DEFAULT 'pending' COMMENT 'Статус участия',
-    assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    UNIQUE KEY unique_task_volunteer (task_id, user_id)
-) ENGINE=InnoDB COMMENT 'Волонтеры, выполняющие простые задачи';
+CREATE TABLE `balance_transactions` (
+  `id` int UNSIGNED NOT NULL,
+  `user_id` int UNSIGNED NOT NULL,
+  `amount` decimal(10,2) NOT NULL COMMENT 'Изменение баланса (может быть отрицательным)',
+  `balance_after` decimal(10,2) NOT NULL COMMENT 'Баланс после операции',
+  `type` enum('task_reward','task_cancellation','project_reward','withdrawal','refill') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `reference_type` enum('task','project') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `reference_id` int UNSIGNED DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='История изменений баланса';
 
--- =====================================================
--- Проекты
--- =====================================================
-CREATE TABLE projects (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
-    type ENUM('A', 'B') NOT NULL COMMENT 'A - с ролями по дням, B - без разделения по дням',
-    created_by_user_id INT UNSIGNED NULL COMMENT 'Создатель – пользователь',
-    created_by_organization_id INT UNSIGNED NULL COMMENT 'Создатель – организация',
-    status ENUM('searching', 'active', 'completed', 'cancelled') DEFAULT 'searching',
-    start_date DATE COMMENT 'Дата начала проекта',
-    end_date DATE COMMENT 'Дата окончания проекта',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (created_by_user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (created_by_organization_id) REFERENCES organizations(id) ON DELETE CASCADE,
-    INDEX idx_status (status),
-    INDEX idx_creator_user (created_by_user_id),
-    INDEX idx_creator_org (created_by_organization_id),
-    CHECK (created_by_user_id IS NOT NULL OR created_by_organization_id IS NOT NULL)
-) ENGINE=InnoDB COMMENT 'Проекты (большие задачи)';
+-- --------------------------------------------------------
 
--- =====================================================
--- Роли в проектах
--- =====================================================
-CREATE TABLE project_roles (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    project_id INT UNSIGNED NOT NULL,
-    name VARCHAR(100) NOT NULL,
-    description TEXT,
-    total_needed INT UNSIGNED COMMENT 'Для типа B: общее количество людей на эту роль',
-    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-    INDEX idx_project (project_id)
-) ENGINE=InnoDB COMMENT 'Роли, доступные в проекте';
+--
+-- Структура таблицы `chats`
+--
 
--- =====================================================
--- Потребность в ролях по дням (только для типа A)
--- =====================================================
-CREATE TABLE project_role_daily_needs (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    role_id INT UNSIGNED NOT NULL,
-    date DATE NOT NULL,
-    needed_count INT UNSIGNED NOT NULL COMMENT 'Сколько человек нужно на эту дату',
-    FOREIGN KEY (role_id) REFERENCES project_roles(id) ON DELETE CASCADE,
-    UNIQUE KEY unique_role_date (role_id, date)
-) ENGINE=InnoDB COMMENT 'Ежедневная потребность в ролях (для типа A)';
+CREATE TABLE `chats` (
+  `id` int UNSIGNED NOT NULL,
+  `type` enum('personal','group') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Название группового чата',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Чаты';
 
--- =====================================================
--- Участники проекта (назначенные на роли) – только пользователи
--- =====================================================
-CREATE TABLE project_participants (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id INT UNSIGNED NOT NULL,
-    project_id INT UNSIGNED NOT NULL,
-    role_id INT UNSIGNED NOT NULL,
-    status ENUM('invited', 'active', 'rejected', 'left') DEFAULT 'invited',
-    invited_by INT UNSIGNED COMMENT 'Кто пригласил (админ/овнер)',
-    joined_at TIMESTAMP NULL COMMENT 'Когда принял приглашение или был назначен',
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-    FOREIGN KEY (role_id) REFERENCES project_roles(id) ON DELETE CASCADE,
-    FOREIGN KEY (invited_by) REFERENCES users(id) ON DELETE SET NULL,
-    UNIQUE KEY unique_project_user_role (user_id, project_id, role_id)
-) ENGINE=InnoDB COMMENT 'Участники проектов и их роли';
+-- --------------------------------------------------------
 
--- =====================================================
--- Дни, на которые назначен участник (для типа A)
--- =====================================================
-CREATE TABLE participant_days (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    participant_id INT UNSIGNED NOT NULL,
-    date DATE NOT NULL,
-    FOREIGN KEY (participant_id) REFERENCES project_participants(id) ON DELETE CASCADE,
-    UNIQUE KEY unique_participant_day (participant_id, date)
-) ENGINE=InnoDB COMMENT 'Даты участия (для типа A)';
+--
+-- Структура таблицы `chat_members`
+--
 
--- =====================================================
--- Мелкие задачи внутри проекта
--- =====================================================
-CREATE TABLE project_tasks (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    project_id INT UNSIGNED NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
-    date DATE COMMENT 'Если привязана к конкретному дню',
-    status ENUM('pending', 'in_progress', 'completed') DEFAULT 'pending',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE CASCADE,
-    INDEX idx_project (project_id)
-) ENGINE=InnoDB COMMENT 'Мелкие задачи внутри проекта';
+CREATE TABLE `chat_members` (
+  `id` int UNSIGNED NOT NULL,
+  `chat_id` int UNSIGNED NOT NULL,
+  `user_id` int UNSIGNED NOT NULL,
+  `joined_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_read_message_id` int UNSIGNED DEFAULT NULL COMMENT 'Последнее прочитанное сообщение'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Участники чатов';
 
--- =====================================================
--- Исполнители мелких задач проекта (только пользователи)
--- =====================================================
-CREATE TABLE project_task_volunteers (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    project_task_id INT UNSIGNED NOT NULL,
-    user_id INT UNSIGNED NOT NULL,
-    status ENUM('assigned', 'completed') DEFAULT 'assigned',
-    assigned_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (project_task_id) REFERENCES project_tasks(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    UNIQUE KEY unique_task_volunteer (project_task_id, user_id)
-) ENGINE=InnoDB COMMENT 'Волонтеры, выполняющие мелкие задачи проекта';
+-- --------------------------------------------------------
 
--- =====================================================
--- Оценки пользователей друг другом (только пользователи)
--- =====================================================
-CREATE TABLE ratings (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    rater_id INT UNSIGNED NOT NULL COMMENT 'Кто оценивает (пользователь)',
-    rated_user_id INT UNSIGNED NOT NULL COMMENT 'Кого оценивают (пользователь)',
-    rating TINYINT UNSIGNED NOT NULL CHECK (rating BETWEEN 1 AND 5),
-    comment TEXT,
-    task_id INT UNSIGNED NULL COMMENT 'Ссылка на простую задачу (если оценка за неё)',
-    project_id INT UNSIGNED NULL COMMENT 'Ссылка на проект (если оценка за участие в проекте)',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (rater_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (rated_user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE SET NULL,
-    FOREIGN KEY (project_id) REFERENCES projects(id) ON DELETE SET NULL,
-    INDEX idx_rater (rater_id),
-    INDEX idx_rated (rated_user_id),
-    UNIQUE KEY unique_task_rating (rater_id, rated_user_id, task_id),
-    UNIQUE KEY unique_project_rating (rater_id, rated_user_id, project_id)
-) ENGINE=InnoDB COMMENT 'Оценки (рейтинг)';
+--
+-- Структура таблицы `messages`
+--
 
--- =====================================================
--- Чаты (личные и групповые)
--- =====================================================
-CREATE TABLE chats (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    type ENUM('personal', 'group') NOT NULL,
-    name VARCHAR(255) NULL COMMENT 'Название группового чата',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-) ENGINE=InnoDB COMMENT 'Чаты';
+CREATE TABLE `messages` (
+  `id` int UNSIGNED NOT NULL,
+  `chat_id` int UNSIGNED NOT NULL,
+  `sender_id` int UNSIGNED NOT NULL COMMENT 'Отправитель (пользователь)',
+  `content_type` enum('text','image','file','voice') COLLATE utf8mb4_unicode_ci DEFAULT 'text',
+  `content` text COLLATE utf8mb4_unicode_ci COMMENT 'Текст сообщения или ссылка на файл',
+  `file_url` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'URL файла (если есть)',
+  `transcribed_text` text COLLATE utf8mb4_unicode_ci COMMENT 'Распознанный текст голосового сообщения',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Сообщения';
 
--- =====================================================
--- Участники чатов (только пользователи)
--- =====================================================
-CREATE TABLE chat_members (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    chat_id INT UNSIGNED NOT NULL,
-    user_id INT UNSIGNED NOT NULL,
-    joined_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    last_read_message_id INT UNSIGNED NULL COMMENT 'Последнее прочитанное сообщение',
-    FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    UNIQUE KEY unique_chat_user (chat_id, user_id)
-) ENGINE=InnoDB COMMENT 'Участники чатов';
+-- --------------------------------------------------------
 
--- =====================================================
--- Сообщения
--- =====================================================
-CREATE TABLE messages (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    chat_id INT UNSIGNED NOT NULL,
-    sender_id INT UNSIGNED NOT NULL COMMENT 'Отправитель (пользователь)',
-    content_type ENUM('text', 'image', 'file', 'voice') DEFAULT 'text',
-    content TEXT COMMENT 'Текст сообщения или ссылка на файл',
-    file_url VARCHAR(500) NULL COMMENT 'URL файла (если есть)',
-    transcribed_text TEXT NULL COMMENT 'Распознанный текст голосового сообщения',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE,
-    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_chat (chat_id),
-    INDEX idx_sender (sender_id)
-) ENGINE=InnoDB COMMENT 'Сообщения';
+--
+-- Структура таблицы `notifications`
+--
 
--- =====================================================
--- Уведомления (включая приглашения)
--- =====================================================
-CREATE TABLE notifications (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id INT UNSIGNED NOT NULL,
-    type ENUM(
-        'project_invite',
-        'task_invite',
-        'task_status_change',
-        'project_status_change',
-        'new_message',
-        'rating_received',
-        'organization_verified'
-    ) NOT NULL,
-    content TEXT NOT NULL,
-    reference_type ENUM('task', 'project', 'chat', 'user') NULL,
-    reference_id INT UNSIGNED NULL,
-    is_read BOOLEAN DEFAULT FALSE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_user (user_id),
-    INDEX idx_read (is_read)
-) ENGINE=InnoDB COMMENT 'Уведомления пользователей';
+CREATE TABLE `notifications` (
+  `id` int UNSIGNED NOT NULL,
+  `user_id` int UNSIGNED NOT NULL,
+  `type` enum('project_invite','task_invite','task_status_change','project_status_change','new_message','rating_received','organization_verified') COLLATE utf8mb4_unicode_ci NOT NULL,
+  `content` text COLLATE utf8mb4_unicode_ci NOT NULL,
+  `reference_type` enum('task','project','chat','user') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `reference_id` int UNSIGNED DEFAULT NULL,
+  `is_read` tinyint(1) DEFAULT '0',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Уведомления пользователей';
 
--- =====================================================
--- Транзакции баланса (история начислений/списаний) – только для пользователей
--- =====================================================
-CREATE TABLE balance_transactions (
-    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-    user_id INT UNSIGNED NOT NULL,
-    amount DECIMAL(10,2) NOT NULL COMMENT 'Изменение баланса (может быть отрицательным)',
-    balance_after DECIMAL(10,2) NOT NULL COMMENT 'Баланс после операции',
-    type ENUM('task_reward', 'task_cancellation', 'project_reward', 'withdrawal', 'refill') NOT NULL,
-    reference_type ENUM('task', 'project') NULL,
-    reference_id INT UNSIGNED NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    INDEX idx_user (user_id),
-    INDEX idx_created (created_at)
-) ENGINE=InnoDB COMMENT 'История изменений баланса';
+-- --------------------------------------------------------
 
--- Добавим связь для last_read_message_id в chat_members (после создания messages)
-ALTER TABLE chat_members
-    ADD CONSTRAINT fk_last_read_message
-    FOREIGN KEY (last_read_message_id) REFERENCES messages(id) ON DELETE SET NULL;
+--
+-- Структура таблицы `organizations`
+--
 
--- =====================================================
--- Триггеры для автоматического пересчёта среднего рейтинга
--- =====================================================
+CREATE TABLE `organizations` (
+  `id` int UNSIGNED NOT NULL,
+  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Название организации',
+  `inn` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'ИНН (может отсутствовать)',
+  `contact_person` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Контактное лицо (ФИО)',
+  `contact_phone` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Контактный телефон',
+  `contact_email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Контактный email',
+  `description` text COLLATE utf8mb4_unicode_ci COMMENT 'Описание деятельности',
+  `logo` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Логотип',
+  `verified` tinyint(1) DEFAULT '0' COMMENT 'Подтверждена модератором',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Юридические лица (организации)';
 
-DELIMITER //
+-- --------------------------------------------------------
 
--- AFTER INSERT
-CREATE TRIGGER trg_ratings_after_insert
-AFTER INSERT ON ratings
-FOR EACH ROW
-BEGIN
+--
+-- Структура таблицы `organization_members`
+--
+
+CREATE TABLE `organization_members` (
+  `id` int UNSIGNED NOT NULL,
+  `user_id` int UNSIGNED NOT NULL COMMENT 'Пользователь',
+  `organization_id` int UNSIGNED NOT NULL COMMENT 'Организация',
+  `role` enum('owner','manager','member') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'member' COMMENT 'Роль внутри организации',
+  `status` enum('pending','active') COLLATE utf8mb4_unicode_ci DEFAULT 'pending' COMMENT 'Статус членства (ожидает подтверждения / активен)',
+  `added_by` int UNSIGNED DEFAULT NULL COMMENT 'Кто добавил/пригласил (ссылка на users)',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Связь пользователей с организациями и роли в них';
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `participant_days`
+--
+
+CREATE TABLE `participant_days` (
+  `id` int UNSIGNED NOT NULL,
+  `participant_id` int UNSIGNED NOT NULL,
+  `date` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Даты участия (для типа A)';
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `projects`
+--
+
+CREATE TABLE `projects` (
+  `id` int UNSIGNED NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `type` enum('A','B') COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'A - с ролями по дням, B - без разделения по дням',
+  `created_by_user_id` int UNSIGNED DEFAULT NULL COMMENT 'Создатель – пользователь',
+  `created_by_organization_id` int UNSIGNED DEFAULT NULL COMMENT 'Создатель – организация',
+  `status` enum('searching','active','completed','cancelled') COLLATE utf8mb4_unicode_ci DEFAULT 'searching',
+  `start_date` date DEFAULT NULL COMMENT 'Дата начала проекта',
+  `end_date` date DEFAULT NULL COMMENT 'Дата окончания проекта',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `project_participants`
+--
+
+CREATE TABLE `project_participants` (
+  `id` int UNSIGNED NOT NULL,
+  `user_id` int UNSIGNED NOT NULL,
+  `project_id` int UNSIGNED NOT NULL,
+  `role_id` int UNSIGNED NOT NULL,
+  `status` enum('invited','active','rejected','left') COLLATE utf8mb4_unicode_ci DEFAULT 'invited',
+  `invited_by` int UNSIGNED DEFAULT NULL COMMENT 'Кто пригласил (админ/овнер)',
+  `joined_at` timestamp NULL DEFAULT NULL COMMENT 'Когда принял приглашение или был назначен'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Участники проектов и их роли';
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `project_roles`
+--
+
+CREATE TABLE `project_roles` (
+  `id` int UNSIGNED NOT NULL,
+  `project_id` int UNSIGNED NOT NULL,
+  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `total_needed` int UNSIGNED DEFAULT NULL COMMENT 'Для типа B: общее количество людей на эту роль'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Роли, доступные в проекте';
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `project_role_daily_needs`
+--
+
+CREATE TABLE `project_role_daily_needs` (
+  `id` int UNSIGNED NOT NULL,
+  `role_id` int UNSIGNED NOT NULL,
+  `date` date NOT NULL,
+  `needed_count` int UNSIGNED NOT NULL COMMENT 'Сколько человек нужно на эту дату'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Ежедневная потребность в ролях (для типа A)';
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `project_tasks`
+--
+
+CREATE TABLE `project_tasks` (
+  `id` int UNSIGNED NOT NULL,
+  `project_id` int UNSIGNED NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `date` date DEFAULT NULL COMMENT 'Если привязана к конкретному дню',
+  `status` enum('pending','in_progress','completed') COLLATE utf8mb4_unicode_ci DEFAULT 'pending',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Мелкие задачи внутри проекта';
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `project_task_volunteers`
+--
+
+CREATE TABLE `project_task_volunteers` (
+  `id` int UNSIGNED NOT NULL,
+  `project_task_id` int UNSIGNED NOT NULL,
+  `user_id` int UNSIGNED NOT NULL,
+  `status` enum('assigned','completed') COLLATE utf8mb4_unicode_ci DEFAULT 'assigned',
+  `assigned_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Волонтеры, выполняющие мелкие задачи проекта';
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `ratings`
+--
+
+CREATE TABLE `ratings` (
+  `id` int UNSIGNED NOT NULL,
+  `rater_id` int UNSIGNED NOT NULL COMMENT 'Кто оценивает (пользователь)',
+  `rated_user_id` int UNSIGNED NOT NULL COMMENT 'Кого оценивают (пользователь)',
+  `rating` tinyint UNSIGNED NOT NULL,
+  `comment` text COLLATE utf8mb4_unicode_ci,
+  `task_id` int UNSIGNED DEFAULT NULL COMMENT 'Ссылка на простую задачу (если оценка за неё)',
+  `project_id` int UNSIGNED DEFAULT NULL COMMENT 'Ссылка на проект (если оценка за участие в проекте)',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ;
+
+--
+-- Триггеры `ratings`
+--
+DELIMITER $$
+CREATE TRIGGER `trg_ratings_after_delete` AFTER DELETE ON `ratings` FOR EACH ROW BEGIN
+    UPDATE users
+    SET average_rating = (
+        SELECT COALESCE(AVG(rating), 0)
+        FROM ratings
+        WHERE rated_user_id = OLD.rated_user_id
+    )
+    WHERE id = OLD.rated_user_id;
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `trg_ratings_after_insert` AFTER INSERT ON `ratings` FOR EACH ROW BEGIN
     UPDATE users
     SET average_rating = (
         SELECT COALESCE(AVG(rating), 0)
@@ -361,13 +282,11 @@ BEGIN
         WHERE rated_user_id = NEW.rated_user_id
     )
     WHERE id = NEW.rated_user_id;
-END //
-
--- AFTER UPDATE
-CREATE TRIGGER trg_ratings_after_update
-AFTER UPDATE ON ratings
-FOR EACH ROW
-BEGIN
+END
+$$
+DELIMITER ;
+DELIMITER $$
+CREATE TRIGGER `trg_ratings_after_update` AFTER UPDATE ON `ratings` FOR EACH ROW BEGIN
     IF OLD.rated_user_id != NEW.rated_user_id THEN
         -- Для старого пользователя
         UPDATE users
@@ -395,20 +314,464 @@ BEGIN
         )
         WHERE id = NEW.rated_user_id;
     END IF;
-END //
-
--- AFTER DELETE
-CREATE TRIGGER trg_ratings_after_delete
-AFTER DELETE ON ratings
-FOR EACH ROW
-BEGIN
-    UPDATE users
-    SET average_rating = (
-        SELECT COALESCE(AVG(rating), 0)
-        FROM ratings
-        WHERE rated_user_id = OLD.rated_user_id
-    )
-    WHERE id = OLD.rated_user_id;
-END //
-
+END
+$$
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `tasks`
+--
+
+CREATE TABLE `tasks` (
+  `id` int UNSIGNED NOT NULL,
+  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text COLLATE utf8mb4_unicode_ci,
+  `needed_volunteers` int UNSIGNED NOT NULL DEFAULT '1' COMMENT 'Сколько волонтеров нужно',
+  `priority` enum('low','medium','high') COLLATE utf8mb4_unicode_ci DEFAULT 'medium',
+  `location` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Место выполнения',
+  `reward` decimal(10,2) DEFAULT '0.00' COMMENT 'Награда в нирбиках',
+  `status` enum('searching','in_progress','completed','cancelled') COLLATE utf8mb4_unicode_ci DEFAULT 'searching',
+  `created_by_user_id` int UNSIGNED DEFAULT NULL COMMENT 'Создатель – пользователь (если задача от физлица)',
+  `created_by_organization_id` int UNSIGNED DEFAULT NULL COMMENT 'Создатель – организация (если задача от юрлица)',
+  `deadline` datetime DEFAULT NULL COMMENT 'Срок выполнения',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ;
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `task_volunteers`
+--
+
+CREATE TABLE `task_volunteers` (
+  `id` int UNSIGNED NOT NULL,
+  `task_id` int UNSIGNED NOT NULL,
+  `user_id` int UNSIGNED NOT NULL,
+  `status` enum('pending','accepted','rejected','cancelled') COLLATE utf8mb4_unicode_ci DEFAULT 'pending' COMMENT 'Статус участия',
+  `assigned_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Волонтеры, выполняющие простые задачи';
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `users`
+--
+
+CREATE TABLE `users` (
+  `id` int UNSIGNED NOT NULL,
+  `full_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ФИО',
+  `city` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Город',
+  `birth_date` date DEFAULT NULL COMMENT 'Год рождения',
+  `about` text COLLATE utf8mb4_unicode_ci COMMENT 'Краткая информация о себе',
+  `profile_picture` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Ссылка на фото профиля',
+  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Email для входа',
+  `phone` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Телефон',
+  `password` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'Хеш пароля',
+  `vk_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'ID ВКонтакте',
+  `tg_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'ID Telegram',
+  `balance` decimal(10,2) DEFAULT '0.00' COMMENT 'Текущий баланс нирбиков',
+  `availability_status` enum('available','busy','offline') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'available' COMMENT 'Статус доступности',
+  `is_admin` tinyint(1) DEFAULT '0',
+  `is_moderator` tinyint(1) DEFAULT '0',
+  `lastSeenAt` timestamp NULL DEFAULT NULL COMMENT 'Последнее посещение',
+  `is_online` tinyint(1) DEFAULT '0' COMMENT 'Флаг онлайн',
+  `average_rating` decimal(3,2) DEFAULT '0.00' COMMENT 'Средний рейтинг (на основе оценок)',
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `education_institution` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Учебное заведение',
+  `education_degree` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Степень/квалификация',
+  `education_field` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Специальность',
+  `education_start_year` year DEFAULT NULL,
+  `education_end_year` year DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Физические лица (пользователи)';
+
+--
+-- Дамп данных таблицы `users`
+--
+
+INSERT INTO `users` (`id`, `full_name`, `city`, `birth_date`, `about`, `profile_picture`, `email`, `phone`, `password`, `vk_id`, `tg_id`, `balance`, `availability_status`, `is_admin`, `is_moderator`, `lastSeenAt`, `is_online`, `average_rating`, `created_at`, `updated_at`, `education_institution`, `education_degree`, `education_field`, `education_start_year`, `education_end_year`) VALUES
+(4, 'привет', NULL, NULL, NULL, NULL, 'test@test.test', '+71234567890', '$2y$10$aay4bYX9IH6MmXh2m5GWZe8VVUxfnLHcA/E6DsQTYlOuldn5X1SP6', NULL, NULL, 0.00, 'available', 0, 0, '2026-03-12 03:06:29', 1, 0.00, '2026-03-12 03:05:58', '2026-03-12 03:06:29', NULL, NULL, NULL, NULL, NULL),
+(5, 'Вожегов Григорий Романович', 'Пермь2', '2006-06-07', 'Начинающий программист', NULL, 'tocabloha@gmail.com', '+79082697663', '$2y$10$y4VrRWP/21wRwpuxa5dl/.fcYssm5EsBRX2P5nieTJjFrCJpggZeW', NULL, NULL, 0.00, 'available', 0, 0, '2026-03-13 20:09:37', 1, 0.00, '2026-03-12 22:51:22', '2026-03-13 20:09:37', '', '', '', '0000', '0000');
+
+--
+-- Индексы сохранённых таблиц
+--
+
+--
+-- Индексы таблицы `balance_transactions`
+--
+ALTER TABLE `balance_transactions`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_user` (`user_id`),
+  ADD KEY `idx_created` (`created_at`);
+
+--
+-- Индексы таблицы `chats`
+--
+ALTER TABLE `chats`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Индексы таблицы `chat_members`
+--
+ALTER TABLE `chat_members`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_chat_user` (`chat_id`,`user_id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `fk_last_read_message` (`last_read_message_id`);
+
+--
+-- Индексы таблицы `messages`
+--
+ALTER TABLE `messages`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_chat` (`chat_id`),
+  ADD KEY `idx_sender` (`sender_id`);
+
+--
+-- Индексы таблицы `notifications`
+--
+ALTER TABLE `notifications`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_user` (`user_id`),
+  ADD KEY `idx_read` (`is_read`);
+
+--
+-- Индексы таблицы `organizations`
+--
+ALTER TABLE `organizations`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_name` (`name`);
+
+--
+-- Индексы таблицы `organization_members`
+--
+ALTER TABLE `organization_members`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_member` (`user_id`,`organization_id`),
+  ADD KEY `organization_id` (`organization_id`),
+  ADD KEY `added_by` (`added_by`);
+
+--
+-- Индексы таблицы `participant_days`
+--
+ALTER TABLE `participant_days`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_participant_day` (`participant_id`,`date`);
+
+--
+-- Индексы таблицы `projects`
+--
+ALTER TABLE `projects`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_status` (`status`),
+  ADD KEY `idx_creator_user` (`created_by_user_id`),
+  ADD KEY `idx_creator_org` (`created_by_organization_id`);
+
+--
+-- Индексы таблицы `project_participants`
+--
+ALTER TABLE `project_participants`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_project_user_role` (`user_id`,`project_id`,`role_id`),
+  ADD KEY `project_id` (`project_id`),
+  ADD KEY `role_id` (`role_id`),
+  ADD KEY `invited_by` (`invited_by`);
+
+--
+-- Индексы таблицы `project_roles`
+--
+ALTER TABLE `project_roles`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_project` (`project_id`);
+
+--
+-- Индексы таблицы `project_role_daily_needs`
+--
+ALTER TABLE `project_role_daily_needs`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_role_date` (`role_id`,`date`);
+
+--
+-- Индексы таблицы `project_tasks`
+--
+ALTER TABLE `project_tasks`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_project` (`project_id`);
+
+--
+-- Индексы таблицы `project_task_volunteers`
+--
+ALTER TABLE `project_task_volunteers`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_task_volunteer` (`project_task_id`,`user_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Индексы таблицы `ratings`
+--
+ALTER TABLE `ratings`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_task_rating` (`rater_id`,`rated_user_id`,`task_id`),
+  ADD UNIQUE KEY `unique_project_rating` (`rater_id`,`rated_user_id`,`project_id`),
+  ADD KEY `task_id` (`task_id`),
+  ADD KEY `project_id` (`project_id`),
+  ADD KEY `idx_rater` (`rater_id`),
+  ADD KEY `idx_rated` (`rated_user_id`);
+
+--
+-- Индексы таблицы `tasks`
+--
+ALTER TABLE `tasks`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_status` (`status`),
+  ADD KEY `idx_creator_user` (`created_by_user_id`),
+  ADD KEY `idx_creator_org` (`created_by_organization_id`);
+
+--
+-- Индексы таблицы `task_volunteers`
+--
+ALTER TABLE `task_volunteers`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `unique_task_volunteer` (`task_id`,`user_id`),
+  ADD KEY `user_id` (`user_id`);
+
+--
+-- Индексы таблицы `users`
+--
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`),
+  ADD KEY `idx_email` (`email`),
+  ADD KEY `idx_vk` (`vk_id`),
+  ADD KEY `idx_tg` (`tg_id`);
+
+--
+-- AUTO_INCREMENT для сохранённых таблиц
+--
+
+--
+-- AUTO_INCREMENT для таблицы `balance_transactions`
+--
+ALTER TABLE `balance_transactions`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `chats`
+--
+ALTER TABLE `chats`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `chat_members`
+--
+ALTER TABLE `chat_members`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `messages`
+--
+ALTER TABLE `messages`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `notifications`
+--
+ALTER TABLE `notifications`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `organizations`
+--
+ALTER TABLE `organizations`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `organization_members`
+--
+ALTER TABLE `organization_members`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `participant_days`
+--
+ALTER TABLE `participant_days`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `projects`
+--
+ALTER TABLE `projects`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `project_participants`
+--
+ALTER TABLE `project_participants`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `project_roles`
+--
+ALTER TABLE `project_roles`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `project_role_daily_needs`
+--
+ALTER TABLE `project_role_daily_needs`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `project_tasks`
+--
+ALTER TABLE `project_tasks`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `project_task_volunteers`
+--
+ALTER TABLE `project_task_volunteers`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `ratings`
+--
+ALTER TABLE `ratings`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `tasks`
+--
+ALTER TABLE `tasks`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `task_volunteers`
+--
+ALTER TABLE `task_volunteers`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT для таблицы `users`
+--
+ALTER TABLE `users`
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- Ограничения внешнего ключа сохраненных таблиц
+--
+
+--
+-- Ограничения внешнего ключа таблицы `balance_transactions`
+--
+ALTER TABLE `balance_transactions`
+  ADD CONSTRAINT `balance_transactions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `chat_members`
+--
+ALTER TABLE `chat_members`
+  ADD CONSTRAINT `chat_members_ibfk_1` FOREIGN KEY (`chat_id`) REFERENCES `chats` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `chat_members_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_last_read_message` FOREIGN KEY (`last_read_message_id`) REFERENCES `messages` (`id`) ON DELETE SET NULL;
+
+--
+-- Ограничения внешнего ключа таблицы `messages`
+--
+ALTER TABLE `messages`
+  ADD CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`chat_id`) REFERENCES `chats` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `notifications`
+--
+ALTER TABLE `notifications`
+  ADD CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `organization_members`
+--
+ALTER TABLE `organization_members`
+  ADD CONSTRAINT `organization_members_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `organization_members_ibfk_2` FOREIGN KEY (`organization_id`) REFERENCES `organizations` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `organization_members_ibfk_3` FOREIGN KEY (`added_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Ограничения внешнего ключа таблицы `participant_days`
+--
+ALTER TABLE `participant_days`
+  ADD CONSTRAINT `participant_days_ibfk_1` FOREIGN KEY (`participant_id`) REFERENCES `project_participants` (`id`) ON DELETE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `projects`
+--
+ALTER TABLE `projects`
+  ADD CONSTRAINT `projects_ibfk_1` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `projects_ibfk_2` FOREIGN KEY (`created_by_organization_id`) REFERENCES `organizations` (`id`) ON DELETE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `project_participants`
+--
+ALTER TABLE `project_participants`
+  ADD CONSTRAINT `project_participants_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `project_participants_ibfk_2` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `project_participants_ibfk_3` FOREIGN KEY (`role_id`) REFERENCES `project_roles` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `project_participants_ibfk_4` FOREIGN KEY (`invited_by`) REFERENCES `users` (`id`) ON DELETE SET NULL;
+
+--
+-- Ограничения внешнего ключа таблицы `project_roles`
+--
+ALTER TABLE `project_roles`
+  ADD CONSTRAINT `project_roles_ibfk_1` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `project_role_daily_needs`
+--
+ALTER TABLE `project_role_daily_needs`
+  ADD CONSTRAINT `project_role_daily_needs_ibfk_1` FOREIGN KEY (`role_id`) REFERENCES `project_roles` (`id`) ON DELETE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `project_tasks`
+--
+ALTER TABLE `project_tasks`
+  ADD CONSTRAINT `project_tasks_ibfk_1` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `project_task_volunteers`
+--
+ALTER TABLE `project_task_volunteers`
+  ADD CONSTRAINT `project_task_volunteers_ibfk_1` FOREIGN KEY (`project_task_id`) REFERENCES `project_tasks` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `project_task_volunteers_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `ratings`
+--
+ALTER TABLE `ratings`
+  ADD CONSTRAINT `ratings_ibfk_1` FOREIGN KEY (`rater_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `ratings_ibfk_2` FOREIGN KEY (`rated_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `ratings_ibfk_3` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `ratings_ibfk_4` FOREIGN KEY (`project_id`) REFERENCES `projects` (`id`) ON DELETE SET NULL;
+
+--
+-- Ограничения внешнего ключа таблицы `tasks`
+--
+ALTER TABLE `tasks`
+  ADD CONSTRAINT `tasks_ibfk_1` FOREIGN KEY (`created_by_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `tasks_ibfk_2` FOREIGN KEY (`created_by_organization_id`) REFERENCES `organizations` (`id`) ON DELETE CASCADE;
+
+--
+-- Ограничения внешнего ключа таблицы `task_volunteers`
+--
+ALTER TABLE `task_volunteers`
+  ADD CONSTRAINT `task_volunteers_ibfk_1` FOREIGN KEY (`task_id`) REFERENCES `tasks` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `task_volunteers_ibfk_2` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

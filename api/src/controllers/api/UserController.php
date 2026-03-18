@@ -9,6 +9,7 @@ use Exception;
 use Models\Users;
 use Models\UsersQuery;
 use OpenApi\Attributes as OA;
+use Propel\Runtime\Map\TableMap;
 
 #[OA\Info(
     version: '1.0.0',
@@ -26,14 +27,17 @@ use OpenApi\Attributes as OA;
     name: 'jwt',
     description: 'Аутентификация через JWT в cookie (HttpOnly)'
 )]
+#[OA\Tag(name: 'Users', description: 'Управление пользователями')]
 #[Route("/api/users")]
 class UserController
 {
+
     /**
      * Регистрация нового пользователя
      */
     #[OA\Post(
         path: '/api/users/register',
+        tags: ['Users'],
         summary: 'Регистрация нового пользователя',
         requestBody: new OA\RequestBody(
             required: true,
@@ -162,6 +166,7 @@ class UserController
      */
     #[OA\Post(
         path: '/api/users/signin',
+        tags: ['Users'],
         summary: 'Авторизация пользователя',
         requestBody: new OA\RequestBody(
             required: true,
@@ -267,90 +272,11 @@ class UserController
     }
 
     /**
-     * Получение профиля текущего пользователя
-     */
-    #[OA\Get(
-        path: '/api/users/me',
-        summary: 'Получить данные текущего авторизованного пользователя',
-        security: [['cookieAuth' => []]],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Данные профиля',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'id', type: 'integer'),
-                        new OA\Property(property: 'full_name', type: 'string'),
-                        new OA\Property(property: 'phone', type: 'string', nullable: true),
-                        new OA\Property(property: 'email', type: 'string', nullable: true),
-                        new OA\Property(property: 'city', type: 'string', nullable: true),
-                        new OA\Property(property: 'birth_date', type: 'string', format: 'date', nullable: true),
-                        new OA\Property(property: 'about', type: 'string', nullable: true),
-                        new OA\Property(property: 'profile_picture', type: 'string', nullable: true),
-                        new OA\Property(property: 'vk_id', type: 'string', nullable: true),
-                        new OA\Property(property: 'tg_id', type: 'string', nullable: true),
-                        new OA\Property(property: 'balance', type: 'number', format: 'float'),
-                        new OA\Property(property: 'availability_status', type: 'string', enum: ['available', 'busy', 'offline']),
-                        new OA\Property(property: 'is_admin', type: 'boolean'),
-                        new OA\Property(property: 'is_moderator', type: 'boolean'),
-                        new OA\Property(property: 'last_seen_at', type: 'string', format: 'date-time', nullable: true),
-                        new OA\Property(property: 'is_online', type: 'boolean'),
-                        new OA\Property(property: 'average_rating', type: 'number', format: 'float'),
-                        new OA\Property(property: 'created_at', type: 'string', format: 'date-time'),
-                        new OA\Property(property: 'updated_at', type: 'string', format: 'date-time')
-                    ]
-                )
-            ),
-            new OA\Response(
-                response: 401,
-                description: 'Не авторизован',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'error', type: 'string')
-                    ]
-                )
-            ),
-            new OA\Response(
-                response: 404,
-                description: 'Пользователь не найден',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'error', type: 'string')
-                    ]
-                )
-            )
-        ]
-    )]
-    #[Route("/me", "GET")]
-    public function getCurrentUser()
-    {
-        try {
-            if(!session_status() == PHP_SESSION_NONE){
-                session_start();
-            }
-            
-            $userId = $_SESSION['id'] ?? null;
-            if (!$userId) {
-                return new Response(401, ['error' => 'Unauthorized']);
-            }
-
-            $user = UsersQuery::create()->findOneById($userId);
-            if (!$user) {
-                return new Response(404, ['error' => 'User not found']);
-            }
-
-            // Возвращаем все данные профиля (кроме пароля)
-            return new Response(200, $this->formatUserProfile($user));
-        } catch (Exception $ex) {
-            return Validate::Ex($ex);
-        }
-    }
-
-    /**
      * Получение публичной информации о пользователе по ID
      */
     #[OA\Get(
         path: '/api/users/{id}',
+        tags: ['Users'],
         summary: 'Получить публичные данные пользователя по ID',
         parameters: [
             new OA\Parameter(
@@ -405,8 +331,13 @@ class UserController
     {
         try {
             $id = $params['id'] ?? null;
+
             if (!$id) {
                 return new Response(400, ['error' => 'User ID required']);
+            }
+
+            if($id == -1){
+                $id = $_SESSION['id'];
             }
 
             $user = UsersQuery::create()->findOneById($id);
@@ -414,21 +345,7 @@ class UserController
                 return new Response(404, ['error' => 'User not found']);
             }
 
-            // Публичные данные (без конфиденциальной информации)
-            $publicData = [
-                'id' => $user->getId(),
-                'full_name' => $user->getFullName(),
-                'city' => $user->getCity(),
-                'birth_date' => $user->getBirthDate() ? $user->getBirthDate()->format('Y-m-d') : null,
-                'about' => $user->getAbout(),
-                'profile_picture' => $user->getProfilePicture(),
-                'availability_status' => $user->getAvailabilityStatus(),
-                'average_rating' => $user->getAverageRating(),
-                'last_seen_at' => $user->getLastSeenAt() ? $user->getLastSeenAt()->format('Y-m-d H:i:s') : null,
-                'is_online' => $user->getIsOnline()
-            ];
-
-            return new Response(200, $publicData);
+            return new Response(200, $this->formatUserProfile($user));
         } catch (Exception $ex) {
             return Validate::Ex($ex);
         }
@@ -439,6 +356,7 @@ class UserController
      */
     #[OA\Put(
         path: '/api/users',
+        tags: ['Users'],
         summary: 'Редактирование профиля текущего пользователя',
         security: [['cookieAuth' => []]],
         requestBody: new OA\RequestBody(
@@ -508,7 +426,9 @@ class UserController
     public function edit($params)
     {
         try {
-            session_start();
+            if(!session_status() == PHP_SESSION_NONE){
+                session_start();
+            }
             $userId = $_SESSION['id'] ?? null;
             if (!$userId) {
                 return new Response(401, ['error' => 'Unauthorized']);
@@ -519,48 +439,50 @@ class UserController
                 return new Response(404, ['error' => 'User not found']);
             }
 
-            // Обновляем только переданные поля
-            $editableFields = ['full_name', 'city', 'about', 'profile_picture', 'availability_status'];
-            foreach ($editableFields as $field) {
-                if (isset($params[$field])) {
-                    $setter = 'set' . str_replace('_', '', ucwords($field, '_')); // fullName -> setFullName, profile_picture -> setProfilePicture
-                    $user->$setter(trim($params[$field]));
-                }
+            // Проверка текущего пароля
+            $currentPassword = $params['current_password'] ?? null;
+            if (!$currentPassword || !password_verify($currentPassword, $user->getPassword())) {
+                return new Response(403, ['error' => 'Invalid password']);
             }
 
-            // Отдельно обрабатываем дату рождения
-            if (isset($params['birth_date'])) {
-                if (!Validate::date($params['birth_date'], $r)) {
-                    return $r;
-                }
-                $user->setBirthDate($params['birth_date']);
-            }
+            // Обновление полей
+            $editableFields = [
+                'full_name',
+                'city',
+                'birth_date',
+                'email',
+                'phone',
+                'about',
+                'profile_picture',
+                'education_institution',
+                'education_degree',
+                'education_field',
+                'education_start_year',
+                'education_end_year'];
 
-            // Отдельно обрабатываем телефон и email (с проверкой уникальности)
             if (isset($params['phone']) && trim($params['phone']) !== $user->getPhone()) {
                 $phone = trim($params['phone']);
-                if (Validate::phone($phone, $r)) {
-                    return $r;
-                }
-                if (Validate::findUserByField('phone', $phone, $r, $userId)) {
-                    return $r;
-                }
-                $user->setPhone($phone);
+                if (Validate::phone($phone, $r)) return $r;
+                if (Validate::findUserByField('Phone', $phone, $r, $userId)) return new Response(409, ['error' => 'User with this phone already exists']);
             }
 
             if (isset($params['email']) && trim($params['email']) !== $user->getEmail()) {
                 $email = trim($params['email']);
-                if (Validate::email($email, $r)) {
-                    return $r;
-                }
-                if (Validate::findUserByField('email', $email, $r, $userId)) {
-                    return $r;
-                }
+                if (Validate::email($email, $r)) return $r;
+                if (Validate::findUserByField('Email', $email, $r, $userId)) return new Response(409, ['error' => 'User with this email already exists']);
                 $user->setEmail($email);
             }
 
-            $user->save();
+            foreach ($editableFields as $field) {
+                if (isset($params[$field])) {
+                    $v = trim($params[$field]);
+                    if($v != $user->getByName($field, TableMap::TYPE_FIELDNAME)){
+                        $user->setByName($field, $v, TableMap::TYPE_FIELDNAME);
+                    }
+                }
+            }
 
+            $user->save();
             return new Response(200, ['result' => 'successful']);
         } catch (Exception $ex) {
             return Validate::Ex($ex);
@@ -572,6 +494,7 @@ class UserController
      */
     #[OA\Put(
         path: '/api/users/password',
+        tags: ['Users'],
         summary: 'Смена пароля текущего пользователя',
         security: [['cookieAuth' => []]],
         requestBody: new OA\RequestBody(
@@ -628,7 +551,9 @@ class UserController
     public function changePassword($params)
     {
         try {
-            session_start();
+            if(!session_status() == PHP_SESSION_NONE){
+                session_start();
+            }
             $userId = $_SESSION['id'] ?? null;
             if (!$userId) {
                 return new Response(401, ['error' => 'Unauthorized']);
@@ -669,6 +594,7 @@ class UserController
      */
     #[OA\Delete(
         path: '/api/users',
+        tags: ['Users'],
         summary: 'Удаление профиля текущего пользователя',
         security: [['cookieAuth' => []]],
         responses: [
@@ -705,7 +631,9 @@ class UserController
     public function delete()
     {
         try {
-            session_start();
+            if(!session_status() == PHP_SESSION_NONE){
+                session_start();
+            }
             $userId = $_SESSION['id'] ?? null;
             if (!$userId) {
                 return new Response(401, ['error' => 'Unauthorized']);
@@ -722,6 +650,7 @@ class UserController
      */
     #[OA\Delete(
         path: '/api/users/{id}',
+        tags: ['Users'],
         summary: 'Удаление профиля по ID (только для самого пользователя)',
         security: [['cookieAuth' => []]],
         parameters: [
@@ -806,6 +735,7 @@ class UserController
      */
     #[OA\Post(
         path: '/api/users/logout',
+        tags: ['Users'],
         summary: 'Выход из системы (удаление сессии и cookie)',
         responses: [
             new OA\Response(
@@ -859,25 +789,25 @@ class UserController
     private function formatUserProfile(Users $user): array
     {
         return [
-            'id' => $user->getId(),
-            'full_name' => $user->getFullName(),
-            'phone' => $user->getPhone(),
-            'email' => $user->getEmail(),
-            'city' => $user->getCity(),
-            'birth_date' => $user->getBirthDate() ? $user->getBirthDate()->format('Y-m-d') : null,
-            'about' => $user->getAbout(),
-            'profile_picture' => $user->getProfilePicture(),
+            'Id' => $user->getId(),
+            'FullName' => $user->getFullName(),
+            'Phone' => $user->getPhone(),
+            'Email' => $user->getEmail(),
+            'City' => $user->getCity(),
+            'BirthDate' => $user->getBirthDate() ? $user->getBirthDate()->format('Y-m-d') : null,
+            'About' => $user->getAbout(),
+            'ProfilePicture' => $user->getProfilePicture(),
             'vk_id' => $user->getVkId(),
             'tg_id' => $user->getTgId(),
-            'balance' => $user->getBalance(),
-            'availability_status' => $user->getAvailabilityStatus(),
-            'is_admin' => $user->getIsAdmin(),
-            'is_moderator' => $user->getIsModerator(),
-            'last_seen_at' => $user->getLastSeenAt() ? $user->getLastSeenAt()->format('Y-m-d H:i:s') : null,
-            'is_online' => $user->getIsOnline(),
-            'average_rating' => $user->getAverageRating(),
-            'created_at' => $user->getCreatedAt() ? $user->getCreatedAt()->format('Y-m-d H:i:s') : null,
-            'updated_at' => $user->getUpdatedAt() ? $user->getUpdatedAt()->format('Y-m-d H:i:s') : null
+            'Balance' => $user->getBalance(),
+            'AvailabilityStatus' => $user->getAvailabilityStatus(),
+            'IsAdmin' => $user->getIsAdmin(),
+            'IsModerator' => $user->getIsModerator(),
+            'LastSeenAt' => $user->getLastSeenAt() ? $user->getLastSeenAt()->format('Y-m-d H:i:s') : null,
+            'IsOnline' => $user->getIsOnline(),
+            'AverageRating' => $user->getAverageRating(),
+            'CreatedAt' => $user->getCreatedAt() ? $user->getCreatedAt()->format('Y-m-d H:i:s') : null,
+            'UpdatedAt' => $user->getUpdatedAt() ? $user->getUpdatedAt()->format('Y-m-d H:i:s') : null
         ];
     }
 }

@@ -1,0 +1,1164 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Volunteer API",
+        "description": "API для волонтёрского приложения. Управление пользователями, задачами, проектами и чатами.",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080",
+            "description": "Локальный сервер"
+        }
+    ],
+    "paths": {
+        "/api/tasks": {
+            "get": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Получить список задач",
+                "description": "Получение списка задач с пагинацией",
+                "operationId": "6aebdfeae32ab6b76decad29d385f106",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "Номер страницы",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "description": "Количество записей на странице",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Фильтр по статусу",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "searching",
+                                "in_progress",
+                                "completed",
+                                "cancelled"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "priority",
+                        "in": "query",
+                        "description": "Фильтр по приоритету",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "low",
+                                "medium",
+                                "high"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "description": "Фильтр по городу (по полю location)",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список задач",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "title": {
+                                                        "type": "string"
+                                                    },
+                                                    "description": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "needed_volunteers": {
+                                                        "type": "integer"
+                                                    },
+                                                    "priority": {
+                                                        "type": "string"
+                                                    },
+                                                    "location": {
+                                                        "type": "string",
+                                                        "nullable": true
+                                                    },
+                                                    "reward": {
+                                                        "type": "number",
+                                                        "format": "float"
+                                                    },
+                                                    "status": {
+                                                        "type": "string"
+                                                    },
+                                                    "creator_id": {
+                                                        "type": "integer"
+                                                    },
+                                                    "deadline": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "created_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    },
+                                                    "updated_at": {
+                                                        "type": "string",
+                                                        "format": "date-time"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        },
+                                        "page": {
+                                            "type": "integer"
+                                        },
+                                        "limit": {
+                                            "type": "integer"
+                                        },
+                                        "pages": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Создать задачу",
+                "description": "Создание новой задачи",
+                "operationId": "3725af62c22f76368386bffa67597043",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "title",
+                                    "needed_volunteers",
+                                    "deadline"
+                                ],
+                                "properties": {
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Помочь с переездом"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "example": "Нужны сильные руки"
+                                    },
+                                    "needed_volunteers": {
+                                        "type": "integer",
+                                        "example": 2
+                                    },
+                                    "priority": {
+                                        "type": "string",
+                                        "enum": [
+                                            "low",
+                                            "medium",
+                                            "high"
+                                        ],
+                                        "example": "medium"
+                                    },
+                                    "location": {
+                                        "type": "string",
+                                        "example": "ул. Ленина, 10"
+                                    },
+                                    "reward": {
+                                        "type": "number",
+                                        "format": "float",
+                                        "example": 100.5
+                                    },
+                                    "deadline": {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "example": "2025-12-31 23:59:59"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Задача создана",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "result": {
+                                            "type": "string",
+                                            "example": "successful"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации"
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                }
+            }
+        },
+        "/api/tasks/{id}": {
+            "get": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Получить задачу по ID",
+                "description": "Получение одной задачи по ID",
+                "operationId": "f1bb87347d4501a7324a32919875cf1e",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Данные задачи"
+                    },
+                    "404": {
+                        "description": "Задача не найдена"
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Обновить задачу (только для создателя)",
+                "description": "Обновление задачи",
+                "operationId": "61e14e89ee3a454601312df966ff7fc6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "title": {
+                                        "type": "string"
+                                    },
+                                    "description": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "needed_volunteers": {
+                                        "type": "integer"
+                                    },
+                                    "priority": {
+                                        "type": "string",
+                                        "enum": [
+                                            "low",
+                                            "medium",
+                                            "high"
+                                        ]
+                                    },
+                                    "location": {
+                                        "type": "string",
+                                        "nullable": true
+                                    },
+                                    "reward": {
+                                        "type": "number",
+                                        "format": "float"
+                                    },
+                                    "status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "searching",
+                                            "in_progress",
+                                            "completed",
+                                            "cancelled"
+                                        ]
+                                    },
+                                    "deadline": {
+                                        "type": "string",
+                                        "format": "date-time"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Обновлено успешно"
+                    },
+                    "403": {
+                        "description": "Нет прав"
+                    },
+                    "404": {
+                        "description": "Задача не найдена"
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Удалить задачу (только для создателя)",
+                "description": "Удаление задачи",
+                "operationId": "35acd0e402b68dc3afd5827e05ed5c71",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Удалено успешно"
+                    },
+                    "403": {
+                        "description": "Нет прав"
+                    },
+                    "404": {
+                        "description": "Задача не найдена"
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                }
+            }
+        },
+        "/api/users/register": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Регистрация нового пользователя",
+                "description": "Регистрация нового пользователя",
+                "operationId": "47e06fdfd6ab0b18a9ffc397ca635db1",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "full_name",
+                                    "password",
+                                    "confirm"
+                                ],
+                                "properties": {
+                                    "full_name": {
+                                        "type": "string",
+                                        "example": "Иван Иванов"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "+79001234567"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "ivan@example.com"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret"
+                                    },
+                                    "confirm": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret"
+                                    },
+                                    "city": {
+                                        "type": "string",
+                                        "example": "Пермь"
+                                    },
+                                    "birth_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2000-05-15"
+                                    },
+                                    "about": {
+                                        "type": "string",
+                                        "example": "О себе"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешная регистрация",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "result": {
+                                            "type": "string",
+                                            "example": "successful"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации (не все параметры, пароли не совпадают, неверный формат)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Пользователь с таким телефоном или email уже существует",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/signin": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Авторизация пользователя",
+                "description": "Вход в систему",
+                "operationId": "8c184fcd72da7f37a7b0cc8df180627a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "login",
+                                    "password"
+                                ],
+                                "properties": {
+                                    "login": {
+                                        "description": "Телефон или email",
+                                        "type": "string",
+                                        "example": "+79001234567"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "secret"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Успешный вход. В cookie устанавливается JWT, в теле возвращаются данные пользователя",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "properties": {
+                                                "id": {
+                                                    "type": "integer"
+                                                },
+                                                "phone": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "email": {
+                                                    "type": "string",
+                                                    "nullable": true
+                                                },
+                                                "full_name": {
+                                                    "type": "string"
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Неверный логин/пароль или отсутствуют параметры",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/users/{id}": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Получить публичные данные пользователя по ID",
+                "description": "Получение публичной информации о пользователе по ID",
+                "operationId": "a68ec55d74b7048a5bbd7d2a1f48f9e4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID пользователя",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Публичные данные пользователя",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "full_name": {
+                                            "type": "string"
+                                        },
+                                        "city": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "birth_date": {
+                                            "type": "string",
+                                            "format": "date",
+                                            "nullable": true
+                                        },
+                                        "about": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "profile_picture": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "availability_status": {
+                                            "type": "string",
+                                            "enum": [
+                                                "available",
+                                                "busy",
+                                                "offline"
+                                            ]
+                                        },
+                                        "average_rating": {
+                                            "type": "number",
+                                            "format": "float"
+                                        },
+                                        "last_seen_at": {
+                                            "type": "string",
+                                            "format": "date-time",
+                                            "nullable": true
+                                        },
+                                        "is_online": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "ID не передан",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Пользователь не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Удаление профиля по ID (только для самого пользователя)",
+                "description": "Удаление профиля по ID (только свой)",
+                "operationId": "044a8ceac6675e1463a0f70298899438",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID пользователя",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Профиль удалён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "result": {
+                                            "type": "string",
+                                            "example": "successful"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "ID не передан",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Попытка удалить чужой профиль",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Пользователь не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/users": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Редактирование профиля текущего пользователя",
+                "description": "Редактирование профиля",
+                "operationId": "b599fd8a8b161043992f138ab9c580d4",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "full_name": {
+                                        "type": "string",
+                                        "example": "Пётр Петров"
+                                    },
+                                    "phone": {
+                                        "type": "string",
+                                        "example": "+79007654321"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "petr@example.com"
+                                    },
+                                    "city": {
+                                        "type": "string",
+                                        "example": "Москва"
+                                    },
+                                    "birth_date": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "1995-03-20"
+                                    },
+                                    "about": {
+                                        "type": "string",
+                                        "example": "Новый текст о себе"
+                                    },
+                                    "profile_picture": {
+                                        "type": "string",
+                                        "example": "https://example.com/avatar.jpg"
+                                    },
+                                    "availability_status": {
+                                        "type": "string",
+                                        "enum": [
+                                            "available",
+                                            "busy",
+                                            "offline"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Профиль обновлён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "result": {
+                                            "type": "string",
+                                            "example": "successful"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации (неверный формат, занятый телефон/email и т.д.)",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Пользователь не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Телефон или email уже заняты",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Удаление профиля текущего пользователя",
+                "description": "Удаление своего профиля",
+                "operationId": "e6000b290151db83f7c7f7208fcf50b9",
+                "responses": {
+                    "200": {
+                        "description": "Профиль удалён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "result": {
+                                            "type": "string",
+                                            "example": "successful"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Пользователь не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/users/password": {
+            "put": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Смена пароля текущего пользователя",
+                "description": "Смена пароля",
+                "operationId": "7d75f0cf8e1e14a0ed0c7bd00e2a0359",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "old",
+                                    "new",
+                                    "confirm"
+                                ],
+                                "properties": {
+                                    "old": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "oldpass"
+                                    },
+                                    "new": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newpass"
+                                    },
+                                    "confirm": {
+                                        "type": "string",
+                                        "format": "password",
+                                        "example": "newpass"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Пароль изменён",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "result": {
+                                            "type": "string",
+                                            "example": "successful"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Не все поля, не совпадают, неверный старый пароль",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Пользователь не найден",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "cookieAuth": []
+                    }
+                ]
+            }
+        },
+        "/api/users/logout": {
+            "post": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Выход из системы (удаление сессии и cookie)",
+                "description": "Выход из системы",
+                "operationId": "d58dc4ade69787581dbc405ea7f56741",
+                "responses": {
+                    "200": {
+                        "description": "Успешный выход",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "cookieAuth": {
+                "type": "apiKey",
+                "description": "Аутентификация через JWT в cookie (HttpOnly)",
+                "name": "jwt",
+                "in": "cookie"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Tasks",
+            "description": "Управление задачами"
+        },
+        {
+            "name": "Users",
+            "description": "Управление пользователями"
+        }
+    ]
+}

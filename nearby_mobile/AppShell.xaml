@@ -9,7 +9,7 @@
     <!-- Shell.NavBarIsVisible="False" если надо отлючить хрень сверху-->
 
     <TabBar>
-        <ShellContent Title="Задачи" Icon="tasks.svg" ContentTemplate="{DataTemplate views:MainPage}" />
+        <ShellContent Title="Задачи" Icon="tasks.svg" ContentTemplate="{DataTemplate views:TasksPage}" />
         <ShellContent Title="Фонды" Icon="funds.svg" ContentTemplate="{DataTemplate views:MainPage}" />
         <ShellContent Title="Чаты" Icon="chats.svg" ContentTemplate="{DataTemplate views:MainPage}" />
         <ShellContent Title="Настройки" Icon="settings.svg" ContentTemplate="{DataTemplate views:MainPage}" />

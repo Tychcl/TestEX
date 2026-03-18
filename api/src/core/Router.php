@@ -14,8 +14,10 @@ class Router {
         if (is_array($params)) {
             return array_map([$this, 'filterParams'], $params);
         }
-        $params = strip_tags($params);
-        $params = htmlspecialchars($params, ENT_QUOTES, 'UTF-8');
+        if($params){
+            $params = strip_tags($params);
+            $params = htmlspecialchars($params, ENT_QUOTES, 'UTF-8');
+        }
         return $params;
     }
 
@@ -29,23 +31,27 @@ class Router {
         }
         
         $jsonData = json_decode($request->body, true) ?? [];
-        #error_log($request->body);
         $queryParams = [];
         $queryString = parse_url($uri, PHP_URL_QUERY);
         if ($queryString) {
             parse_str($queryString, $queryParams);
         }
         $routePath = rtrim($route['path'], '/');
-        if (strpos($routePath, '{') === false) {
-            $params = array_merge($queryParams, $jsonData, $request->params);
-            $params = $this->filterParams($params);
-            return $this->executeHandler($route, $params, $request);
-        }
-        preg_match_all('/\{([a-z]+)\}/', $routePath, $paramNames);
-        $params = [];
         
-        for ($i = 0; $i < count($paramNames[1]); $i++) {
-            $params[$paramNames[1][$i]] = $matches[$i + 1] ?? null;
+        // Преобразуем шаблон в регулярное выражение
+        $pattern = preg_replace('/\{([a-z]+)\}/', '(?P<$1>[^/]+)', $routePath);
+        $pattern = str_replace('/', '\/', $pattern);
+        $pattern = '/^' . $pattern . '$/';
+        
+        if (preg_match($pattern, $path, $matches)) {
+            $params = [];
+            foreach ($matches as $key => $value) {
+                if (is_string($key)) {
+                    $params[$key] = $value;
+                }
+            }
+        } else {
+            $params = [];
         }
         
         $params = array_merge($params, $queryParams, $jsonData, $request->params);

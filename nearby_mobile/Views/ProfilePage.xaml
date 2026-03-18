@@ -5,13 +5,12 @@
              xmlns:header="clr-namespace:nearby_mobile.Views.Headers">
 
     <Shell.TitleView>
-        <header:ProfileHeaderView BindingContext="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext}" />
+        <header:ProfileHeaderView BindingContext="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext}"/>
     </Shell.TitleView>
 
     <ScrollView Orientation="Vertical" VerticalScrollBarVisibility="Never">
         <VerticalStackLayout>
-            
-            <Grid ColumnDefinitions="Auto, *" Margin="25,15">
+            <Grid ColumnDefinitions="Auto, *" Margin="25, 0">
                 <VerticalStackLayout Grid.Column="0">
                     <Label Text="{Binding Name}" Style="{StaticResource BoldLabel}"/>
                     <Label Text="{Binding Familia}" Style="{StaticResource BoldLabel}"/>
@@ -87,7 +86,6 @@
                         <Label Style="{StaticResource CommonLabel}" Text="Среднее специальное" TextColor="{StaticResource Gray600}"/>
                     </VerticalStackLayout>
                 </Border>
-
 
             </VerticalStackLayout>
 

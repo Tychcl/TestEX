@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="nearby_mobile.Views.EditProfilePage"
+             Title="Редактирование профиля">
+
+    <Grid RowDefinitions="Auto, *">
+        <HorizontalStackLayout Grid.Row="0">
+            <Button Text="←" 
+                Command="{Binding GoBackCommand}"
+                BackgroundColor="Transparent"
+                TextColor="black"
+                FontSize="24"
+                HorizontalOptions="Start"
+                VerticalOptions="Center"
+                WidthRequest="40"/>
+
+            <Label Text="Редактирование профиля"
+                TextColor="Black"
+                FontSize="18"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"/>
+        </HorizontalStackLayout>
+        
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Spacing="15" Padding="20">
+
+            <!-- Фото профиля -->
+            <StackLayout Orientation="Horizontal" Spacing="15" HorizontalOptions="Center">
+                <Image Source="{Binding ProfilePictureSource}"
+                       HeightRequest="80" WidthRequest="80"
+                       Aspect="AspectFill"
+                       HorizontalOptions="Center">
+                    <Image.Clip>
+                        <RoundRectangleGeometry CornerRadius="40"/>
+                    </Image.Clip>
+                </Image>
+                <Button Text="Выбрать фото" Command="{Binding PickImageCommand}"
+                        BackgroundColor="#2196F3" TextColor="White" WidthRequest="120"/>
+            </StackLayout>
+
+            <!-- ФИО -->
+            <Label Text="ФИО" Style="{StaticResource BoldLabel}" Margin="0,10,0,0"/>
+            <Entry Text="{Binding FullName}" Placeholder="Иванов Иван Иванович"/>
+
+            <!-- Город -->
+            <Label Text="Город" Style="{StaticResource BoldLabel}" Margin="0,10,0,0"/>
+            <Entry Text="{Binding City}" Placeholder="Москва"/>
+
+            <!-- Дата рождения -->
+            <Label Text="Дата рождения" Style="{StaticResource BoldLabel}" Margin="0,10,0,0"/>
+            <DatePicker Date="{Binding BirthDate}" MaximumDate="{Binding Today}"/>
+
+            <!-- Email -->
+            <Label Text="Email" Style="{StaticResource BoldLabel}" Margin="0,10,0,0"/>
+            <Entry Text="{Binding Email}" Placeholder="example@mail.com" Keyboard="Email"/>
+
+            <!-- Телефон -->
+            <Label Text="Телефон" Style="{StaticResource BoldLabel}" Margin="0,10,0,0"/>
+            <Entry Text="{Binding Phone}" Placeholder="+7 (999) 123-45-67" Keyboard="Telephone"/>
+
+            <!-- О себе -->
+            <Label Text="О себе" Style="{StaticResource BoldLabel}" Margin="0,10,0,0"/>
+            <Editor Text="{Binding About}" AutoSize="TextChanges" HeightRequest="80"/>
+
+            <!-- Образование -->
+            <Label Text="Образование" Style="{StaticResource BoldLabel}" Margin="0,10,0,0"/>
+            <Entry Text="{Binding EducationInstitution}" Placeholder="Учебное заведение"/>
+            <Entry Text="{Binding EducationDegree}" Placeholder="Степень (например, бакалавр)"/>
+            <Entry Text="{Binding EducationField}" Placeholder="Специальность"/>
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="5" Margin="0,5">
+                <Entry Grid.Column="0" Text="{Binding EducationStartYear}" Placeholder="Год начала" Keyboard="Numeric"/>
+                <Entry Grid.Column="1" Text="{Binding EducationEndYear}" Placeholder="Год окончания" Keyboard="Numeric"/>
+                <Label Grid.Column="2" Text="(оставьте пустым если учитесь)" FontSize="Small" VerticalOptions="Center"/>
+            </Grid>
+
+            <!-- Пароль для подтверждения -->
+            <Label Text="Введите текущий пароль для сохранения" Style="{StaticResource BoldLabel}" Margin="0,20,0,0"/>
+            <Entry Text="{Binding CurrentPassword}" IsPassword="True" Placeholder="Пароль"/>
+
+            <!-- Кнопка сохранения -->
+            <Button Text="Сохранить" Command="{Binding SaveCommand}"
+                    BackgroundColor="Green" TextColor="White" Margin="0,20"/>
+        </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

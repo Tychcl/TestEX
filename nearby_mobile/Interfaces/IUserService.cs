@@ -6,5 +6,6 @@ namespace nearby_mobile.Services;
 public interface IUserService : INotifyPropertyChanged
 {
     User? CurrentUser { get; set; }
-    Task LoadUserAsync();
+    Task<User?> LoadUserByIdAsync(int id = -1);
+    Task<bool> UpdateUserAsync(object updatedData);
 }

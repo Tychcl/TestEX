@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="nearby_mobile.Views.TaskDetailPage"
+             Title="Детали задачи">
+
+    <Grid RowDefinitions="Auto, *">
+        <!-- Кастомный хедер 
+        <Grid BackgroundColor="#2196F3" Padding="10,0" HeightRequest="50">
+            <Button Text="←" Clicked="OnBackButtonClicked"
+                    BackgroundColor="Transparent" TextColor="White"
+                    FontSize="24" HorizontalOptions="Start" VerticalOptions="Center"
+                    WidthRequest="40"/>
+            <Label Text="Детали задачи" TextColor="White" FontSize="18"
+                   HorizontalOptions="Center" VerticalOptions="Center"/>
+            <HorizontalStackLayout HorizontalOptions="End" VerticalOptions="Center" Spacing="10">
+                <Button Text="✎" Command="{Binding EditCommand}" 
+                        IsVisible="{Binding IsOwner}"
+                        BackgroundColor="Transparent" TextColor="White" FontSize="20"/>
+                <Button Text="🗑" Command="{Binding DeleteCommand}" 
+                        IsVisible="{Binding IsOwner}"
+                        BackgroundColor="Transparent" TextColor="White" FontSize="20"/>
+            </HorizontalStackLayout>
+        </Grid>-->
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="20" Spacing="15">
+                <Label Text="{Binding Task.Title}" FontSize="24" FontAttributes="Bold"/>
+
+                <Label Text="Описание" Style="{StaticResource BoldLabel}"/>
+                <Label Text="{Binding Task.Description}" Style="{StaticResource CommonLabel}"/>
+
+                <Grid ColumnDefinitions="*,*">
+                    <VerticalStackLayout>
+                        <Label Text="Приоритет" Style="{StaticResource BoldLabel}"/>
+                        <Label Text="{Binding Task.Priority}" Style="{StaticResource CommonLabel}"/>
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="Статус" Style="{StaticResource BoldLabel}"/>
+                        <Label Text="{Binding Task.Status}" Style="{StaticResource CommonLabel}"/>
+                    </VerticalStackLayout>
+                </Grid>
+
+                <Label Text="Место" Style="{StaticResource BoldLabel}"/>
+                <Label Text="{Binding Task.Location}" Style="{StaticResource CommonLabel}"/>
+
+                <Label Text="Награда" Style="{StaticResource BoldLabel}"/>
+                <Label Text="{Binding Task.Reward, StringFormat='{0:F2} нирбиков'}" Style="{StaticResource CommonLabel}"/>
+
+                <Label Text="Дедлайн" Style="{StaticResource BoldLabel}"/>
+                <Label Text="{Binding Task.Deadline, StringFormat='{0:dd.MM.yyyy HH:mm}'}" Style="{StaticResource CommonLabel}"/>
+
+                <Label Text="Требуется волонтёров" Style="{StaticResource BoldLabel}"/>
+                <Label Text="{Binding Task.NeededVolunteers}" Style="{StaticResource CommonLabel}"/>
+
+                <Label Text="Заказчик" Style="{StaticResource BoldLabel}"/>
+                <Label Text="{Binding Task.CreatorFIO}" 
+                        Style="{StaticResource CommonLabel}" 
+                        TextDecorations="Underline">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoToAuthorProfileCommand}"/>
+                    </Label.GestureRecognizers>
+                </Label>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

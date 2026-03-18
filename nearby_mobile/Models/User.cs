@@ -25,5 +25,11 @@ namespace nearby_mobile.Models
         public double AverageRating { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime UpdatedAt { get; set; }
+
+        public string? EducationInstitution { get; set; }
+        public string? EducationDegree { get; set; }
+        public string? EducationField { get; set; }
+        public int? EducationStartYear { get; set; }
+        public int? EducationEndYear { get; set; }
     }
 }

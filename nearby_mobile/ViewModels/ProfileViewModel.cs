@@ -3,9 +3,8 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using nearby_mobile.Interfaces;
 using nearby_mobile.Services;
+using nearby_mobile.Models;
 using nearby_mobile.Views;
-
-namespace nearby_mobile.ViewModels;
 
 public class ProfileViewModel : INotifyPropertyChanged, IDisposable
 {
@@ -13,7 +12,19 @@ public class ProfileViewModel : INotifyPropertyChanged, IDisposable
     private readonly IAuthService _authService;
     private readonly IServiceProvider _serviceProvider;
 
-    public event PropertyChangedEventHandler? PropertyChanged;
+    private User? _user;
+    private bool _isOwnProfile;
+    public bool IsOwnProfile
+    {
+        get => _isOwnProfile;
+        set => SetField(ref _isOwnProfile, value);
+    }
+    private bool _isInitialized;
+    public bool IsInitialized
+    {
+        get => _isInitialized;
+        set => SetField(ref _isInitialized, value);
+    }
 
     public ProfileViewModel(
         IUserService userService,
@@ -24,55 +35,90 @@ public class ProfileViewModel : INotifyPropertyChanged, IDisposable
         _authService = authService;
         _serviceProvider = serviceProvider;
 
-        LogoutCommand = new Command(async () => await LogoutAsync());
+        LogoutCommand = new Command(async () => await LogoutAsync(), () => IsOwnProfile);
+        GoToEditCommand = new Command(async () => await GoToEditAsync(), () => IsOwnProfile);
 
         _userService.PropertyChanged += OnUserServicePropertyChanged;
+    }
 
+    public async Task InitializeAsync(int? userId = null)
+    {
+        if (userId == null || userId == _userService.CurrentUser?.Id)
+        {
+            IsOwnProfile = true;
+            _user = _userService.CurrentUser;
+        }
+        else
+        {
+            IsOwnProfile = false;
+            _user = await _userService.LoadUserByIdAsync(userId.Value);
+        }
         UpdateFromUser();
+        RefreshCommands();
+        _isInitialized = true;
     }
 
     private void OnUserServicePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName == nameof(IUserService.CurrentUser))
+        if (_isOwnProfile && e.PropertyName == nameof(IUserService.CurrentUser))
         {
+            _user = _userService.CurrentUser;
             UpdateFromUser();
         }
     }
 
     private void UpdateFromUser()
     {
-        var user = _userService.CurrentUser;
-        if (user != null)
+        if (_user != null)
         {
-            FullName = user.FullName;
-            Phone = user.Phone ?? "";
-            Email = user.Email ?? "";
-            BirthDate = user.BirthDate?.ToString("dd.MM.yyyy") ?? "";
-            About = user.About ?? "";
+            FullName = _user.FullName;
+            Phone = _user.Phone ?? "";
+            Email = _user.Email ?? "";
+            BirthDate = _user.BirthDate?.ToString("dd.MM.yyyy") ?? "";
+            About = _user.About ?? "";
         }
     }
 
-    public string Name;
-    public string Familia;
-    public string Otchestvo;
+    private void RefreshCommands()
+    {
+        (LogoutCommand as Command)?.ChangeCanExecute();
+        (GoToEditCommand as Command)?.ChangeCanExecute();
+    }
+
+    private string _name;
+    public string Name
+    {
+        get => _name;
+        set => SetField(ref _name, value);
+    }
+
+    private string _familia;
+    public string Familia
+    {
+        get => _familia;
+        set => SetField(ref _familia, value);
+    }
+
+    private string _otchestvo;
+    public string Otchestvo
+    {
+        get => _otchestvo;
+        set => SetField(ref _otchestvo, value);
+    }
 
     private string _fullName;
     public string FullName
     {
         get => _fullName;
-        set { 
-            if (_fullName != value) 
-            { 
-                _fullName = value;
-                if (!string.IsNullOrEmpty(value))
-                {
-                    string[] m = value.ToString().Split(' ');
-                    Name = m[1];
-                    Familia = m[0];
-                    Otchestvo = m[2];
-                }
-                OnPropertyChanged(); 
-            } 
+        set
+        {
+            if (SetField(ref _fullName, value) && !string.IsNullOrEmpty(value))
+            {
+                var parts = value.Split(' ');
+                Familia = parts.Length > 0 ? parts[0] : "";
+                Name = parts.Length > 1 ? parts[1] : "";
+                Otchestvo = parts.Length > 2 ? parts[2] : "";
+            }
         }
     }
 
@@ -80,48 +126,67 @@ public class ProfileViewModel : INotifyPropertyChanged, IDisposable
     public string Phone
     {
         get => _phone;
-        set { if (_phone != value) { _phone = value; OnPropertyChanged(); } }
+        set => SetField(ref _phone, value);
     }
 
     private string _email;
     public string Email
     {
         get => _email;
-        set { if (_email != value) { _email = value; OnPropertyChanged(); } }
+        set => SetField(ref _email, value);
     }
 
     private string _birthDate;
     public string BirthDate
     {
         get => _birthDate;
-        set { if (_birthDate != value) { _birthDate = value; OnPropertyChanged(); } }
+        set => SetField(ref _birthDate, value);
     }
 
     private string _about;
     public string About
     {
         get => _about;
-        set { if (_about != value) { _about = value; OnPropertyChanged(); } }
+        set => SetField(ref _about, value);
     }
 
-    private string _education = "Пермский авиационный техникум имени А.Д. Швецова\n2022 - 2026\nСреднее специальное";
+    private string _education = "Пермский авиационный техникум...";
     public string Education
     {
         get => _education;
-        set { if (_education != value) { _education = value; OnPropertyChanged(); } }
+        set => SetField(ref _education, value);
     }
 
     public ICommand LogoutCommand { get; }
+    public ICommand GoToEditCommand { get; }
 
     private async Task LogoutAsync()
     {
+        if (!IsOwnProfile) return;
         await _authService.LogoutAsync();
+        _userService.CurrentUser = null;
         Application.Current.MainPage = new NavigationPage(_serviceProvider.GetRequiredService<LoginPage>());
     }
 
-    protected void OnPropertyChanged([CallerMemberName] string prop = "")
+    private async Task GoToEditAsync()
     {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
+        if (!IsOwnProfile) return;
+        var editPage = _serviceProvider.GetRequiredService<EditProfilePage>();
+        await Shell.Current.Navigation.PushModalAsync(editPage);
+    }
+
+    public event PropertyChangedEventHandler? PropertyChanged;
+    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+    {
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+    {
+        if (EqualityComparer<T>.Default.Equals(field, value)) return false;
+        field = value;
+        OnPropertyChanged(propertyName);
+        return true;
     }
 
     public void Dispose()

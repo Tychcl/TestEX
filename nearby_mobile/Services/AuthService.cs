@@ -13,11 +13,16 @@ public class AuthService : IAuthService
         _tokenService = tokenService;
     }
 
-    public async Task<bool> LoginAsync(string login, string password)
+    public async Task<bool?> LoginAsync(string login, string password)
     {
         var request = new { login, password };
         var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
         var response = await _apiClient.PostAsync("users/signin", content);
+
+        if(response is null)
+        {
+            return null;
+        }
 
         if (response.IsSuccessStatusCode)
         {

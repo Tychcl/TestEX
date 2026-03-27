@@ -1,14 +1,16 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
+using nearby_mobile.Classes;
 using nearby_mobile.Interfaces;
 using nearby_mobile.Models;
 using nearby_mobile.Views;
 
 namespace nearby_mobile.ViewModels;
 
-public class TasksViewModel : INotifyPropertyChanged
+public class TasksViewModel : BaseViewModel, INotifyPropertyChanged
 {
     private readonly ITaskService _taskService;
     private readonly IServiceProvider _serviceProvider;
@@ -28,13 +30,13 @@ public class TasksViewModel : INotifyPropertyChanged
         get => _tasks;
         set { 
             _tasks = value; 
-            OnPropertyChanged(); }
+            SetField(ref _tasks, value); }
     }
 
     public bool IsRefreshing
     {
         get => _isRefreshing;
-        set { _isRefreshing = value; OnPropertyChanged(); }
+        set { _isRefreshing = value; SetField(ref _isRefreshing, value); }
     }
 
     public string StatusFilter
@@ -126,28 +128,23 @@ public class TasksViewModel : INotifyPropertyChanged
 
     private async Task GoToDetailAsync(TaskItem task)
     {
-        if (task == null) return;
-
-        var detailPage = _serviceProvider.GetRequiredService<TaskDetailPage>();
-        var viewModel = _serviceProvider.GetRequiredService<TaskDetailViewModel>();
-        await viewModel.InitializeAsync(task.Id);
-        detailPage.BindingContext = viewModel;
-
-        var navigation = Shell.Current?.Navigation ?? Application.Current.MainPage?.Navigation;
-
-        if (navigation == null)
+        try
         {
-            System.Diagnostics.Debug.WriteLine("Ошибка: нет доступного навигационного сервиса");
-            return;
+            var detailPage = _serviceProvider.GetRequiredService<TaskDetailPage>();
+            var vm = _serviceProvider.GetRequiredService<TaskDetailViewModel>();
+            await vm.InitializeAsync(task.Id);
+            detailPage.BindingContext = vm;
+            await Application.Current.MainPage.Navigation.PushModalAsync(detailPage);
         }
-
-        await navigation.PushAsync(detailPage);
+        catch
+        {
+            await Application.Current.MainPage.DisplayAlert("Ошибка", "Не удалось открыть задачу", "OK");
+        }
     }
 
     private async Task GoToCreateAsync()
     {
-        var createPage = _serviceProvider.GetRequiredService<AddEditTaskPage>();
-        await Shell.Current.Navigation.PushAsync(createPage);
+        await Shell.Current.GoToAsync(nameof(AddEditTaskPage));
     }
 
     private async Task DeleteTaskAsync(TaskItem task)
@@ -167,9 +164,4 @@ public class TasksViewModel : INotifyPropertyChanged
         }
     }
 
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-    }
 }

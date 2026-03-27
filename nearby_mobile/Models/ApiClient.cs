@@ -31,27 +31,56 @@ public class ApiClient
         return request;
     }
 
-    public async Task<HttpResponseMessage> GetAsync(string url)
+    public async Task<HttpResponseMessage?> GetAsync(string url)
     {
-        var request = await CreateRequestAsync(HttpMethod.Get, url);
-        return await _httpClient.SendAsync(request);
+        try
+        {
+            var request = await CreateRequestAsync(HttpMethod.Get, url);
+            return await _httpClient.SendAsync(request);
+        }
+        catch
+        {
+            return null;
+        }
+        
     }
 
-    public async Task<HttpResponseMessage> PostAsync(string url, HttpContent content)
+    public async Task<HttpResponseMessage?> PostAsync(string url, HttpContent content)
     {
-        var request = await CreateRequestAsync(HttpMethod.Post, url, content);
-        return await _httpClient.SendAsync(request);
+        try
+        {
+            var request = await CreateRequestAsync(HttpMethod.Post, url, content);
+            return await _httpClient.SendAsync(request);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
-    public async Task<HttpResponseMessage> PutAsync(string url, HttpContent content)
+    public async Task<HttpResponseMessage?> PutAsync(string url, HttpContent content)
     {
-        var request = await CreateRequestAsync(HttpMethod.Put, url, content);
-        return await _httpClient.SendAsync(request);
+        try
+        {
+            var request = await CreateRequestAsync(HttpMethod.Put, url, content);
+            return await _httpClient.SendAsync(request);
+        }
+        catch
+        {
+            return null;
+        }
     }
 
-    public async Task<HttpResponseMessage> DeleteAsync(string url)
+    public async Task<HttpResponseMessage?> DeleteAsync(string url)
     {
-        var request = await CreateRequestAsync(HttpMethod.Delete, url);
-        return await _httpClient.SendAsync(request);
+        try
+        {
+            var request = await CreateRequestAsync(HttpMethod.Delete, url);
+            return await _httpClient.SendAsync(request);
+        }
+        catch
+        {
+            return null;
+        }
     }
 }

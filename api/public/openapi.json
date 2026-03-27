@@ -12,6 +12,404 @@
         }
     ],
     "paths": {
+        "/api/tasks/{taskId}/my-status": {
+            "get": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Получить статус отклика текущего пользователя на задачу",
+                "operationId": "8582a16e8d675d7cec39c687d6e69d8f",
+                "parameters": [
+                    {
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Статус",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "enum": [
+                                                "pending",
+                                                "accepted",
+                                                "rejected",
+                                                null
+                                            ]
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                }
+            }
+        },
+        "/api/tasks/{taskId}/volunteer": {
+            "post": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Откликнуться на задачу",
+                "description": "Откликнуться на задачу (для волонтёра)",
+                "operationId": "c002cd74105bfc86d5f9069adfdcd548",
+                "parameters": [
+                    {
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Отклик успешно создан"
+                    },
+                    "400": {
+                        "description": "Ошибка (уже откликался, задача не в поиске и т.д.)"
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    },
+                    "404": {
+                        "description": "Задача не найдена"
+                    }
+                }
+            }
+        },
+        "/api/tasks/{taskId}/volunteers": {
+            "get": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Список откликнувшихся волонтёров",
+                "description": "Получить список кандидатов (для автора задачи)",
+                "operationId": "0ff40d64a35285240c253d284adeb54e",
+                "parameters": [
+                    {
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список кандидатов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer"
+                                            },
+                                            "full_name": {
+                                                "type": "string"
+                                            },
+                                            "birth_date": {
+                                                "type": "string",
+                                                "format": "date",
+                                                "nullable": true
+                                            },
+                                            "profile_picture": {
+                                                "type": "string",
+                                                "nullable": true
+                                            },
+                                            "status": {
+                                                "type": "string",
+                                                "enum": [
+                                                    "pending",
+                                                    "accepted",
+                                                    "rejected"
+                                                ]
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    },
+                    "403": {
+                        "description": "Нет прав (только автор задачи)"
+                    },
+                    "404": {
+                        "description": "Задача не найдена"
+                    }
+                }
+            }
+        },
+        "/api/tasks/{taskId}/volunteers/{userId}/accept": {
+            "put": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Принять волонтёра",
+                "description": "Принять волонтёра",
+                "operationId": "68a64604bd70bbb3f5d68508a5ac9983",
+                "parameters": [
+                    {
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Принят"
+                    },
+                    "400": {
+                        "description": "Ошибка (задача не в поиске, лимит и т.д.)"
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    },
+                    "403": {
+                        "description": "Нет прав"
+                    },
+                    "404": {
+                        "description": "Задача или отклик не найдены"
+                    }
+                }
+            }
+        },
+        "/api/tasks/{task}/volunteers/{user}/reject": {
+            "put": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Отклонить волонтёра",
+                "description": "Отклонить волонтёра",
+                "operationId": "04bb43bb2506f57825c5e27f5c559577",
+                "parameters": [
+                    {
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Отклонён"
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    },
+                    "403": {
+                        "description": "Нет прав"
+                    },
+                    "404": {
+                        "description": "Задача или отклик не найдены"
+                    }
+                }
+            }
+        },
+        "/api/tasks/{task}/start": {
+            "put": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Начать выполнение задачи",
+                "description": "Начать выполнение задачи (автор)",
+                "operationId": "0fc5018b70e2dc6b35b23350596365ed",
+                "parameters": [
+                    {
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Статус изменён на in_progress"
+                    },
+                    "400": {
+                        "description": "Нет принятых волонтёров"
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    },
+                    "403": {
+                        "description": "Нет прав"
+                    },
+                    "404": {
+                        "description": "Задача не найдена"
+                    }
+                }
+            }
+        },
+        "/api/tasks/{taskId}/complete": {
+            "put": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Завершить задачу и начислить награду",
+                "description": "Завершить задачу (автор)",
+                "operationId": "86e97178159632c259e04f0749c9088d",
+                "parameters": [
+                    {
+                        "name": "taskId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Задача завершена, награда начислена"
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    },
+                    "403": {
+                        "description": "Нет прав"
+                    },
+                    "404": {
+                        "description": "Задача не найдена"
+                    }
+                }
+            }
+        },
+        "/api/tasks/user/{id}": {
+            "get": {
+                "tags": [
+                    "Tasks"
+                ],
+                "summary": "Получить задачи пользователя",
+                "description": "Получение задач конкретного пользователя",
+                "operationId": "d5f4a0f9ffc58fbf03db89f4fc16799e",
+                "parameters": [
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "description": "ID пользователя",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Фильтр по статусу",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "searching",
+                                "in_progress",
+                                "completed",
+                                "cancelled"
+                            ]
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "default": 10
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список задач пользователя",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Task"
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        },
+                                        "page": {
+                                            "type": "integer"
+                                        },
+                                        "limit": {
+                                            "type": "integer"
+                                        },
+                                        "pages": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    },
+                    "404": {
+                        "description": "Пользователь не найден"
+                    }
+                }
+            }
+        },
         "/api/tasks": {
             "get": {
                 "tags": [
@@ -798,14 +1196,25 @@
                 ]
             }
         },
-        "/api/users": {
+        "/api/users/{Id}": {
             "put": {
                 "tags": [
                     "Users"
                 ],
                 "summary": "Редактирование профиля текущего пользователя",
                 "description": "Редактирование профиля",
-                "operationId": "b599fd8a8b161043992f138ab9c580d4",
+                "operationId": "c58d4307f3ffeaedb8608434a2350cf6",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "ID пользователя",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -920,67 +1329,6 @@
                     },
                     "409": {
                         "description": "Телефон или email уже заняты",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    }
-                },
-                "security": [
-                    {
-                        "cookieAuth": []
-                    }
-                ]
-            },
-            "delete": {
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Удаление профиля текущего пользователя",
-                "description": "Удаление своего профиля",
-                "operationId": "e6000b290151db83f7c7f7208fcf50b9",
-                "responses": {
-                    "200": {
-                        "description": "Профиль удалён",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "result": {
-                                            "type": "string",
-                                            "example": "successful"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Не авторизован",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "properties": {
-                                        "error": {
-                                            "type": "string"
-                                        }
-                                    },
-                                    "type": "object"
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "Пользователь не найден",
                         "content": {
                             "application/json": {
                                 "schema": {

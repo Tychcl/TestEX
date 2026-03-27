@@ -4,10 +4,11 @@ using System.Windows.Input;
 using nearby_mobile.Interfaces;
 using nearby_mobile.Services;
 using nearby_mobile.Views;
+using nearby_mobile.Classes;
 
 namespace nearby_mobile.ViewModels;
 
-public class LoginViewModel : INotifyPropertyChanged
+public class LoginViewModel : BaseViewModel ,INotifyPropertyChanged
 {
     private readonly IAuthService _authService;
     private readonly IUserService _userService;
@@ -15,8 +16,6 @@ public class LoginViewModel : INotifyPropertyChanged
 
     private string _login;
     private string _password;
-
-    public event PropertyChangedEventHandler? PropertyChanged;
 
     public LoginViewModel(IAuthService authService, IUserService userService, IServiceProvider serviceProvider)
     {
@@ -36,7 +35,7 @@ public class LoginViewModel : INotifyPropertyChanged
             if (_login != value)
             {
                 _login = value;
-                OnPropertyChanged();
+                SetField(ref _login, value);
             }
         }
     }
@@ -49,7 +48,7 @@ public class LoginViewModel : INotifyPropertyChanged
             if (_password != value)
             {
                 _password = value;
-                OnPropertyChanged();
+                SetField(ref _password, value);
             }
         }
     }
@@ -65,8 +64,15 @@ public class LoginViewModel : INotifyPropertyChanged
             return;
         }
 
-        var success = await _authService.LoginAsync(Login, Password);
-        if (success)
+        bool? success = await _authService.LoginAsync(Login, Password);
+
+        if (success is null)
+        {
+            await Application.Current.MainPage.DisplayAlert("Ошибка", "Неудается подключиться к серверу", "OK");
+            return;
+        }
+
+        if ((bool)success)
         {
             await _userService.LoadUserByIdAsync();
             Application.Current.MainPage = _serviceProvider.GetRequiredService<AppShell>();
@@ -81,10 +87,5 @@ public class LoginViewModel : INotifyPropertyChanged
     {
         var registerPage = _serviceProvider.GetRequiredService<RegisterPage>();
         await Application.Current.MainPage.Navigation.PushAsync(registerPage);
-    }
-
-    protected void OnPropertyChanged([CallerMemberName] string prop = "")
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
 }

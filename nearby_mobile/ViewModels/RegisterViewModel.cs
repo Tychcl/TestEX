@@ -3,10 +3,11 @@ using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using nearby_mobile.Interfaces;
 using nearby_mobile.Services;
+using nearby_mobile.Classes;
 
 namespace nearby_mobile.ViewModels;
 
-public class RegisterViewModel : INotifyPropertyChanged
+public class RegisterViewModel : BaseViewModel, INotifyPropertyChanged
 {
     private readonly IAuthService _authService;
 
@@ -15,8 +16,6 @@ public class RegisterViewModel : INotifyPropertyChanged
     private string _email;
     private string _password;
     private string _confirm;
-
-    public event PropertyChangedEventHandler? PropertyChanged;
 
     public RegisterViewModel(IAuthService authService)
     {
@@ -32,7 +31,7 @@ public class RegisterViewModel : INotifyPropertyChanged
             if (_fullName != value)
             {
                 _fullName = value;
-                OnPropertyChanged();
+                SetField(ref _fullName, value);
             }
         }
     }
@@ -45,7 +44,7 @@ public class RegisterViewModel : INotifyPropertyChanged
             if (_phone != value)
             {
                 _phone = value;
-                OnPropertyChanged();
+                SetField(ref _phone, value);
             }
         }
     }
@@ -58,7 +57,7 @@ public class RegisterViewModel : INotifyPropertyChanged
             if (_email != value)
             {
                 _email = value;
-                OnPropertyChanged();
+                SetField(ref _email, value);
             }
         }
     }
@@ -71,7 +70,7 @@ public class RegisterViewModel : INotifyPropertyChanged
             if (_password != value)
             {
                 _password = value;
-                OnPropertyChanged();
+                SetField(ref _password, value);
             }
         }
     }
@@ -84,7 +83,7 @@ public class RegisterViewModel : INotifyPropertyChanged
             if (_confirm != value)
             {
                 _confirm = value;
-                OnPropertyChanged();
+                SetField(ref _confirm, value);
             }
         }
     }
@@ -117,10 +116,5 @@ public class RegisterViewModel : INotifyPropertyChanged
         {
             await Application.Current.MainPage.DisplayAlert("Ошибка", "Регистрация не удалась. Возможно, пользователь уже существует.", "OK");
         }
-    }
-
-    protected void OnPropertyChanged([CallerMemberName] string prop = "")
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
 }

@@ -43,15 +43,16 @@ namespace nearby_mobile
             builder.Services.AddTransient<TasksViewModel>();
 
             // Страницы
+            builder.Services.AddTransient<MainPage>();
             builder.Services.AddTransient<LoginPage>();
             builder.Services.AddTransient<LoadingPage>();
             builder.Services.AddTransient<RegisterPage>();
             builder.Services.AddTransient<ProfilePage>();
             builder.Services.AddTransient<EditProfilePage>();
             builder.Services.AddTransient<AddEditTaskPage>();
-            builder.Services.AddSingleton<AppShell>();
             builder.Services.AddTransient<TasksPage>();
             builder.Services.AddTransient<TaskDetailPage>();
+            builder.Services.AddSingleton<AppShell>();
 
             return builder.Build();
         }

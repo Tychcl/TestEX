@@ -26,11 +26,8 @@ public class UserService : IUserService
         get => _currentUser;
         set
         {
-            if (_currentUser != value)
-            {
-                _currentUser = value;
-                OnPropertyChanged();
-            }
+            _currentUser = value;
+            OnPropertyChanged();
         }
     }
 
@@ -44,13 +41,14 @@ public class UserService : IUserService
         }
 
         var response = await _apiClient.GetAsync($"users/{id}");
-        if (response.IsSuccessStatusCode)
+        if (response is not null && response.IsSuccessStatusCode)
         {
             var json = await response.Content.ReadAsStringAsync();
             var user = JsonConvert.DeserializeObject<User>(json);
-            if (id == -1)
+            if (id == -1 || CurrentUser?.Id == id)
             {
                 CurrentUser = user;
+                //PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof()));
             }
             return user;
         }

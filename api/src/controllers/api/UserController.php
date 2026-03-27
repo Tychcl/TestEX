@@ -250,7 +250,7 @@ class UserController
 
             $token = JWToken::generateToken($payload);
 
-            $response = new Response(200, ['success' => $payload]);
+            $response = new Response(200, $this->formatUserProfile($user));
             $response->setCook(
                 'jwt',
                 $token,
@@ -355,9 +355,18 @@ class UserController
      * Редактирование профиля
      */
     #[OA\Put(
-        path: '/api/users',
+        path: '/api/users/{Id}',
         tags: ['Users'],
         summary: 'Редактирование профиля текущего пользователя',
+        parameters: [
+            new OA\Parameter(
+                name: 'id',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer'),
+                description: 'ID пользователя'
+            )
+        ],
         security: [['cookieAuth' => []]],
         requestBody: new OA\RequestBody(
             required: true,
@@ -422,16 +431,22 @@ class UserController
             )
         ]
     )]
-    #[Route("", "PUT")]
+    #[Route("/{id}", "PUT")]
     public function edit($params)
     {
         try {
-            if(!session_status() == PHP_SESSION_NONE){
-                session_start();
-            }
-            $userId = $_SESSION['id'] ?? null;
+            $userId = $params['id'] ?? null;
+           
             if (!$userId) {
-                return new Response(401, ['error' => 'Unauthorized']);
+                return new Response(400, ['error' => 'User ID required']);
+            }
+
+            if($userId == -1){
+                $userId = $_SESSION['id'];
+            }
+
+            if (($_SESSION['id'] ?? null) != $userId) {
+                return new Response(403, ['error' => 'You can only redact your own profile']);
             }
 
             $user = UsersQuery::create()->findOneById($userId);
@@ -590,62 +605,6 @@ class UserController
     }
 
     /**
-     * Удаление своего профиля
-     */
-    #[OA\Delete(
-        path: '/api/users',
-        tags: ['Users'],
-        summary: 'Удаление профиля текущего пользователя',
-        security: [['cookieAuth' => []]],
-        responses: [
-            new OA\Response(
-                response: 200,
-                description: 'Профиль удалён',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'result', type: 'string', example: 'successful')
-                    ]
-                )
-            ),
-            new OA\Response(
-                response: 401,
-                description: 'Не авторизован',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'error', type: 'string')
-                    ]
-                )
-            ),
-            new OA\Response(
-                response: 404,
-                description: 'Пользователь не найден',
-                content: new OA\JsonContent(
-                    properties: [
-                        new OA\Property(property: 'error', type: 'string')
-                    ]
-                )
-            )
-        ]
-    )]
-    #[Route("", "DELETE")]
-    public function delete()
-    {
-        try {
-            if(!session_status() == PHP_SESSION_NONE){
-                session_start();
-            }
-            $userId = $_SESSION['id'] ?? null;
-            if (!$userId) {
-                return new Response(401, ['error' => 'Unauthorized']);
-            }
-
-            return $this->innerDelete($userId);
-        } catch (Exception $ex) {
-            return Validate::Ex($ex);
-        }
-    }
-
-    /**
      * Удаление профиля по ID (только свой)
      */
     #[OA\Delete(
@@ -719,7 +678,10 @@ class UserController
                 return new Response(400, ['error' => 'User ID required']);
             }
 
-            session_start();
+            if($id == -1){
+                $id = $_SESSION['id'];
+            }
+
             if (($_SESSION['id'] ?? null) != $id) {
                 return new Response(403, ['error' => 'You can only delete your own profile']);
             }

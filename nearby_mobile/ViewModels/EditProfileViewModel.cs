@@ -6,10 +6,11 @@ using Microsoft.Maui.Media;
 using nearby_mobile.Interfaces;
 using nearby_mobile.Models;
 using nearby_mobile.Services;
+using nearby_mobile.Classes;
 
 namespace nearby_mobile.ViewModels;
 
-public class EditProfileViewModel : INotifyPropertyChanged, IQueryAttributable
+public class EditProfileViewModel : BaseViewModel, INotifyPropertyChanged
 {
     private readonly IUserService _userService;
     private readonly IAuthService _authService;
@@ -17,54 +18,60 @@ public class EditProfileViewModel : INotifyPropertyChanged, IQueryAttributable
 
     public event PropertyChangedEventHandler? PropertyChanged;
 
-    // Свойства для привязки
+    private string _pagetitle = string.Empty;
+    public string PageTitle
+    {
+        get => _pagetitle;
+        set { if (_pagetitle != value) { _pagetitle = value; SetField(ref _pagetitle, value); } }
+    }
+
     private string _fullName = string.Empty;
     public string FullName
     {
         get => _fullName;
-        set { if (_fullName != value) { _fullName = value; OnPropertyChanged(); } }
+        set { if (_fullName != value) { _fullName = value; SetField(ref _fullName, value); } }
     }
 
     private string? _city;
     public string? City
     {
         get => _city;
-        set { if (_city != value) { _city = value; OnPropertyChanged(); } }
+        set { if (_city != value) { _city = value; SetField(ref _city, value); } }
     }
 
     private DateTime? _birthDate;
     public DateTime? BirthDate
     {
         get => _birthDate;
-        set { if (_birthDate != value) { _birthDate = value; OnPropertyChanged(); } }
+        set { if (_birthDate != value) { _birthDate = value; SetField(ref _birthDate, value); } }
     }
 
     private string? _email;
     public string? Email
     {
         get => _email;
-        set { if (_email != value) { _email = value; OnPropertyChanged(); } }
+        set { if (_email != value) { _email = value; SetField(ref _email, value); } }
     }
 
     private string? _phone;
     public string? Phone
     {
         get => _phone;
-        set { if (_phone != value) { _phone = value; OnPropertyChanged(); } }
+        set { if (_phone != value) { _phone = value; SetField(ref _phone, value); } }
     }
 
     private string? _about;
     public string? About
     {
         get => _about;
-        set { if (_about != value) { _about = value; OnPropertyChanged(); } }
+        set { if (_about != value) { _about = value; SetField(ref _about, value); } }
     }
 
     private string? _profilePictureSource;
     public string? ProfilePictureSource
     {
         get => _profilePictureSource;
-        set { if (_profilePictureSource != value) { _profilePictureSource = value; OnPropertyChanged(); } }
+        set { if (_profilePictureSource != value) { _profilePictureSource = value; SetField(ref _profilePictureSource, value); } }
     }
 
     // Образование (одна запись)
@@ -72,42 +79,42 @@ public class EditProfileViewModel : INotifyPropertyChanged, IQueryAttributable
     public string? EducationInstitution
     {
         get => _educationInstitution;
-        set { if (_educationInstitution != value) { _educationInstitution = value; OnPropertyChanged(); } }
+        set { if (_educationInstitution != value) { _educationInstitution = value; SetField(ref _educationInstitution, value); } }
     }
 
     private string? _educationDegree;
     public string? EducationDegree
     {
         get => _educationDegree;
-        set { if (_educationDegree != value) { _educationDegree = value; OnPropertyChanged(); } }
+        set { if (_educationDegree != value) { _educationDegree = value; SetField(ref _educationDegree, value); } }
     }
 
     private string? _educationField;
     public string? EducationField
     {
         get => _educationField;
-        set { if (_educationField != value) { _educationField = value; OnPropertyChanged(); } }
+        set { if (_educationField != value) { _educationField = value; SetField(ref _educationField, value); } }
     }
 
     private string? _educationStartYear;
     public string? EducationStartYear
     {
         get => _educationStartYear;
-        set { if (_educationStartYear != value) { _educationStartYear = value; OnPropertyChanged(); } }
+        set { if (_educationStartYear != value) { _educationStartYear = value; SetField(ref _educationStartYear, value); } }
     }
 
     private string? _educationEndYear;
     public string? EducationEndYear
     {
         get => _educationEndYear;
-        set { if (_educationEndYear != value) { _educationEndYear = value; OnPropertyChanged(); } }
+        set { if (_educationEndYear != value) { _educationEndYear = value; SetField(ref _educationEndYear, value); } }
     }
 
     private string _currentPassword = string.Empty;
     public string CurrentPassword
     {
         get => _currentPassword;
-        set { if (_currentPassword != value) { _currentPassword = value; OnPropertyChanged(); } }
+        set { if (_currentPassword != value) { _currentPassword = value; SetField(ref _currentPassword, value); } }
     }
 
     public DateTime Today => DateTime.Today;
@@ -115,28 +122,28 @@ public class EditProfileViewModel : INotifyPropertyChanged, IQueryAttributable
     public ICommand PickImageCommand { get; }
     public ICommand SaveCommand { get; }
     public ICommand GoBackCommand { get; }
+    private ProfileViewModel _p { get; set; }
 
-    public EditProfileViewModel(IUserService userService, IAuthService authService)
+    public EditProfileViewModel(IUserService userService, IAuthService authService, ProfileViewModel p)
     {
         _userService = userService;
         _authService = authService;
+        PageTitle = "Редактирование профиля";
+        _p = p;
 
         PickImageCommand = new Command(async () => await PickImageAsync());
         SaveCommand = new Command(async () => await SaveAsync());
         GoBackCommand = new Command(async () => await GoBackAsync());
+        LoadInfo();
     }
 
     private async Task GoBackAsync()
     {
-        if (Shell.Current != null)
-            await Shell.Current.Navigation.PopAsync();
-        else
-            await Application.Current.MainPage.Navigation.PopAsync();
+        await Shell.Current.GoToAsync("..");
     }
 
-    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    public void LoadInfo()
     {
-        // Получаем текущего пользователя из сервиса (уже должен быть загружен)
         var user = _userService.CurrentUser;
         if (user != null)
         {
@@ -228,6 +235,7 @@ public class EditProfileViewModel : INotifyPropertyChanged, IQueryAttributable
         {
             await Application.Current.MainPage.DisplayAlert("Успех", "Данные сохранены", "OK");
             // Безопасная навигация назад
+            _p.UserChanged();
             if (Shell.Current != null)
                 await Shell.Current.GoToAsync("..");
             else
@@ -237,10 +245,5 @@ public class EditProfileViewModel : INotifyPropertyChanged, IQueryAttributable
         {
             await Application.Current.MainPage.DisplayAlert("Ошибка", "Не удалось сохранить", "OK");
         }
-    }
-
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = "")
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

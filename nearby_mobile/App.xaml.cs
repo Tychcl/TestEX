@@ -6,15 +6,13 @@ namespace nearby_mobile
 {
     public partial class App : Application
     {
-        private readonly IAuthService _authService;
         private readonly IUserService _userService;
         private readonly ITokenService _tokenService;
         private readonly IServiceProvider _serviceProvider;
 
-        public App(IAuthService authService, IUserService userService, ITokenService tokenService, IServiceProvider serviceProvider)
+        public App(IUserService userService, ITokenService tokenService, IServiceProvider serviceProvider)
         {
             InitializeComponent();
-            _authService = authService;
             _userService = userService;
             _tokenService = tokenService;
             _serviceProvider = serviceProvider;
@@ -29,13 +27,13 @@ namespace nearby_mobile
             if (!string.IsNullOrEmpty(token))
             {
                 await _userService.LoadUserByIdAsync();
-                if(_userService.CurrentUser is not null)
+                if (_userService.CurrentUser is not null)
                 {
                     MainPage = _serviceProvider.GetRequiredService<AppShell>();
                     return;
                 }
             }
-            MainPage = _serviceProvider.GetRequiredService<LoginPage>();
+            MainPage = new NavigationPage(_serviceProvider.GetRequiredService<LoginPage>());
         }
     }
 }

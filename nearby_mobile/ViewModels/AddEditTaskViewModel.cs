@@ -5,11 +5,25 @@ using nearby_mobile.Interfaces;
 using Newtonsoft.Json;
 using System.Text;
 using nearby_mobile.Services;
+using nearby_mobile.Classes;
 
 namespace nearby_mobile.ViewModels;
 
-public class AddEditTaskViewModel : INotifyPropertyChanged
+public class AddEditTaskViewModel : BaseViewModel, INotifyPropertyChanged, IQueryAttributable
 {
+
+    public void ApplyQueryAttributes(IDictionary<string, object> query)
+    {
+        if (query.TryGetValue("id", out var idObj) && idObj is int id)
+        {
+            _ = InitializeForEditAsync(id);
+        }
+        else
+        {
+
+        }
+    }
+
     private readonly IUserService _userService;
     private readonly IServiceProvider _serviceProvider;
     private readonly ApiClient _apiClient;
@@ -25,43 +39,43 @@ public class AddEditTaskViewModel : INotifyPropertyChanged
     public string Title
     {
         get => _title;
-        set { if (_title != value) { _title = value; OnPropertyChanged(); } }
+        set { if (_title != value) { _title = value; SetField(ref _title, value); } }
     }
 
     public string Description
     {
         get => _description;
-        set { if (_description != value) { _description = value; OnPropertyChanged(); } }
+        set { if (_description != value) { _description = value; SetField(ref _description, value); } }
     }
 
     public int NeededVolunteers
     {
         get => _neededVolunteers;
-        set { if (_neededVolunteers != value) { _neededVolunteers = value; OnPropertyChanged(); } }
+        set { if (_neededVolunteers != value) { _neededVolunteers = value; SetField(ref _neededVolunteers, value); } }
     }
 
     public string Priority
     {
         get => _priority;
-        set { if (_priority != value) { _priority = value; OnPropertyChanged(); } }
+        set { if (_priority != value) { _priority = value; SetField(ref _priority, value); } }
     }
 
     public string Location
     {
         get => _location;
-        set { if (_location != value) { _location = value; OnPropertyChanged(); } }
+        set { if (_location != value) { _location = value; SetField(ref _location, value); } }
     }
 
     public decimal Reward
     {
         get => _reward;
-        set { if (_reward != value) { _reward = value; OnPropertyChanged(); } }
+        set { if (_reward != value) { _reward = value; SetField(ref _reward, value); } }
     }
 
     public DateTime Deadline
     {
         get => _deadline;
-        set { if (_deadline != value) { _deadline = value; OnPropertyChanged(); } }
+        set { if (_deadline != value) { _deadline = value; SetField(ref _deadline, value); } }
     }
 
     public List<string> Priorities { get; } = new() { "low", "medium", "high" };
@@ -137,10 +151,7 @@ public class AddEditTaskViewModel : INotifyPropertyChanged
 
     private async Task CancelAsync()
     {
-        if (Shell.Current != null)
-            await Shell.Current.GoToAsync("..");
-        else
-            await Application.Current.MainPage.Navigation.PopAsync();
+        await Shell.Current.GoToAsync("..");
     }
 
     public async Task InitializeForEditAsync(int taskId)
@@ -157,11 +168,5 @@ public class AddEditTaskViewModel : INotifyPropertyChanged
             Reward = task.Reward;
             Deadline = task.Deadline;
         }
-    }
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-    {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

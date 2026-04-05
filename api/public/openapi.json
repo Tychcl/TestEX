@@ -12,6 +12,553 @@
         }
     ],
     "paths": {
+        "/api/chats": {
+            "get": {
+                "tags": [
+                    "Chats"
+                ],
+                "summary": "Список чатов пользователя",
+                "description": "Получить список чатов текущего пользователя (личные и групповые)",
+                "operationId": "3dc613385b24e2a3576f550be10a197b",
+                "parameters": [
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 20
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список чатов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/Chat"
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        },
+                                        "page": {
+                                            "type": "integer"
+                                        },
+                                        "limit": {
+                                            "type": "integer"
+                                        },
+                                        "pages": {
+                                            "type": "integer"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Chats"
+                ],
+                "summary": "Создать чат",
+                "description": "Создать новый чат (личный или групповой)",
+                "operationId": "bc5f4a1cd3a1734ebe4c5849ae54d072",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "type"
+                                ],
+                                "properties": {
+                                    "type": {
+                                        "description": "Тип чата",
+                                        "type": "string",
+                                        "enum": [
+                                            "personal",
+                                            "group"
+                                        ]
+                                    },
+                                    "name": {
+                                        "description": "Название группового чата (обязательно для group)",
+                                        "type": "string"
+                                    },
+                                    "user_ids": {
+                                        "description": "ID участников (для personal: ровно один другой пользователь; для group: не менее двух)",
+                                        "type": "array",
+                                        "items": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Чат создан",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "result": {
+                                            "type": "string",
+                                            "example": "successful"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Ошибка валидации"
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                }
+            }
+        },
+        "/api/chats/{id}": {
+            "get": {
+                "tags": [
+                    "Chats"
+                ],
+                "summary": "Детальная информация о чате",
+                "description": "Получить детали чата (участники, сообщения с пагинацией)",
+                "operationId": "08cc435bd2b2a00dc61ebb1aec2c32e3",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 50
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Данные чата",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ChatDetail"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Нет доступа к чату"
+                    },
+                    "404": {
+                        "description": "Чат не найден"
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                }
+            }
+        },
+        "/api/chats/{id}/members": {
+            "post": {
+                "tags": [
+                    "Chats"
+                ],
+                "summary": "Добавить участника в групповой чат",
+                "description": "Добавить участника в групповой чат",
+                "operationId": "cd284d473d0c05e148bab63fea847bc4",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "user_id"
+                                ],
+                                "properties": {
+                                    "user_id": {
+                                        "type": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Участник добавлен"
+                    },
+                    "400": {
+                        "description": "Ошибка валидации"
+                    },
+                    "403": {
+                        "description": "Нет прав (только участники чата)"
+                    },
+                    "404": {
+                        "description": "Чат не найден"
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                }
+            }
+        },
+        "/api/chats/{id}/members/{userId}": {
+            "delete": {
+                "tags": [
+                    "Chats"
+                ],
+                "summary": "Удалить участника из группового чата",
+                "description": "Удалить участника из группового чата",
+                "operationId": "4488459be375f8392a88b85f78b6bedc",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "userId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Участник удалён"
+                    },
+                    "403": {
+                        "description": "Нет прав"
+                    },
+                    "404": {
+                        "description": "Чат или участник не найдены"
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                }
+            }
+        },
+        "/api/chats/{id}/messages": {
+            "get": {
+                "tags": [
+                    "Chats"
+                ],
+                "summary": "Получить сообщения чата",
+                "description": "Получить сообщения чата (с пагинацией) – дублирует часть getById, но может быть полезно отдельно",
+                "operationId": "ea4b86f74828ff5197cdab70b4340967",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 1
+                        }
+                    },
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "default": 50
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Список сообщений"
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    },
+                    "404": {
+                        "description": "Чат не найден"
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Chats"
+                ],
+                "summary": "Отправить сообщение",
+                "description": "Отправить сообщение в чат",
+                "operationId": "0d2fcc74aa90bc9b609cee459ae70513",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "content_type"
+                                ],
+                                "properties": {
+                                    "content_type": {
+                                        "type": "string",
+                                        "enum": [
+                                            "text",
+                                            "image",
+                                            "file",
+                                            "voice"
+                                        ]
+                                    },
+                                    "content": {
+                                        "description": "Текст сообщения или описание файла",
+                                        "type": "string"
+                                    },
+                                    "file_url": {
+                                        "description": "URL файла (для image/file/voice)",
+                                        "type": "string"
+                                    },
+                                    "transcribed_text": {
+                                        "description": "Распознанный текст голосового сообщения",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Сообщение отправлено",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "id": {
+                                            "type": "integer"
+                                        },
+                                        "result": {
+                                            "type": "string",
+                                            "example": "successful"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Не участник чата"
+                    },
+                    "404": {
+                        "description": "Чат не найден"
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                }
+            }
+        },
+        "/api/chats/{id}/read": {
+            "put": {
+                "tags": [
+                    "Chats"
+                ],
+                "summary": "Отметить сообщения как прочитанные до указанного ID",
+                "description": "Отметить сообщение как прочитанное (обновить last_read_message_id для текущего пользователя в чате)",
+                "operationId": "fd7b66b3cbe02ed877dc173f9b49a2af",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "message_id",
+                        "in": "query",
+                        "description": "ID последнего прочитанного сообщения",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Статус обновлён"
+                    },
+                    "403": {
+                        "description": "Нет доступа"
+                    },
+                    "404": {
+                        "description": "Чат или сообщение не найдены"
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                }
+            }
+        },
+        "/api/messages/{id}": {
+            "put": {
+                "tags": [
+                    "Chats"
+                ],
+                "summary": "Редактировать сообщение",
+                "description": "Редактировать текст сообщения (только своё)",
+                "operationId": "cb8752b0c0ceea7eaa7a7c0be377ed30",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "content"
+                                ],
+                                "properties": {
+                                    "content": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Сообщение обновлено"
+                    },
+                    "403": {
+                        "description": "Не автор"
+                    },
+                    "404": {
+                        "description": "Сообщение не найдено"
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Chats"
+                ],
+                "summary": "Удалить сообщение",
+                "description": "Удалить своё сообщение",
+                "operationId": "79a03d3c98fea5c640e627cb55f71f31",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Сообщение удалено"
+                    },
+                    "403": {
+                        "description": "Не автор"
+                    },
+                    "404": {
+                        "description": "Сообщение не найдено"
+                    },
+                    "401": {
+                        "description": "Не авторизован"
+                    }
+                }
+            }
+        },
         "/api/tasks/{taskId}/my-status": {
             "get": {
                 "tags": [
@@ -1500,6 +2047,10 @@
         }
     },
     "tags": [
+        {
+            "name": "Chats",
+            "description": "Управление чатами и сообщениями"
+        },
         {
             "name": "Tasks",
             "description": "Управление задачами"

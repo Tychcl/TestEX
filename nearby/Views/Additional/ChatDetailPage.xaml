@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="nearby.Views.Additional.ChatDetailPage"
+             xmlns:viewModels="clr-namespace:nearby.ViewModels"
+             xmlns:models="clr-namespace:nearby.Models"
+             xmlns:converters="clr-namespace:nearby.Classes"
+             x:DataType="viewModels:ChatDetailViewModel"
+             Title="{Binding Chat.OtherUser.FullName, FallbackValue='Чат'}">
+    
+<ContentPage.Resources>
+        <converters:IsCurrentUserConverter x:Key="IsCurrentUserConverter"/>
+        <converters:IsGroupConverter x:Key="IsGroupConverter"/>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="*, Auto">
+        <CollectionView ItemsSource="{Binding Messages}" 
+                        SelectionMode="None"
+                        Grid.Row="0"
+                        RemainingItemsThreshold="3"
+                        RemainingItemsThresholdReachedCommand="{Binding LoadMoreMessagesCommand}"
+                        VerticalOptions="End">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Message">
+                    <Border Background="#f2f2f2" Stroke="#e1e1e1" Margin="3, 5, 0, 5" HorizontalOptions="Start">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChatDetailViewModel}}, Path=MessageTap}" CommandParameter="{Binding .}" NumberOfTapsRequired="1"/>
+                        </Border.GestureRecognizers>
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="15, 15, 0, 15"/>
+                        </Border.StrokeShape>
+                        <Grid Padding="5" RowDefinitions="Auto, Auto, *">
+                            <Label Grid.Row="0" Text="{Binding Content}" TextColor="Black" HorizontalOptions="Start"/>
+                            <Label Grid.Row="1" Text="{Binding CreatedAt, StringFormat='{0:dd.MM HH:mm}'}" HorizontalOptions="End" Margin="10, 5, 0,0" FontSize="12" TextColor="Gray"/>
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+    
+    <!--<Grid RowDefinitions="Auto, *, Auto">
+
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Messages}"
+                    RemainingItemsThreshold="3"
+                    RemainingItemsThresholdReachedCommand="{Binding LoadMoreMessagesCommand}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="10" ColumnDefinitions="Auto, *, Auto" RowDefinitions="Auto, Auto">
+                        <Image Grid.RowSpan="2" Source="{Binding SenderProfilePicture}" WidthRequest="40" HeightRequest="40" Aspect="AspectFill">
+                            <Image.Clip>
+                                
+                            </Image.Clip>
+                        </Image>
+
+                        <Label Grid.Column="1" Grid.Row="0" Text="{Binding SenderName}" FontSize="12" TextColor="Gray"/>
+
+                        <Label Grid.Column="1" Grid.Row="1" Text="{Binding Content}" FontSize="14"/>
+
+                        <Label Grid.Column="2" Grid.Row="0" Text="{Binding CreatedAt, StringFormat='{0:HH:mm}'}" FontSize="10" TextColor="Gray"/>
+
+                        <StackLayout Grid.Column="2" Grid.Row="1" Orientation="Horizontal" Spacing="5"
+                                 IsVisible="{Binding SenderId, Converter={StaticResource IsCurrentUserConverter}, ConverterParameter={Binding Source={RelativeSource AncestorType={x:Type viewModels:ChatDetailViewModel}}, Path=CurrentUserId}}">
+                            <Button Text="✎" Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChatDetailViewModel}}, Path=EditMessageCommand}"
+                                CommandParameter="{Binding .}" BackgroundColor="Transparent" TextColor="Blue" FontSize="14"/>
+                            <Button Text="🗑" Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChatDetailViewModel}}, Path=DeleteMessageCommand}"
+                                CommandParameter="{Binding .}" BackgroundColor="Transparent" TextColor="Red" FontSize="14"/>
+                        </StackLayout>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <Grid Grid.Row="2" Padding="10" ColumnDefinitions="*, Auto">
+            <Entry Grid.Column="0" Placeholder="Введите сообщение..." Text="{Binding NewMessageText}" ReturnType="Send" ReturnCommand="{Binding SendMessageCommand}"/>
+            <Button Grid.Column="1" Text="Отправить" Command="{Binding SendMessageCommand}" Margin="5,0,0,0"/>
+        </Grid>
+    </Grid>-->
+</ContentPage>

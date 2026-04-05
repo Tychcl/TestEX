@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="nearby.Views.Main.ChatsPage"
+             xmlns:viewModels="clr-namespace:nearby.ViewModels"
+             xmlns:models="clr-namespace:nearby.Models"
+             xmlns:converters="clr-namespace:nearby.Classes"
+             Title="Чаты"
+             x:DataType="viewModels:ChatsViewModel">
+
+    <ContentPage.Resources>
+        <converters:IsGroupConverter x:Key="IsGroupConverter"/>
+        <converters:IsPersonalConverter x:Key="IsPersonalConverter"/>
+        <converters:GreaterThanZeroConverter x:Key="GreaterThanZeroConverter"/>
+    </ContentPage.Resources>
+
+    <Shell.TitleView>
+        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
+            <Label Text="Чаты" FontSize="20" VerticalOptions="Center" HorizontalOptions="StartAndExpand"/>
+            <Button Text="Создать группу" Command="{Binding CreateGroupCommand}" HorizontalOptions="End" Margin="5,0"/>
+        </StackLayout>
+    </Shell.TitleView>
+
+    <Grid Padding="5">
+        <RefreshView IsRefreshing="{Binding IsRefreshing}" 
+                     Command="{Binding RefreshCommand}"
+                     VerticalOptions="Fill">
+            <CollectionView ItemsSource="{Binding Chats}" 
+                SelectionMode="None"
+                RemainingItemsThreshold="3"
+                RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}"
+                VerticalOptions="Fill">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Chat">
+                        <Border Style="{StaticResource Card}" Padding="5" Margin="0,5" StrokeThickness="2" StrokeShape="20">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChatsViewModel}}, Path=ChatSelectedCommand}" CommandParameter="{Binding .}"/>
+                            </Border.GestureRecognizers>
+                            <Grid ColumnDefinitions="Auto, *, Auto" RowDefinitions="Auto, *" ColumnSpacing="5">
+                                <Image Grid.Column="0" Grid.RowSpan="2" VerticalOptions="Center" HorizontalOptions="Start" Source="test_profile_image.jpg" WidthRequest="50" HeightRequest="50" Aspect="AspectFill" Margin="0">
+                                    <Image.Clip>
+                                        <RoundRectangleGeometry CornerRadius="15" Rect="0,0,50,50"/>
+                                    </Image.Clip>
+                                </Image>
+                                <Label Grid.Column="1" Grid.Row="0" VerticalOptions="Start" Text="{Binding OtherUser.FullName}" Style="{StaticResource CommonLabel}" FontSize="14"/>
+                                <Label Grid.Column="2" Grid.Row="0" VerticalOptions="Start" HorizontalOptions="End" Text="{Binding LastMessage.CreatedAt, StringFormat='{0:dd.MM HH:mm}'}" Style="{StaticResource CommonLabel}" FontSize="12" Margin="5,0" />
+                                <Label Grid.Column="1" Grid.Row="1" VerticalOptions="Start" Text="{Binding LastMessage.Content}" Style="{StaticResource GrayLabel}" FontSize="13"/>
+                                <Border Background="{StaticResource CRoyalBlue}" StrokeThickness="0" StrokeShape="25" Grid.Column="2" Grid.RowSpan="2" VerticalOptions="Center" HorizontalOptions="End" Margin="5,0">
+                                    <Label Text="{Binding UnreadCount}" Padding="5,1" TextColor="White" FontSize="12"/>
+                                </Border>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </Grid>
+</ContentPage>

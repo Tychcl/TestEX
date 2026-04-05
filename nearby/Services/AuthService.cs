@@ -47,12 +47,13 @@ public class AuthService : IAuthService
         return new ApiResponse<User>(false, "Неверный логин или пароль", null);
     }
 
-    public async Task<bool?> RegisterAsync(string fullName, string phone, string email, string password)
+    public async Task<ApiResponse<bool?>> RegisterAsync(string fullName, string phone, string email, string password)
     {
         var request = new { full_name = fullName, phone, email, password, confirm = password };
         var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
         var response = await _apiClient.PostAsync("users/register", content);
-        return response?.IsSuccessStatusCode;
+        var json = await response.Content.ReadAsStringAsync();
+        return new ApiResponse<bool?>(response?.IsSuccessStatusCode, json, null);
     }
 
     public async Task LogoutAsync()

@@ -11,7 +11,7 @@ namespace nearby.Interfaces
     public interface IAuthService
     {
         Task<ApiResponse<User>> LoginAsync(string login, string password);
-        Task<bool?> RegisterAsync(string fullName, string phone, string email, string password);
+        Task<ApiResponse<bool?>> RegisterAsync(string fullName, string phone, string email, string password);
         Task LogoutAsync();
         Task<string?> GetTokenAsync();
     }

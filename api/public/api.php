@@ -12,6 +12,7 @@ $router = new Router();
 
 $routes->add('Api\UserController');
 $routes->add('Api\TasksController');
+$routes->add('Api\ChatsController');
 $dispatcher = MiddlewareFabric::createForApi($router, $routes);
 
 $request = new Request();

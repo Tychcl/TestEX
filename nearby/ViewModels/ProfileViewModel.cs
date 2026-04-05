@@ -1,129 +1,127 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using nearby.Classes;
 using nearby.Interfaces;
 using nearby.Models;
 using nearby.Services;
-using nearby.Views.Auth;
 using nearby.Views.Additional;
-using static Microsoft.Maui.ApplicationModel.Permissions;
+using nearby.Views.Auth;
 
 namespace nearby.ViewModels
 {
     public enum TaskCategory
     {
-        Created,      // задачи, созданные пользователем
-        InProgress,   // задачи, которые пользователь взял в работу
-        Completed     // выполненные задачи
+        Created,
+        InProgress,
+        Completed
     }
-    public class ProfileViewModel : BaseViewModel, INotifyPropertyChanged, IDisposable
+
+    public class ProfileViewModel : BaseViewModel, INotifyPropertyChanged, IDisposable, IQueryAttributable
     {
-        #region services
+        #region Services
         private readonly IUserService _userService;
         private readonly IAuthService _authService;
         private readonly ITaskService _taskService;
         private readonly IServiceProvider _serviceProvider;
         #endregion
 
-        #region variables
+        #region Fields
+        private bool _loading;
         private const int TaskPageSize = 10;
         private int _currentTaskPage = 1;
         private bool _hasMoreTasks = true;
         private bool _isLoadingTasks;
+        private int _userId = -1; // ID пользователя, чей профиль смотрим
 
-        private int _id;
-
-        private TaskCategory _selectedCategory;
+        private TaskCategory _selectedCategory = TaskCategory.Created;
         public TaskCategory SelectedCategory
         {
             get => _selectedCategory;
-            set => SetField(ref _selectedCategory, value);
+            set
+            {
+                if (SetField(ref _selectedCategory, value))
+                {
+                    // При смене категории сбрасываем пагинацию и перезагружаем задачи
+                    _currentTaskPage = 1;
+                    _hasMoreTasks = true;
+                    _ = LoadUserTasksAsync(reset: true);
+                }
+            }
         }
 
         private ObservableCollection<TaskItem> _userTasks = new();
         public ObservableCollection<TaskItem> UserTasks
         {
             get => _userTasks;
-            set 
-            { 
-                if (SetField(ref _userTasks, value))
-                {
-                    _currentTaskPage = 1;
-                    _hasMoreTasks = true;
-                    LoadUserTasksCommand.Execute(null);
-                }
-            }
+            set => SetField(ref _userTasks, value);
         }
 
-        private User _user;
+        private User _user = null!;
         public User User
         {
             get => _user;
-            set { SetField(ref _user, value); }
+            set => SetField(ref _user, value);
         }
 
-        private string _surname; //фамилия
+        private string _surname = string.Empty;
         public string Surname
         {
             get => _surname;
-            set { SetField(ref _surname, value); }
+            set => SetField(ref _surname, value);
         }
 
-        private string _name; //имя
+        private string _name = string.Empty;
         public string Name
         {
             get => _name;
-            set { SetField(ref _name, value); }
+            set => SetField(ref _name, value);
         }
 
-        private string _patronymic; //отчество
+        private string _patronymic = string.Empty;
         public string Patronymic
         {
             get => _patronymic;
-            set { SetField(ref _patronymic, value); }
+            set => SetField(ref _patronymic, value);
         }
 
-        private string _phone; 
+        private string _phone = string.Empty;
         public string Phone
         {
             get => _phone;
-            set { SetField(ref _phone, value); }
+            set => SetField(ref _phone, value);
         }
 
-        private string _email;
+        private string _email = string.Empty;
         public string Email
         {
             get => _email;
-            set {  SetField(ref _email, value); }
+            set => SetField(ref _email, value);
         }
 
-        private string _birthdate;
+        private string _birthDate = string.Empty;
         public string BirthDate
         {
-            get => _birthdate;
-            set { SetField(ref _birthdate, value); }
+            get => _birthDate;
+            set => SetField(ref _birthDate, value);
         }
 
-        private string _about;
+        private string _about = string.Empty;
         public string About
         {
             get => _about;
-            set { SetField(ref _about, value); }
+            set => SetField(ref _about, value);
         }
 
-        private bool _isownprofile;
+        private bool _isOwnProfile;
         public bool IsOwnProfile
         {
-            get => _isownprofile;
-            set { SetField(ref _isownprofile, value); }
+            get => _isOwnProfile;
+            set => SetField(ref _isOwnProfile, value);
         }
         #endregion
 
-        #region Icommands
+        #region Commands
         public ICommand LogoutCommand { get; }
         public ICommand GoToEditCommand { get; }
         public ICommand SelectCategoryCommand { get; }
@@ -134,18 +132,14 @@ namespace nearby.ViewModels
             IUserService userService,
             IAuthService authService,
             ITaskService taskService,
-            IServiceProvider serviceProvider,
-            int id = -1)
+            IServiceProvider serviceProvider)
         {
             _userService = userService;
             _authService = authService;
             _taskService = taskService;
             _serviceProvider = serviceProvider;
-            _userService.PropertyChanged += UpdateUserData;
 
-            _id = id;
-            LoadUserData();
-            SelectedCategory = TaskCategory.Created;
+            _userService.PropertyChanged += OnUserServicePropertyChanged;
 
             LogoutCommand = new Command(async () => await LogoutAsync(), () => IsOwnProfile);
             GoToEditCommand = new Command(async () => await GoToEditAsync(), () => IsOwnProfile);
@@ -153,7 +147,24 @@ namespace nearby.ViewModels
             LoadUserTasksCommand = new Command(async () => await LoadUserTasksAsync(reset: true));
         }
 
-        #region commands
+        #region IQueryAttributable
+        public async void ApplyQueryAttributes(IDictionary<string, object> query)
+        {
+            if (query.TryGetValue("id", out var idObj) && idObj is int id && id > 0)
+            {
+                _userId = id;
+            }
+            else
+            {
+                _userId = -1; // свой профиль
+            }
+
+            // Загружаем данные после получения параметров
+            await LoadData();
+        }
+        #endregion
+
+        #region Commands Implementation
         private async Task LogoutAsync()
         {
             if (!IsOwnProfile) return;
@@ -161,13 +172,22 @@ namespace nearby.ViewModels
             _userService.CurrentUser = null;
             Application.Current.MainPage = _serviceProvider.GetRequiredService<AuthShell>();
         }
+
         private async Task GoToEditAsync()
         {
             if (!IsOwnProfile) return;
-            var page = _serviceProvider.GetRequiredService<EditProfilePage>();
-            var vm = _serviceProvider.GetRequiredService<EditProfileViewModel>();
-            page.BindingContext = vm;
-            await Application.Current.MainPage.Navigation.PushModalAsync(page);
+
+            if (Shell.Current != null)
+            {
+                await Shell.Current.GoToAsync(nameof(EditProfilePage), true);
+            }
+            else
+            {
+                var page = _serviceProvider.GetRequiredService<EditProfilePage>();
+                var vm = _serviceProvider.GetRequiredService<EditProfileViewModel>();
+                page.BindingContext = vm;
+                await Application.Current.MainPage.Navigation.PushModalAsync(page);
+            }
         }
 
         public async Task LoadUserTasksAsync(bool reset)
@@ -178,13 +198,12 @@ namespace nearby.ViewModels
             {
                 _currentTaskPage = 1;
                 _hasMoreTasks = true;
-                UserTasks.Clear();
+                await MainThread.InvokeOnMainThreadAsync(() => UserTasks.Clear());
             }
 
             if (!_hasMoreTasks) return;
 
             _isLoadingTasks = true;
-
             try
             {
                 string status = SelectedCategory switch
@@ -195,15 +214,19 @@ namespace nearby.ViewModels
                     _ => ""
                 };
 
-                var tasks = await _taskService.GetUserTasksAsync(_user.Id, status, _currentTaskPage, TaskPageSize);
+                var response = await _taskService.GetUserTasksAsync(_user.Id, status, _currentTaskPage, TaskPageSize);
+                if (response?.Object == null) return;
 
-                if (tasks.result is null || tasks.Object is null) return;
-
-                if (tasks.Object.Any())
+                var tasks = response.Object;
+                if (tasks.Any())
                 {
-                    foreach (var task in tasks.Object) UserTasks.Add(task);
+                    await MainThread.InvokeOnMainThreadAsync(() =>
+                    {
+                        foreach (var task in tasks)
+                            UserTasks.Add(task);
+                    });
                     _currentTaskPage++;
-                    if (tasks.Object.Count < TaskPageSize)
+                    if (tasks.Count < TaskPageSize)
                         _hasMoreTasks = false;
                 }
                 else
@@ -218,32 +241,40 @@ namespace nearby.ViewModels
         }
         #endregion
 
-        #region func
-        private void UpdateUserData(object? sender, PropertyChangedEventArgs e)
+        #region Data Loading
+        private async Task LoadUserData()
         {
-            if (e.PropertyName == nameof(IUserService.CurrentUser))
+            // Если _userId == -1 — свой профиль
+            IsOwnProfile = _userId == -1 || (_userService.CurrentUser != null && _userService.CurrentUser.Id == _userId);
+            RefreshCommands();
+            if (IsOwnProfile)
             {
-                LoadUserData();
+                if (_userService.CurrentUser == null)
+                {
+                    // Пользователь ещё не загружен – ждём или выходим
+                    return;
+                }
+                User = _userService.CurrentUser;
             }
-        }
-
-        private void LoadUserData()
-        {
-            if(_userService.CurrentUser is null)
+            else
             {
-                return;
+                var response = await _userService.LoadUserByIdAsync(_userId);
+                if (response?.Object == null)
+                {
+                    await Application.Current.MainPage.DisplayAlert("Ошибка", "Не удалось загрузить пользователя", "OK");
+                    return;
+                }
+                User = response.Object;
             }
 
-            User = _userService.CurrentUser;
-            IsOwnProfile = User.Id == _id | _id == -1;
-
+            // Заполняем отображаемые поля
             Phone = User.Phone ?? "";
             Email = User.Email ?? "";
             BirthDate = User.BirthDate?.ToString("dd.MM.yyyy") ?? "";
             About = User.About ?? "";
 
             string[]? fio = User.FullName?.Split(' ');
-            if(fio is not null)
+            if (fio != null)
             {
                 Surname = fio.Length > 0 ? fio[0] : "";
                 Name = fio.Length > 1 ? fio[1] : "";
@@ -251,12 +282,43 @@ namespace nearby.ViewModels
             }
         }
 
-        public void Dispose()
+        public async Task LoadData()
         {
-            _userService.PropertyChanged -= UpdateUserData;
+            if (_loading) return;
+            _loading = true;
+
+            try
+            {
+                await LoadUserData();
+                await LoadUserTasksAsync(reset: true);
+            }
+            finally
+            {
+                _loading = false;
+            }
+        }
+
+        private void OnUserServicePropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            // Если мы смотрим свой профиль и CurrentUser изменился – обновляем данные
+            if (IsOwnProfile && e.PropertyName == nameof(IUserService.CurrentUser))
+            {
+                _ = LoadData(); // асинхронный вызов без ожидания
+            }
+        }
+
+        private void RefreshCommands()
+        {
+            (LogoutCommand as Command)?.ChangeCanExecute();
+            (GoToEditCommand as Command)?.ChangeCanExecute();
         }
         #endregion
 
-
+        #region IDisposable
+        public void Dispose()
+        {
+            _userService.PropertyChanged -= OnUserServicePropertyChanged;
+        }
+        #endregion
     }
 }

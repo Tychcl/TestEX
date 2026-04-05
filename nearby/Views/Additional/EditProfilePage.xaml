@@ -7,8 +7,8 @@
              xmlns:local="clr-namespace:nearby.ViewModels"
                 x:DataType="local:EditProfileViewModel">
 
-    <Grid RowDefinitions="Auto, *">
-        <header:BaseHeaderView BindingContext="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext}" Grid.Row="0"/>
+    <!--<Grid RowDefinitions="Auto, *">-->
+        <!--<header:BaseHeaderView BindingContext="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext}" Grid.Row="0"/>-->
 
             <ScrollView Grid.Row="1">
             <VerticalStackLayout Spacing="15" Padding="20">
@@ -71,5 +71,5 @@
                     BackgroundColor="Green" TextColor="White" Margin="0,20"/>
         </VerticalStackLayout>
         </ScrollView>
-    </Grid>
+    <!--</Grid>-->
 </ContentPage>

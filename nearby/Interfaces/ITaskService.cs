@@ -11,7 +11,6 @@ public interface ITaskService
     Task<ApiResponse<TaskItem>> CreateTaskAsync(TaskItem task);
     Task<ApiResponse<TaskItem>> UpdateTaskAsync(int id, TaskItem task);
     Task<ApiResponse<TaskItem>> DeleteTaskAsync(int id);
-
     Task<ApiResponse<TaskItem>> VolunteerForTaskAsync(int taskId);
     Task<ApiResponse<List<TaskVolunteerInfo>>> GetTaskVolunteersAsync(int taskId);
     Task<ApiResponse<TaskItem>> AcceptVolunteerAsync(int taskId, int volunteerUserId);

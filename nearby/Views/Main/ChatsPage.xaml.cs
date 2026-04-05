@@ -2,9 +2,9 @@ using nearby.ViewModels;
 
 namespace nearby.Views.Main;
 
-public partial class TasksPage : ContentPage
+public partial class ChatsPage : ContentPage
 {
-    public TasksPage(TasksViewModel viewModel)
+    public ChatsPage(ChatsViewModel viewModel)
     {
         BindingContext = viewModel;
         InitializeComponent();
@@ -13,9 +13,9 @@ public partial class TasksPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        if (BindingContext is TasksViewModel vm && vm.Tasks.Count == 0)
+        if (BindingContext is ChatsViewModel vm && vm.Chats.Count == 0)
         {
-            vm.LoadTasksCommand.Execute(null);
+            vm.LoadChatsCommand.Execute(null);
         }
     }
 }

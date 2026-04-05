@@ -37,13 +37,21 @@ namespace nearby
             builder.Services.AddSingleton<IUserService, UserService>();
             builder.Services.AddTransient<IAuthService, AuthService>();
             builder.Services.AddSingleton<ITaskService, TaskService>();
+            builder.Services.AddSingleton<IChatService, ChatService>();
 
             //=====================
             //ВиевМодели
             //=====================
+            //аунтефикация
             builder.Services.AddTransient<LoginViewModel>();
-            builder.Services.AddTransient<ProfileViewModel>();
+            builder.Services.AddTransient<RegViewModel>();
+
+            builder.Services.AddTransient<ChatsViewModel>();
+            builder.Services.AddTransient<ChatDetailViewModel>();
             builder.Services.AddTransient<EditProfileViewModel>();
+            builder.Services.AddTransient<ProfileViewModel>();
+            builder.Services.AddTransient<TasksViewModel>();
+            builder.Services.AddTransient<TaskDetailViewModel>();
 
             //=====================
             //Страницы
@@ -57,8 +65,11 @@ namespace nearby
             builder.Services.AddTransient<ProfilePage>();
             builder.Services.AddTransient<TasksPage>();
             builder.Services.AddTransient<MainShell>();
+            builder.Services.AddTransient<ChatsPage>();
             //дополнительные
             builder.Services.AddTransient<EditProfilePage>();
+            builder.Services.AddTransient<TaskDetailPage>();
+            builder.Services.AddTransient<ChatDetailPage>();
 
             return builder.Build();
         }

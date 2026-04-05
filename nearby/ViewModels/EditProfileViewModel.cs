@@ -8,7 +8,6 @@ using nearby.Classes;
 using nearby.Interfaces;
 using nearby.Models;
 using nearby.Services;
-using static Microsoft.Maui.ApplicationModel.Permissions;
 
 namespace nearby.ViewModels;
 

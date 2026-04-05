@@ -12,7 +12,7 @@
     <TabBar>
         <ShellContent Title="Задачи" Icon="tasks.svg" ContentTemplate="{DataTemplate main:TasksPage}" />
         <ShellContent Title="Фонды" Icon="funds.svg" ContentTemplate="{DataTemplate loading:LoadingPage}" />
-        <ShellContent Title="Чаты" Icon="chats.svg" ContentTemplate="{DataTemplate loading:LoadingPage}" />
+        <ShellContent Title="Чаты" Icon="chats.svg" ContentTemplate="{DataTemplate main:ChatsPage}" />
         <ShellContent Title="Настройки" Icon="settings.svg" ContentTemplate="{DataTemplate loading:LoadingPage}" />
         <ShellContent Title="Профиль" Icon="profile.svg" ContentTemplate="{DataTemplate main:ProfilePage}" />
     </TabBar>

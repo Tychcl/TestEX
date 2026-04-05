@@ -44,12 +44,12 @@
                      Command="{Binding RefreshCommand}"
                      VerticalOptions="Fill">
             <!-- Важно: Fill или FillAndExpand -->
-            <!--<CollectionView ItemsSource="{Binding Tasks}" 
+            <CollectionView ItemsSource="{Binding Tasks}" 
                             SelectionMode="None"
                             RemainingItemsThreshold="3"
                             RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}"
                             VerticalOptions="Fill">
-                --><!-- И здесь Fill --><!--
+                <!-- И здесь Fill -->
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <SwipeView>
@@ -73,7 +73,7 @@
                         </SwipeView>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
-            </CollectionView>-->
+            </CollectionView>
         </RefreshView>
     </Grid>
 </ContentPage>

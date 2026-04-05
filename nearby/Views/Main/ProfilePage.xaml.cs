@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Threading.Tasks;
 using nearby.ViewModels;
 
 namespace nearby.Views.Main;
@@ -9,9 +10,9 @@ public partial class ProfilePage : ContentPage
 
     public ProfilePage(ProfileViewModel viewModel)
     {
-        InitializeComponent();
         _viewModel = viewModel;
         BindingContext = _viewModel;
+        InitializeComponent();
     }
 
     protected override async void OnAppearing()
@@ -19,7 +20,7 @@ public partial class ProfilePage : ContentPage
         base.OnAppearing();
         if (_viewModel is not null)
         {
-            await _viewModel.LoadUserTasksAsync(false);
+            await _viewModel.LoadData();
         }
     }
 

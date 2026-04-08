@@ -13,6 +13,5 @@ public partial class ChatDetailPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        // Загрузка уже происходит в ApplyQueryAttributes
     }
 }

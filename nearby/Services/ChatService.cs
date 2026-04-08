@@ -129,13 +129,13 @@ public class ChatService : IChatService
                 var msg = new Message
                 {
                     Id = Convert.ToInt32(idObj),
-                    Content = message.Content ?? "",
-                    ContentType = message.ContentType,
+                    Content = message.content ?? "",
+                    ContentType = message.content_type,
                     CreatedAt = DateTime.UtcNow,
                     SenderId = 0, // Неизвестно, но можно получить из сессии позже
                     SenderName = "",
-                    FileUrl = message.FileUrl ?? "",
-                    TranscribedText = message.TranscribedText ?? ""
+                    FileUrl = message.file_url ?? "",
+                    TranscribedText = message.transcribed_text ?? ""
                 };
                 return new ApiResponse<Message>(true, "", msg);
             }

@@ -8,9 +8,9 @@ namespace nearby.Models
 {
     public class MessageSendModel
     {
-        public string ContentType { get; set; } = "text";
-        public string? Content { get; set; }
-        public string? FileUrl { get; set; }
-        public string? TranscribedText { get; set; }
+        public string content_type { get; set; } = "text";
+        public string? content { get; set; }
+        public string? file_url { get; set; }
+        public string? transcribed_text { get; set; }
     }
 }

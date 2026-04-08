@@ -24,6 +24,20 @@ public class ChatDetailViewModel : BaseViewModel, IQueryAttributable
     private bool _hasMoreMessages = true;
     private const int PageSize = 50;
 
+    private bool _isMenuVisible;
+    public bool IsMenuVisible
+    {
+        get => _isMenuVisible;
+        set => SetField(ref _isMenuVisible, value);
+    }
+
+    private Message _selectedMessage;
+    public Message SelectedMessage
+    {
+        get => _selectedMessage;
+        set => SetField(ref _selectedMessage, value);
+    }
+
     public int ChatId
     {
         get => _chatId;
@@ -51,7 +65,11 @@ public class ChatDetailViewModel : BaseViewModel, IQueryAttributable
     public string NewMessageText
     {
         get => _newMessageText;
-        set => SetField(ref _newMessageText, value);
+        set
+        {
+            SetField(ref _newMessageText, value);
+            (SendMessageCommand as Command)?.ChangeCanExecute();
+        }
     }
 
     public bool IsLoadingMessages
@@ -69,14 +87,16 @@ public class ChatDetailViewModel : BaseViewModel, IQueryAttributable
     public ICommand RemoveMemberCommand { get; }
     public ICommand EditMessageCommand { get; }
     public ICommand DeleteMessageCommand { get; }
+    public ICommand OpenMenuCommand { get; }
+    public ICommand CloseMenuCommand { get; }
+    public ICommand CopyMessageCommand { get; }
 
     public ChatDetailViewModel(IChatService chatService, IUserService userService, IServiceProvider serviceProvider)
     {
         _chatService = chatService;
         _userService = userService;
         _serviceProvider = serviceProvider;
-        PageTitle = "Чат";
-
+  
         LoadMessagesCommand = new Command(async () => await LoadMessagesAsync(true));
         SendMessageCommand = new Command(async () => await SendMessageAsync(), () => !string.IsNullOrWhiteSpace(NewMessageText));
         LoadMoreMessagesCommand = new Command(async () => await LoadMessagesAsync(false));
@@ -84,7 +104,48 @@ public class ChatDetailViewModel : BaseViewModel, IQueryAttributable
         RemoveMemberCommand = new Command<User>(async (user) => await RemoveMemberAsync(user));
         EditMessageCommand = new Command<Message>(async (message) => await EditMessageAsync(message));
         DeleteMessageCommand = new Command<Message>(async (message) => await DeleteMessageAsync(message));
+        OpenMenuCommand = new Command<Message>(async (message) => await OpenMenuAsync(message));
+        CloseMenuCommand = new Command<Message>(async (message) => await CloseMenu());
+        CopyMessageCommand = new Command<Message>(async (message) => await CopyMessage(message));
         GoBackCommand = new Command(async () => await GoBackAsync());
+    }
+
+    private async Task OpenMenuAsync(Message message)
+    {
+        bool isOwnMessage = message.SenderId == CurrentUserId;
+
+        var actions = new List<string>();
+        if (isOwnMessage)
+        {
+            actions.Add("Редактировать");
+            actions.Add("Удалить");
+            actions.Add("Копировать текст");
+            actions.Add("Отмена");
+        }
+        else
+        {
+            actions.Add("Копировать текст");
+            actions.Add("Отмена");
+        }
+
+        var result = await Application.Current.MainPage.DisplayActionSheet(
+            "Действия с сообщением",
+            null,
+            null,
+            actions.ToArray());
+
+        if (result == "Редактировать")
+            await EditMessageAsync(message);
+        else if (result == "Удалить")
+            await DeleteMessageAsync(message);
+        else if (result == "Копировать текст")
+            await CopyMessage(message);
+    }
+
+    private async Task CloseMenu()
+    {
+        IsMenuVisible = false;
+        SelectedMessage = null;
     }
 
     public void ApplyQueryAttributes(IDictionary<string, object> query)
@@ -93,6 +154,7 @@ public class ChatDetailViewModel : BaseViewModel, IQueryAttributable
         {
             _chatId = id;
             _ = LoadChatDetailAsync();
+            _ = LoadMessagesAsync(true);    
         }
     }
 
@@ -116,19 +178,6 @@ public class ChatDetailViewModel : BaseViewModel, IQueryAttributable
                 {
                     foreach (var p in response.Object.Participants)
                         Participants.Add(p);
-                }
-
-                Messages.Clear();
-                if (response.Object.Messages?.Object != null)
-                {
-                    foreach (var msg in response.Object.Messages.Object.OrderBy(m => m.CreatedAt))
-                        Messages.Add(msg);
-                }
-
-                if (Messages.Any())
-                {
-                    var lastMessageId = Messages.Last().Id;
-                    await _chatService.MarkMessagesAsReadAsync(_chatId, lastMessageId);
                 }
             }
         }
@@ -165,7 +214,12 @@ public class ChatDetailViewModel : BaseViewModel, IQueryAttributable
             {
                 var newMessages = response.Object.Object.OrderBy(m => m.CreatedAt).ToList();
                 foreach (var msg in newMessages)
+                {
+                    bool isOwnMessage = msg.SenderId == CurrentUserId;
+                    msg.layout = isOwnMessage ? LayoutOptions.End : LayoutOptions.Start;
+                    msg.corner = isOwnMessage ? new CornerRadius(15, 15, 15, 0) : new CornerRadius(15, 15, 0, 15);
                     Messages.Add(msg);
+                }
 
                 _currentPage++;
 
@@ -189,8 +243,8 @@ public class ChatDetailViewModel : BaseViewModel, IQueryAttributable
 
         var messageModel = new MessageSendModel
         {
-            ContentType = "text",
-            Content = NewMessageText
+            content_type = "text",
+            content = NewMessageText
         };
 
         var response = await _chatService.SendMessageAsync(_chatId, messageModel);
@@ -206,9 +260,10 @@ public class ChatDetailViewModel : BaseViewModel, IQueryAttributable
                 SenderName = _userService.CurrentUser?.FullName ?? "Вы",
                 SenderProfilePicture = _userService.CurrentUser?.ProfilePicture
             };
+            newMessage.layout = LayoutOptions.End;
+            newMessage.corner = new CornerRadius(15, 15, 15, 0);
             Messages.Add(newMessage);
-            NewMessageText = string.Empty;
-            (SendMessageCommand as Command)?.ChangeCanExecute();
+            NewMessageText = "";
         }
         else
         {
@@ -265,6 +320,7 @@ public class ChatDetailViewModel : BaseViewModel, IQueryAttributable
             {
                 await Application.Current.MainPage.DisplayAlert("Ошибка", result.message ?? "Не удалось редактировать", "OK");
             }
+            await CloseMenu();
         }
     }
 
@@ -282,6 +338,13 @@ public class ChatDetailViewModel : BaseViewModel, IQueryAttributable
         {
             await Application.Current.MainPage.DisplayAlert("Ошибка", result.message ?? "Не удалось удалить сообщение", "OK");
         }
+        await CloseMenu();
+    }
+
+    private async Task CopyMessage(Message message)
+    {
+        await Clipboard.Default.SetTextAsync(message.Content);
+        await CloseMenu();
     }
 
     private async Task GoBackAsync()

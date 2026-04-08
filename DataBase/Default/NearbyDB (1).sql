@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: db:3306
--- Время создания: Мар 13 2026 г., 20:31
+-- Время создания: Апр 08 2026 г., 05:16
 -- Версия сервера: 8.0.43
 -- Версия PHP: 8.3.26
 
@@ -32,11 +32,22 @@ CREATE TABLE `balance_transactions` (
   `user_id` int UNSIGNED NOT NULL,
   `amount` decimal(10,2) NOT NULL COMMENT 'Изменение баланса (может быть отрицательным)',
   `balance_after` decimal(10,2) NOT NULL COMMENT 'Баланс после операции',
-  `type` enum('task_reward','task_cancellation','project_reward','withdrawal','refill') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `reference_type` enum('task','project') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` enum('task_reward','task_cancellation','project_reward','withdrawal','refill') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `reference_type` enum('task','project') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `reference_id` int UNSIGNED DEFAULT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='История изменений баланса';
+
+--
+-- Дамп данных таблицы `balance_transactions`
+--
+
+INSERT INTO `balance_transactions` (`id`, `user_id`, `amount`, `balance_after`, `type`, `reference_type`, `reference_id`, `created_at`) VALUES
+(1, 6, 50.00, 50.00, 'task_reward', 'task', 3, '2026-03-30 10:05:30'),
+(2, 6, 50.00, 100.00, 'task_reward', 'task', 3, '2026-03-30 10:23:56'),
+(3, 6, 50.00, 150.00, 'task_reward', 'task', 3, '2026-03-30 10:25:07'),
+(4, 6, 50.00, 200.00, 'task_reward', 'task', 3, '2026-04-01 11:10:58'),
+(5, 6, 50.00, 250.00, 'task_reward', 'task', 3, '2026-04-01 11:14:38');
 
 -- --------------------------------------------------------
 
@@ -46,10 +57,17 @@ CREATE TABLE `balance_transactions` (
 
 CREATE TABLE `chats` (
   `id` int UNSIGNED NOT NULL,
-  `type` enum('personal','group') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Название группового чата',
+  `type` enum('personal','group') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Название группового чата',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Чаты';
+
+--
+-- Дамп данных таблицы `chats`
+--
+
+INSERT INTO `chats` (`id`, `type`, `name`, `created_at`) VALUES
+(1, 'personal', NULL, '2026-04-01 11:03:55');
 
 -- --------------------------------------------------------
 
@@ -65,6 +83,14 @@ CREATE TABLE `chat_members` (
   `last_read_message_id` int UNSIGNED DEFAULT NULL COMMENT 'Последнее прочитанное сообщение'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Участники чатов';
 
+--
+-- Дамп данных таблицы `chat_members`
+--
+
+INSERT INTO `chat_members` (`id`, `chat_id`, `user_id`, `joined_at`, `last_read_message_id`) VALUES
+(1, 1, 6, '2026-04-01 11:03:55', NULL),
+(2, 1, 5, '2026-04-01 11:03:55', 1);
+
 -- --------------------------------------------------------
 
 --
@@ -75,12 +101,19 @@ CREATE TABLE `messages` (
   `id` int UNSIGNED NOT NULL,
   `chat_id` int UNSIGNED NOT NULL,
   `sender_id` int UNSIGNED NOT NULL COMMENT 'Отправитель (пользователь)',
-  `content_type` enum('text','image','file','voice') COLLATE utf8mb4_unicode_ci DEFAULT 'text',
-  `content` text COLLATE utf8mb4_unicode_ci COMMENT 'Текст сообщения или ссылка на файл',
-  `file_url` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'URL файла (если есть)',
-  `transcribed_text` text COLLATE utf8mb4_unicode_ci COMMENT 'Распознанный текст голосового сообщения',
+  `content_type` enum('text','image','file','voice') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'text',
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'Текст сообщения или ссылка на файл',
+  `file_url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'URL файла (если есть)',
+  `transcribed_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'Распознанный текст голосового сообщения',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Сообщения';
+
+--
+-- Дамп данных таблицы `messages`
+--
+
+INSERT INTO `messages` (`id`, `chat_id`, `sender_id`, `content_type`, `content`, `file_url`, `transcribed_text`, `created_at`) VALUES
+(1, 1, 5, 'text', 'string', 'string', 'string', '2026-04-01 11:41:49');
 
 -- --------------------------------------------------------
 
@@ -91,9 +124,9 @@ CREATE TABLE `messages` (
 CREATE TABLE `notifications` (
   `id` int UNSIGNED NOT NULL,
   `user_id` int UNSIGNED NOT NULL,
-  `type` enum('project_invite','task_invite','task_status_change','project_status_change','new_message','rating_received','organization_verified') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `content` text COLLATE utf8mb4_unicode_ci NOT NULL,
-  `reference_type` enum('task','project','chat','user') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `type` enum('project_invite','task_invite','task_status_change','project_status_change','new_message','rating_received','organization_verified') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `reference_type` enum('task','project','chat','user') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `reference_id` int UNSIGNED DEFAULT NULL,
   `is_read` tinyint(1) DEFAULT '0',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
@@ -107,13 +140,13 @@ CREATE TABLE `notifications` (
 
 CREATE TABLE `organizations` (
   `id` int UNSIGNED NOT NULL,
-  `name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Название организации',
-  `inn` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'ИНН (может отсутствовать)',
-  `contact_person` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Контактное лицо (ФИО)',
-  `contact_phone` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Контактный телефон',
-  `contact_email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Контактный email',
-  `description` text COLLATE utf8mb4_unicode_ci COMMENT 'Описание деятельности',
-  `logo` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Логотип',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'Название организации',
+  `inn` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'ИНН (может отсутствовать)',
+  `contact_person` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Контактное лицо (ФИО)',
+  `contact_phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Контактный телефон',
+  `contact_email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Контактный email',
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'Описание деятельности',
+  `logo` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Логотип',
   `verified` tinyint(1) DEFAULT '0' COMMENT 'Подтверждена модератором',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -129,8 +162,8 @@ CREATE TABLE `organization_members` (
   `id` int UNSIGNED NOT NULL,
   `user_id` int UNSIGNED NOT NULL COMMENT 'Пользователь',
   `organization_id` int UNSIGNED NOT NULL COMMENT 'Организация',
-  `role` enum('owner','manager','member') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'member' COMMENT 'Роль внутри организации',
-  `status` enum('pending','active') COLLATE utf8mb4_unicode_ci DEFAULT 'pending' COMMENT 'Статус членства (ожидает подтверждения / активен)',
+  `role` enum('owner','manager','member') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'member' COMMENT 'Роль внутри организации',
+  `status` enum('pending','active') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'pending' COMMENT 'Статус членства (ожидает подтверждения / активен)',
   `added_by` int UNSIGNED DEFAULT NULL COMMENT 'Кто добавил/пригласил (ссылка на users)',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Связь пользователей с организациями и роли в них';
@@ -155,17 +188,17 @@ CREATE TABLE `participant_days` (
 
 CREATE TABLE `projects` (
   `id` int UNSIGNED NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
-  `type` enum('A','B') COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'A - с ролями по дням, B - без разделения по дням',
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
+  `type` enum('A','B') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'A - с ролями по дням, B - без разделения по дням',
   `created_by_user_id` int UNSIGNED DEFAULT NULL COMMENT 'Создатель – пользователь',
   `created_by_organization_id` int UNSIGNED DEFAULT NULL COMMENT 'Создатель – организация',
-  `status` enum('searching','active','completed','cancelled') COLLATE utf8mb4_unicode_ci DEFAULT 'searching',
+  `status` enum('searching','active','completed','cancelled') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'searching',
   `start_date` date DEFAULT NULL COMMENT 'Дата начала проекта',
   `end_date` date DEFAULT NULL COMMENT 'Дата окончания проекта',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -178,7 +211,7 @@ CREATE TABLE `project_participants` (
   `user_id` int UNSIGNED NOT NULL,
   `project_id` int UNSIGNED NOT NULL,
   `role_id` int UNSIGNED NOT NULL,
-  `status` enum('invited','active','rejected','left') COLLATE utf8mb4_unicode_ci DEFAULT 'invited',
+  `status` enum('invited','active','rejected','left') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'invited',
   `invited_by` int UNSIGNED DEFAULT NULL COMMENT 'Кто пригласил (админ/овнер)',
   `joined_at` timestamp NULL DEFAULT NULL COMMENT 'Когда принял приглашение или был назначен'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Участники проектов и их роли';
@@ -192,8 +225,8 @@ CREATE TABLE `project_participants` (
 CREATE TABLE `project_roles` (
   `id` int UNSIGNED NOT NULL,
   `project_id` int UNSIGNED NOT NULL,
-  `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
+  `name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `total_needed` int UNSIGNED DEFAULT NULL COMMENT 'Для типа B: общее количество людей на эту роль'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Роли, доступные в проекте';
 
@@ -219,10 +252,10 @@ CREATE TABLE `project_role_daily_needs` (
 CREATE TABLE `project_tasks` (
   `id` int UNSIGNED NOT NULL,
   `project_id` int UNSIGNED NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `date` date DEFAULT NULL COMMENT 'Если привязана к конкретному дню',
-  `status` enum('pending','in_progress','completed') COLLATE utf8mb4_unicode_ci DEFAULT 'pending',
+  `status` enum('pending','in_progress','completed') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'pending',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Мелкие задачи внутри проекта';
@@ -237,7 +270,7 @@ CREATE TABLE `project_task_volunteers` (
   `id` int UNSIGNED NOT NULL,
   `project_task_id` int UNSIGNED NOT NULL,
   `user_id` int UNSIGNED NOT NULL,
-  `status` enum('assigned','completed') COLLATE utf8mb4_unicode_ci DEFAULT 'assigned',
+  `status` enum('assigned','completed') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'assigned',
   `assigned_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Волонтеры, выполняющие мелкие задачи проекта';
 
@@ -252,11 +285,11 @@ CREATE TABLE `ratings` (
   `rater_id` int UNSIGNED NOT NULL COMMENT 'Кто оценивает (пользователь)',
   `rated_user_id` int UNSIGNED NOT NULL COMMENT 'Кого оценивают (пользователь)',
   `rating` tinyint UNSIGNED NOT NULL,
-  `comment` text COLLATE utf8mb4_unicode_ci,
+  `comment` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `task_id` int UNSIGNED DEFAULT NULL COMMENT 'Ссылка на простую задачу (если оценка за неё)',
   `project_id` int UNSIGNED DEFAULT NULL COMMENT 'Ссылка на проект (если оценка за участие в проекте)',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Триггеры `ratings`
@@ -326,19 +359,26 @@ DELIMITER ;
 
 CREATE TABLE `tasks` (
   `id` int UNSIGNED NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `description` text COLLATE utf8mb4_unicode_ci,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `description` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
   `needed_volunteers` int UNSIGNED NOT NULL DEFAULT '1' COMMENT 'Сколько волонтеров нужно',
-  `priority` enum('low','medium','high') COLLATE utf8mb4_unicode_ci DEFAULT 'medium',
-  `location` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Место выполнения',
+  `priority` enum('low','medium','high') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'medium',
+  `location` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Место выполнения',
   `reward` decimal(10,2) DEFAULT '0.00' COMMENT 'Награда в нирбиках',
-  `status` enum('searching','in_progress','completed','cancelled') COLLATE utf8mb4_unicode_ci DEFAULT 'searching',
+  `status` enum('searching','in_progress','completed','cancelled') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'searching',
   `created_by_user_id` int UNSIGNED DEFAULT NULL COMMENT 'Создатель – пользователь (если задача от физлица)',
   `created_by_organization_id` int UNSIGNED DEFAULT NULL COMMENT 'Создатель – организация (если задача от юрлица)',
   `deadline` datetime DEFAULT NULL COMMENT 'Срок выполнения',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Дамп данных таблицы `tasks`
+--
+
+INSERT INTO `tasks` (`id`, `title`, `description`, `needed_volunteers`, `priority`, `location`, `reward`, `status`, `created_by_user_id`, `created_by_organization_id`, `deadline`, `created_at`, `updated_at`) VALUES
+(3, 'Попить со мной чай и поболтать', 'да да, благодарю благодарю', 1, 'low', 'хз', 50.00, 'completed', 5, NULL, '2026-03-24 00:00:00', '2026-03-23 10:20:17', '2026-04-01 11:14:38');
 
 -- --------------------------------------------------------
 
@@ -350,10 +390,17 @@ CREATE TABLE `task_volunteers` (
   `id` int UNSIGNED NOT NULL,
   `task_id` int UNSIGNED NOT NULL,
   `user_id` int UNSIGNED NOT NULL,
-  `status` enum('pending','accepted','rejected','cancelled') COLLATE utf8mb4_unicode_ci DEFAULT 'pending' COMMENT 'Статус участия',
+  `status` enum('pending','accepted','rejected','cancelled','completed') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'pending' COMMENT 'Статус участия',
   `assigned_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Волонтеры, выполняющие простые задачи';
+
+--
+-- Дамп данных таблицы `task_volunteers`
+--
+
+INSERT INTO `task_volunteers` (`id`, `task_id`, `user_id`, `status`, `assigned_at`, `updated_at`) VALUES
+(2, 3, 6, 'completed', '2026-03-23 12:43:48', '2026-04-01 11:14:38');
 
 -- --------------------------------------------------------
 
@@ -364,12 +411,12 @@ CREATE TABLE `task_volunteers` (
 CREATE TABLE `users` (
   `id` int UNSIGNED NOT NULL,
   `full_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'ФИО',
-  `city` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Город',
+  `city` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Город',
   `birth_date` date DEFAULT NULL COMMENT 'Год рождения',
-  `about` text COLLATE utf8mb4_unicode_ci COMMENT 'Краткая информация о себе',
+  `about` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'Краткая информация о себе',
   `profile_picture` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Ссылка на фото профиля',
-  `email` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Email для входа',
-  `phone` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Телефон',
+  `email` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Email для входа',
+  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Телефон',
   `password` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'Хеш пароля',
   `vk_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'ID ВКонтакте',
   `tg_id` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'ID Telegram',
@@ -382,9 +429,9 @@ CREATE TABLE `users` (
   `average_rating` decimal(3,2) DEFAULT '0.00' COMMENT 'Средний рейтинг (на основе оценок)',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `education_institution` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Учебное заведение',
-  `education_degree` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Степень/квалификация',
-  `education_field` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Специальность',
+  `education_institution` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Учебное заведение',
+  `education_degree` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Степень/квалификация',
+  `education_field` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'Специальность',
   `education_start_year` year DEFAULT NULL,
   `education_end_year` year DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Физические лица (пользователи)';
@@ -394,8 +441,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `full_name`, `city`, `birth_date`, `about`, `profile_picture`, `email`, `phone`, `password`, `vk_id`, `tg_id`, `balance`, `availability_status`, `is_admin`, `is_moderator`, `lastSeenAt`, `is_online`, `average_rating`, `created_at`, `updated_at`, `education_institution`, `education_degree`, `education_field`, `education_start_year`, `education_end_year`) VALUES
-(4, 'привет', NULL, NULL, NULL, NULL, 'test@test.test', '+71234567890', '$2y$10$aay4bYX9IH6MmXh2m5GWZe8VVUxfnLHcA/E6DsQTYlOuldn5X1SP6', NULL, NULL, 0.00, 'available', 0, 0, '2026-03-12 03:06:29', 1, 0.00, '2026-03-12 03:05:58', '2026-03-12 03:06:29', NULL, NULL, NULL, NULL, NULL),
-(5, 'Вожегов Григорий Романович', 'Пермь2', '2006-06-07', 'Начинающий программист', NULL, 'tocabloha@gmail.com', '+79082697663', '$2y$10$y4VrRWP/21wRwpuxa5dl/.fcYssm5EsBRX2P5nieTJjFrCJpggZeW', NULL, NULL, 0.00, 'available', 0, 0, '2026-03-13 20:09:37', 1, 0.00, '2026-03-12 22:51:22', '2026-03-13 20:09:37', '', '', '', '0000', '0000');
+(5, 'Вожегов Григорий Романович', 'Пермь2', '2006-06-07', 'Начинающий программист19', NULL, 'tocabloha@gmail.com', '+79082697661', '$2y$10$y4VrRWP/21wRwpuxa5dl/.fcYssm5EsBRX2P5nieTJjFrCJpggZeW', NULL, NULL, 0.00, 'available', 0, 0, '2026-04-05 16:04:30', 1, 0.00, '2026-03-12 22:51:22', '2026-04-05 16:04:29', '', '', '', '0000', '0000'),
+(6, 'test test2 test2', NULL, '2006-03-23', NULL, NULL, 'test@test.test', '89082697661', '$2y$10$Z.XSxoIjk0yqF86DJl0ZfO9PsGCrC8mfjgHSkTTgkn/WmZrYRY7sC', NULL, NULL, 250.00, 'available', 0, 0, '2026-03-27 00:32:49', 1, 0.00, '2026-03-18 11:22:05', '2026-04-01 11:14:38', NULL, NULL, NULL, '0000', '0000');
 
 --
 -- Индексы сохранённых таблиц
@@ -558,25 +605,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT для таблицы `balance_transactions`
 --
 ALTER TABLE `balance_transactions`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT для таблицы `chats`
 --
 ALTER TABLE `chats`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT для таблицы `chat_members`
 --
 ALTER TABLE `chat_members`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT для таблицы `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT для таблицы `notifications`
@@ -648,19 +695,19 @@ ALTER TABLE `ratings`
 -- AUTO_INCREMENT для таблицы `tasks`
 --
 ALTER TABLE `tasks`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT для таблицы `task_volunteers`
 --
 ALTER TABLE `task_volunteers`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц

@@ -6,13 +6,7 @@
              Title="Задачи"
              xmlns:header="clr-namespace:nearby.Views.Headers">
 
-    <Shell.TitleView>
-        <header:TasksHeaderView BindingContext="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext}"/>
-    </Shell.TitleView>
-
-    <!-- Используем Grid для точного распределения места -->
     <Grid RowDefinitions="Auto, *" Padding="10" RowSpacing="10">
-        <!-- Строка 0: Фильтры (Auto) -->
         <HorizontalStackLayout Grid.Row="0" Spacing="5">
             <Picker Title="Статус" SelectedItem="{Binding StatusFilter}" WidthRequest="120">
                 <Picker.ItemsSource>
@@ -38,18 +32,15 @@
             <Entry Placeholder="Город" Text="{Binding CityFilter}" WidthRequest="120"/>
         </HorizontalStackLayout>
 
-        <!-- Строка 1: RefreshView с CollectionView (занимает всё оставшееся место) -->
         <RefreshView Grid.Row="1" 
                      IsRefreshing="{Binding IsRefreshing}" 
                      Command="{Binding RefreshCommand}"
                      VerticalOptions="Fill">
-            <!-- Важно: Fill или FillAndExpand -->
             <CollectionView ItemsSource="{Binding Tasks}" 
                             SelectionMode="None"
                             RemainingItemsThreshold="3"
                             RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}"
                             VerticalOptions="Fill">
-                <!-- И здесь Fill -->
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <SwipeView>
@@ -75,5 +66,14 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </RefreshView>
+
+        <ImageButton Grid.Row="1"
+                     Source="add_circle.svg"
+                     VerticalOptions="End"
+                     HorizontalOptions="End"
+                     Margin="0,0,20,20"
+                     WidthRequest="20"
+                     HeightRequest="20"
+                     Command="{Binding GoToCreateTaskCommand}"/>
     </Grid>
 </ContentPage>

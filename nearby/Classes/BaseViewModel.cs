@@ -17,8 +17,8 @@ namespace nearby.Classes
             await Shell.Current.GoToAsync("..");
         }
 
-        private string _pagetitle = string.Empty;
-        public string PageTitle
+        private string? _pagetitle;
+        public string? PageTitle
         {
             get => _pagetitle;
             set => SetField(ref _pagetitle, value);

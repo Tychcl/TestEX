@@ -17,12 +17,13 @@ namespace nearby.ViewModels;
 [QueryProperty(nameof(taskId), "id")]
 public class TaskDetailViewModel : BaseViewModel, INotifyPropertyChanged, IQueryAttributable
 {
+    public Task Initialization { get; private set; }
     public void ApplyQueryAttributes(IDictionary<string, object> query)
     {
         if (query.TryGetValue("id", out var idObj) && idObj is int id)
         {
             taskId = id;
-            InitializeAsync(taskId);
+            Initialization = InitializeAsync(taskId);
         }
     }
 
@@ -131,6 +132,7 @@ public class TaskDetailViewModel : BaseViewModel, INotifyPropertyChanged, IQuery
         GoBackCommand = new Command(async () => await GoBackAsync());
     }
     private bool _isInitialized;
+    public bool IsInitialized { get => _isInitialized; }
     public async Task InitializeAsync(int taskId)
     {
         if (_isInitialized) return;
@@ -142,6 +144,7 @@ public class TaskDetailViewModel : BaseViewModel, INotifyPropertyChanged, IQuery
         if (task.Object != null)
         {
             Task = task.Object;
+            PageTitle = Task.Title;
             IsOwner = _userService.CurrentUser?.Id == task.Object.CreatorId;
 
             if (IsOwner)

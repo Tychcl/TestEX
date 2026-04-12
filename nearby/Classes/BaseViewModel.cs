@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace nearby.Classes
 {
-    public class BaseViewModel
+    public class BaseViewModel: NotifyPropertyChanged
     {
         public ICommand GoBackCommand { get; set; }
         public static async Task GoBackAsync()
@@ -24,18 +24,44 @@ namespace nearby.Classes
             set => SetField(ref _pagetitle, value);
         }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        private bool _isBusy;
+        public bool IsBusy
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            get => _isBusy;
+            set => SetField(ref _isBusy, value);
         }
 
-        protected bool SetField<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+        protected async Task ExecuteAsync(Func<Task> action, params ICommand[] dependentCommands)
         {
-            if (EqualityComparer<T>.Default.Equals(field, value)) return false;
-            field = value;
-            OnPropertyChanged(propertyName);
-            return true;
+            if (IsBusy) return;
+            IsBusy = true;
+            RefreshCommands(dependentCommands);
+            try
+            {
+                await action();
+            }
+            catch (Exception ex)
+            {
+                await Application.Current.MainPage.DisplayAlert("Ошибка", ex.Message, "OK");
+            }
+            finally
+            {
+                IsBusy = false;
+                RefreshCommands(dependentCommands);
+            }
+        }
+
+        protected void RefreshCommands(params ICommand[] commands)
+        {
+            foreach (var cmd in commands)
+            {
+                (cmd as Command)?.ChangeCanExecute();
+            }
+        }
+
+        protected virtual Task ShowErrorAsync(string message)
+        {
+            return Application.Current.MainPage.DisplayAlert("Ошибка", message, "OK");
         }
     }
 }

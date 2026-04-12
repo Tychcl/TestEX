@@ -83,16 +83,16 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <MauiXaml Update="Views\Additional\ChatDetailPage.xaml">
+	  <MauiXaml Update="Views\Additional\Detail\ChatDetailPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Additional\TaskDetailPage.xaml">
+	  <MauiXaml Update="Views\Additional\Detail\TaskDetailPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Auth\AuthShell.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Additional\EditProfilePage.xaml">
+	  <MauiXaml Update="Views\Additional\AddEdit\EditProfilePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Headers\BaseHeaderView.xaml">
@@ -125,6 +125,10 @@
 	  <MauiXaml Update="Views\Main\TasksPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Folder Include="Views\Additional\Settings\" />
 	</ItemGroup>
 
 </Project>

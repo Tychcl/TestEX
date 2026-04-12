@@ -14,16 +14,9 @@ public partial class TaskDetailPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        if (BindingContext is TaskDetailViewModel vm)
+        if (BindingContext is TaskDetailViewModel vm && vm.InitializationTask != null)
         {
-            if (vm.IsInitialized)
-                return;
-            try
-            {
-                if (vm.Initialization != null)
-                    await vm.Initialization;
-            }
-            catch { }
+            await vm.InitializationTask;
         }
     }
 }

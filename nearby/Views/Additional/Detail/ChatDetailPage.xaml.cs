@@ -13,5 +13,9 @@ public partial class ChatDetailPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
+        if (BindingContext is ChatDetailViewModel vm && vm.InitializationTask != null)
+        {
+            await vm.InitializationTask;
+        }
     }
 }

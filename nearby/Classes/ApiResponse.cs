@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace nearby.Classes
 {
-    public class ApiResponse<T>
+    public class ApiResponse<T>: Clone<ApiResponse<T>>
     {
         public bool? result { get; set; }
         public string? message { get; set; }
-        public T? Object { get; set; }
+        public T? Data { get; set; }
 
         public ApiResponse() { }
 
@@ -18,7 +18,7 @@ namespace nearby.Classes
         {
             this.result = result;
             this.message = message;
-            Object = _object;
+            Data = _object;
         }
     }
 }

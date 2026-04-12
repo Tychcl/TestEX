@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace nearby.Services;
 
-public class UserService : BaseViewModel, IUserService
+public class UserService : NotifyPropertyChanged, IUserService
 {
     private readonly ApiClient _apiClient;
     private readonly ITokenService _tokenService;
@@ -23,11 +23,7 @@ public class UserService : BaseViewModel, IUserService
     public User? CurrentUser
     {
         get => _currentUser;
-        set
-        {
-            _currentUser = value;
-           SetField(ref _currentUser, value);
-        }
+        set => SetField(ref _currentUser, value);
     }
 
     public async Task<ApiResponse<User>> LoadUserByIdAsync(int id = -1)

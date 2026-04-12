@@ -5,13 +5,9 @@
              xmlns:header="clr-namespace:nearby.Views.Headers"
              Title="Редактирование профиля"
              xmlns:local="clr-namespace:nearby.ViewModels"
-                x:DataType="local:EditProfileViewModel">
-
-    <!--<Grid RowDefinitions="Auto, *">-->
-        <!--<header:BaseHeaderView BindingContext="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext}" Grid.Row="0"/>-->
-
-            <ScrollView Grid.Row="1">
-            <VerticalStackLayout Spacing="15" Padding="20">
+             x:DataType="local:EditProfileViewModel">
+    <ScrollView>
+        <VerticalStackLayout Spacing="15" Padding="20">
 
             <!-- Фото профиля -->
             <StackLayout Orientation="Horizontal" Spacing="15" HorizontalOptions="Center">
@@ -33,32 +29,32 @@
 
             <!-- Город -->
             <Label Text="Город" Style="{StaticResource BoldLabel}" Margin="0,10,0,0"/>
-                <Entry Text="{Binding User.City}" Placeholder="Москва"/>
+            <Entry Text="{Binding User.City}" Placeholder="Москва"/>
 
             <!-- Дата рождения -->
             <Label Text="Дата рождения" Style="{StaticResource BoldLabel}" Margin="0,10,0,0"/>
-                <DatePicker Date="{Binding User.BirthDate}" MaximumDate="{Binding Today}"/>
+            <DatePicker Date="{Binding User.BirthDate}" MaximumDate="{Binding Today}"/>
 
             <!-- Email -->
             <Label Text="Email" Style="{StaticResource BoldLabel}" Margin="0,10,0,0"/>
-                <Entry Text="{Binding User.Email}" Placeholder="example@mail.com" Keyboard="Email"/>
+            <Entry Text="{Binding User.Email}" Placeholder="example@mail.com" Keyboard="Email"/>
 
             <!-- Телефон -->
             <Label Text="Телефон" Style="{StaticResource BoldLabel}" Margin="0,10,0,0"/>
-                <Entry Text="{Binding User.Phone}" Placeholder="+7 (999) 123-45-67" Keyboard="Telephone"/>
+            <Entry Text="{Binding User.Phone}" Placeholder="+7 (999) 123-45-67" Keyboard="Telephone"/>
 
             <!-- О себе -->
             <Label Text="О себе" Style="{StaticResource BoldLabel}" Margin="0,10,0,0"/>
-                <Editor Text="{Binding User.About}" AutoSize="TextChanges" HeightRequest="80"/>
+            <Editor Text="{Binding User.About}" AutoSize="TextChanges" HeightRequest="80"/>
 
             <!-- Образование -->
             <Label Text="Образование" Style="{StaticResource BoldLabel}" Margin="0,10,0,0"/>
-                <Entry Text="{Binding User.EducationInstitution}" Placeholder="Учебное заведение"/>
-                <Entry Text="{Binding User.EducationDegree}" Placeholder="Степень (например, бакалавр)"/>
-                <Entry Text="{Binding User.EducationField}" Placeholder="Специальность"/>
+            <Entry Text="{Binding User.EducationInstitution}" Placeholder="Учебное заведение"/>
+            <Entry Text="{Binding User.EducationDegree}" Placeholder="Степень (например, бакалавр)"/>
+            <Entry Text="{Binding User.EducationField}" Placeholder="Специальность"/>
             <Grid ColumnDefinitions="*,*,*" ColumnSpacing="5" Margin="0,5">
-                    <Entry Grid.Column="0" Text="{Binding EducationStartYear}" Placeholder="Год начала" Keyboard="Numeric"/>
-                    <Entry Grid.Column="1" Text="{Binding EducationEndYear}" Placeholder="Год окончания" Keyboard="Numeric"/>
+                <Entry Grid.Column="0" Text="{Binding EducationStartYear}" Placeholder="Год начала" Keyboard="Numeric"/>
+                <Entry Grid.Column="1" Text="{Binding EducationEndYear}" Placeholder="Год окончания" Keyboard="Numeric"/>
                 <Label Grid.Column="2" Text="(оставьте пустым если учитесь)" FontSize="Small" VerticalOptions="Center"/>
             </Grid>
 
@@ -70,6 +66,5 @@
             <Button Text="Сохранить" Command="{Binding SaveCommand}"
                     BackgroundColor="Green" TextColor="White" Margin="0,20"/>
         </VerticalStackLayout>
-        </ScrollView>
-    <!--</Grid>-->
+    </ScrollView>
 </ContentPage>

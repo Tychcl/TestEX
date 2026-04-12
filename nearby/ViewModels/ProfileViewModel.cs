@@ -10,29 +10,19 @@ using nearby.Views.Auth;
 
 namespace nearby.ViewModels
 {
-    public enum TaskCategory
-    {
-        Created,
-        InProgress,
-        Completed
-    }
+    public enum TaskCategory { Created, InProgress, Completed }
 
-    public class ProfileViewModel : BaseViewModel, INotifyPropertyChanged, IDisposable, IQueryAttributable
+    public class ProfileViewModel : BaseViewModel, IDisposable
     {
-        #region Services
         private readonly IUserService _userService;
         private readonly IAuthService _authService;
         private readonly ITaskService _taskService;
         private readonly IServiceProvider _serviceProvider;
-        #endregion
 
-        #region Fields
-        private bool _loading;
         private const int TaskPageSize = 10;
         private int _currentTaskPage = 1;
         private bool _hasMoreTasks = true;
-        private bool _isLoadingTasks;
-        private int _userId = -1; // ID пользователя, чей профиль смотрим
+        private int _userId = -1;
 
         private TaskCategory _selectedCategory = TaskCategory.Created;
         public TaskCategory SelectedCategory
@@ -42,7 +32,6 @@ namespace nearby.ViewModels
             {
                 if (SetField(ref _selectedCategory, value))
                 {
-                    // При смене категории сбрасываем пагинацию и перезагружаем задачи
                     _currentTaskPage = 1;
                     _hasMoreTasks = true;
                     _ = LoadUserTasksAsync(reset: true);
@@ -119,14 +108,11 @@ namespace nearby.ViewModels
             get => _isOwnProfile;
             set => SetField(ref _isOwnProfile, value);
         }
-        #endregion
 
-        #region Commands
         public ICommand LogoutCommand { get; }
         public ICommand GoToEditCommand { get; }
         public ICommand SelectCategoryCommand { get; }
         public ICommand LoadUserTasksCommand { get; }
-        #endregion
 
         public ProfileViewModel(
             IUserService userService,
@@ -141,33 +127,26 @@ namespace nearby.ViewModels
 
             _userService.PropertyChanged += OnUserServicePropertyChanged;
 
-            LogoutCommand = new Command(async () => await LogoutAsync(), () => IsOwnProfile);
-            GoToEditCommand = new Command(async () => await GoToEditAsync(), () => IsOwnProfile);
+            LogoutCommand = new Command(async () => await ExecuteAsync(LogoutAsync, LogoutCommand),
+                () => IsOwnProfile);
+            GoToEditCommand = new Command(async () => await ExecuteAsync(GoToEditAsync, GoToEditCommand),
+                () => IsOwnProfile);
             SelectCategoryCommand = new Command<TaskCategory>(category => SelectedCategory = category);
-            LoadUserTasksCommand = new Command(async () => await LoadUserTasksAsync(reset: true));
+            LoadUserTasksCommand = new Command(async () => await ExecuteAsync(() => LoadUserTasksAsync(reset: true), LoadUserTasksCommand));
         }
 
-        #region IQueryAttributable
-        public async void ApplyQueryAttributes(IDictionary<string, object> query)
+        public void ApplyQueryAttributes(IDictionary<string, Object> query)
         {
             if (query.TryGetValue("id", out var idObj) && idObj is int id && id > 0)
-            {
                 _userId = id;
-            }
             else
-            {
-                _userId = -1; // свой профиль
-            }
+                _userId = -1;
 
-            // Загружаем данные после получения параметров
-            await LoadData();
+            _ = LoadData();
         }
-        #endregion
 
-        #region Commands Implementation
         private async Task LogoutAsync()
         {
-            if (!IsOwnProfile) return;
             await _authService.LogoutAsync();
             _userService.CurrentUser = null;
             Application.Current.MainPage = _serviceProvider.GetRequiredService<AuthShell>();
@@ -175,12 +154,8 @@ namespace nearby.ViewModels
 
         private async Task GoToEditAsync()
         {
-            if (!IsOwnProfile) return;
-
             if (Shell.Current != null)
-            {
                 await Shell.Current.GoToAsync(nameof(EditProfilePage), true);
-            }
             else
             {
                 var page = _serviceProvider.GetRequiredService<EditProfilePage>();
@@ -215,9 +190,9 @@ namespace nearby.ViewModels
                 };
 
                 var response = await _taskService.GetUserTasksAsync(_user.Id, status, _currentTaskPage, TaskPageSize);
-                if (response?.Object == null) return;
+                if (response?.Data == null) return;
 
-                var tasks = response.Object;
+                var tasks = response.Data;
                 if (tasks.Any())
                 {
                     await MainThread.InvokeOnMainThreadAsync(() =>
@@ -239,35 +214,25 @@ namespace nearby.ViewModels
                 _isLoadingTasks = false;
             }
         }
-        #endregion
 
-        #region Data Loading
         private async Task LoadUserData()
         {
-            // Если _userId == -1 — свой профиль
             IsOwnProfile = _userId == -1 || (_userService.CurrentUser != null && _userService.CurrentUser.Id == _userId);
-            RefreshCommands();
+            RefreshConditionalCommands();
+
             if (IsOwnProfile)
             {
-                if (_userService.CurrentUser == null)
-                {
-                    // Пользователь ещё не загружен – ждём или выходим
-                    return;
-                }
+                if (_userService.CurrentUser == null) return;
                 User = _userService.CurrentUser;
             }
             else
             {
                 var response = await _userService.LoadUserByIdAsync(_userId);
-                if (response?.Object == null)
-                {
-                    await Application.Current.MainPage.DisplayAlert("Ошибка", "Не удалось загрузить пользователя", "OK");
-                    return;
-                }
-                User = response.Object;
+                if (response?.Data == null)
+                    throw new Exception("Не удалось загрузить пользователя");
+                User = response.Data;
             }
 
-            // Заполняем отображаемые поля
             Phone = User.Phone ?? "";
             Email = User.Email ?? "";
             BirthDate = User.BirthDate?.ToString("dd.MM.yyyy") ?? "";
@@ -286,7 +251,6 @@ namespace nearby.ViewModels
         {
             if (_loading) return;
             _loading = true;
-
             try
             {
                 await LoadUserData();
@@ -298,27 +262,24 @@ namespace nearby.ViewModels
             }
         }
 
-        private void OnUserServicePropertyChanged(object? sender, PropertyChangedEventArgs e)
+        private void OnUserServicePropertyChanged(Object? sender, PropertyChangedEventArgs e)
         {
-            // Если мы смотрим свой профиль и CurrentUser изменился – обновляем данные
             if (IsOwnProfile && e.PropertyName == nameof(IUserService.CurrentUser))
-            {
-                _ = LoadData(); // асинхронный вызов без ожидания
-            }
+                _ = LoadData();
         }
 
-        private void RefreshCommands()
+        private void RefreshConditionalCommands()
         {
             (LogoutCommand as Command)?.ChangeCanExecute();
             (GoToEditCommand as Command)?.ChangeCanExecute();
         }
-        #endregion
 
-        #region IDisposable
         public void Dispose()
         {
             _userService.PropertyChanged -= OnUserServicePropertyChanged;
         }
-        #endregion
+
+        private bool _loading;
+        private bool _isLoadingTasks;
     }
 }

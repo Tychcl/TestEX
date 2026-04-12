@@ -5,111 +5,94 @@ using nearby.Interfaces;
 using nearby.Models;
 using nearby.Views.Additional;
 
-namespace nearby.ViewModels;
-
-public class ChatsViewModel : BaseViewModel
+namespace nearby.ViewModels
 {
-    private readonly IChatService _chatService;
-    private readonly IServiceProvider _serviceProvider;
-
-    private ObservableCollection<Chat> _chats = new();
-    private bool _isRefreshing;
-    private int _currentPage = 1;
-    private bool _hasMorePages = true;
-    private bool _isLoading;
-    private const int PageSize = 20;
-
-    public ObservableCollection<Chat> Chats
+    public class ChatsViewModel : BaseViewModel
     {
-        get => _chats;
-        set => SetField(ref _chats, value);
-    }
+        private readonly IChatService _chatService;
+        private readonly IServiceProvider _serviceProvider;
 
-    public bool IsRefreshing
-    {
-        get => _isRefreshing;
-        set => SetField(ref _isRefreshing, value);
-    }
+        private ObservableCollection<Chat> _chats = new();
+        private bool _isRefreshing;
+        private int _currentPage = 1;
+        private bool _hasMorePages = true;
+        private const int PageSize = 20;
 
-    public ICommand LoadChatsCommand { get; }
-    public ICommand RefreshCommand { get; }
-    public ICommand LoadMoreCommand { get; }
-    public ICommand ChatSelectedCommand { get; }
-    public ICommand CreateGroupCommand { get; }
-
-    public ChatsViewModel(IChatService chatService, IServiceProvider serviceProvider)
-    {
-        _chatService = chatService;
-        _serviceProvider = serviceProvider;
-
-        LoadChatsCommand = new Command(async () => await LoadChatsAsync(true));
-        RefreshCommand = new Command(async () => await LoadChatsAsync(true));
-        LoadMoreCommand = new Command(async () => await LoadChatsAsync(false));
-        ChatSelectedCommand = new Command<Chat>(async (chat) => await GoToChatDetailAsync(chat));
-        CreateGroupCommand = new Command(async () => await CreateGroupAsync());
-    }
-
-    private async Task LoadChatsAsync(bool reset)
-    {
-        if (_isLoading) return;
-
-        if (reset)
+        public ObservableCollection<Chat> Chats
         {
-            _currentPage = 1;
-            _hasMorePages = true;
-            Chats.Clear();
+            get => _chats;
+            set => SetField(ref _chats, value);
         }
 
-        if (!_hasMorePages) return;
-
-        _isLoading = true;
-        IsRefreshing = true;
-
-        try
+        public bool IsRefreshing
         {
-            var response = await _chatService.GetChatsAsync(_currentPage, PageSize);
-            if (response.result != true)
+            get => _isRefreshing;
+            set => SetField(ref _isRefreshing, value);
+        }
+
+        public ICommand LoadChatsCommand { get; }
+        public ICommand RefreshCommand { get; }
+        public ICommand LoadMoreCommand { get; }
+        public ICommand ChatSelectedCommand { get; }
+        public ICommand CreateGroupCommand { get; }
+
+        public ChatsViewModel(IChatService chatService, IServiceProvider serviceProvider)
+        {
+            _chatService = chatService;
+            _serviceProvider = serviceProvider;
+
+            LoadChatsCommand = new Command(async () => await ExecuteAsync(() => LoadChatsAsync(true), LoadChatsCommand));
+            RefreshCommand = new Command(async () => await ExecuteAsync(() => LoadChatsAsync(true), RefreshCommand), () => !IsBusy);
+            LoadMoreCommand = new Command(async () => await ExecuteAsync(() => LoadChatsAsync(false), LoadMoreCommand), () => !IsBusy && _hasMorePages);
+            ChatSelectedCommand = new Command<Chat>(async (chat) => await ExecuteAsync(() => GoToChatDetailAsync(chat), ChatSelectedCommand));
+            CreateGroupCommand = new Command(async () => await ExecuteAsync(CreateGroupAsync, CreateGroupCommand));
+        }
+
+        private async Task LoadChatsAsync(bool reset)
+        {
+            if (reset)
             {
-                await Application.Current.MainPage.DisplayAlert("Ошибка", response.message ?? "Не удалось загрузить чаты", "OK");
-                return;
+                _currentPage = 1;
+                _hasMorePages = true;
+                Chats.Clear();
             }
 
-            if (response.Object != null && response.Object.Any())
-            {
-                foreach (var chat in response.Object)
-                    Chats.Add(chat);
-                _currentPage++;
+            if (!_hasMorePages) return;
 
-                if (response.Object.Count < PageSize)
+            IsRefreshing = true;
+            try
+            {
+                var response = await _chatService.GetChatsAsync(_currentPage, PageSize);
+                if (response.result != true)
+                    throw new Exception(response.message ?? "Не удалось загрузить чаты");
+
+                if (response.Data != null && response.Data.Any())
+                {
+                    foreach (var chat in response.Data)
+                        Chats.Add(chat);
+                    _currentPage++;
+                    if (response.Data.Count < PageSize)
+                        _hasMorePages = false;
+                }
+                else
+                {
                     _hasMorePages = false;
+                }
             }
-            else
+            finally
             {
-                _hasMorePages = false;
+                IsRefreshing = false;
             }
         }
-        finally
-        {
-            _isLoading = false;
-            IsRefreshing = false;
-        }
-    }
 
-    private async Task GoToChatDetailAsync(Chat chat)
-    {
-        try
+        private async Task GoToChatDetailAsync(Chat chat)
         {
             await Shell.Current.GoToAsync(nameof(ChatDetailPage), new Dictionary<string, object?> { { "id", chat.Id } });
         }
-        catch
-        {
-            await Application.Current.MainPage.DisplayAlert("Ошибка", "Не удалось открыть чат", "OK");
-        }
-    }
 
-    private async Task CreateGroupAsync()
-    {
-        // Здесь можно открыть страницу выбора участников и названия
-        await Application.Current.MainPage.DisplayAlert("Создание группы", "Функция в разработке", "OK");
+        private async Task CreateGroupAsync()
+        {
+            await Application.Current.MainPage.DisplayAlert("Создание группы", "Функция в разработке", "OK");
+        }
     }
 }

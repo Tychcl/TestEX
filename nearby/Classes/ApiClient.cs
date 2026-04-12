@@ -1,4 +1,6 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Diagnostics;
+using System.Net;
+using System.Net.Http.Headers;
 using System.Text;
 using nearby.Interfaces;
 
@@ -7,13 +9,15 @@ public class ApiClient
 {
     private readonly HttpClient _httpClient;
     private readonly ITokenService _tokenService;
+    private readonly IAuthService _authService;
 
-    public ApiClient(HttpClient httpClient, ITokenService tokenService)
+    public ApiClient(HttpClient httpClient, ITokenService tokenService, IAuthService authService)
     {
         _httpClient = httpClient;
         _httpClient.Timeout = TimeSpan.FromSeconds(20);
         _httpClient.BaseAddress = new Uri("http://10.0.2.2:8080/api/");
         _tokenService = tokenService;
+        _authService = authService;
     }
 
     private async Task<HttpRequestMessage> CreateRequestAsync(HttpMethod method, string url, HttpContent? content = null)
@@ -36,25 +40,27 @@ public class ApiClient
     {
         try
         {
-            var request = await CreateRequestAsync(HttpMethod.Get, url);
+            using var request = await CreateRequestAsync(HttpMethod.Get, url);
             return await _httpClient.SendAsync(request);
         }
-        catch
+        catch (Exception ex)
         {
+            Debug.WriteLine($"ApiClient error: {ex}");
             return null;
         }
-        
+
     }
 
     public async Task<HttpResponseMessage?> PostAsync(string url, HttpContent content)
     {
         try
         {
-            var request = await CreateRequestAsync(HttpMethod.Post, url, content);
+            using var request = await CreateRequestAsync(HttpMethod.Post, url, content);
             return await _httpClient.SendAsync(request);
         }
-        catch
+        catch (Exception ex)
         {
+            Debug.WriteLine($"ApiClient error: {ex}");
             return null;
         }
     }
@@ -63,11 +69,12 @@ public class ApiClient
     {
         try
         {
-            var request = await CreateRequestAsync(HttpMethod.Put, url, content);
+            using var request = await CreateRequestAsync(HttpMethod.Put, url, content);
             return await _httpClient.SendAsync(request);
         }
-        catch
+        catch (Exception ex)
         {
+            Debug.WriteLine($"ApiClient error: {ex}");
             return null;
         }
     }
@@ -76,12 +83,37 @@ public class ApiClient
     {
         try
         {
-            var request = await CreateRequestAsync(HttpMethod.Delete, url);
+            using var request = await CreateRequestAsync(HttpMethod.Delete, url);
             return await _httpClient.SendAsync(request);
         }
-        catch
+        catch (Exception ex)
         {
+            Debug.WriteLine($"ApiClient error: {ex}");
             return null;
         }
     }
+
+    //TODO: Сделат рефреш токен, мб стоит запихнуть это в токен сервис
+    //private async Task<HttpResponseMessage> SendWithRefreshAsync(HttpRequestMessage request)
+    //{
+    //    var response = await _httpClient.SendAsync(request);
+    //    if (response.StatusCode == HttpStatusCode.Unauthorized)
+    //    {
+    //        // Пытаемся обновить токен
+    //        var refreshed = await _authService.RefreshTokenAsync();
+    //        if (refreshed)
+    //        {
+    //            // Обновляем заголовок в оригинальном запросе
+    //            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", await _tokenService.GetTokenAsync());
+    //            return await _httpClient.SendAsync(request);
+    //        }
+    //        else
+    //        {
+    //            // Редирект на логин
+    //            await Shell.Current.GoToAsync("//AuthShell");
+    //            throw new UnauthorizedAccessException();
+    //        }
+    //    }
+    //    return response;
+    //}
 }

@@ -5,16 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace nearby.Classes
+namespace nearby.Classes.Interface.Converters
 {
-    public class IsCurrentUserConverter : IValueConverter
+    public class IsPersonalConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if (value is int senderId && parameter is int currentUserId)
-                return senderId == currentUserId;
-            return false;
-        }
+            => value is string type && type == "personal";
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
             => throw new NotImplementedException();

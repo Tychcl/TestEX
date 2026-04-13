@@ -91,12 +91,12 @@ namespace nearby.ViewModels
                 if (response.result is not true)
                     throw new Exception(response.message);
 
-                if (response.Object != null && response.Object.Any())
+                if (response.Data != null && response.Data.Any())
                 {
-                    foreach (var task in response.Object)
+                    foreach (var task in response.Data)
                         Tasks.Add(task);
                     _currentPage++;
-                    if (response.Object.Count < PageSize)
+                    if (response.Data.Count < PageSize)
                         _hasMorePages = false;
                 }
                 else

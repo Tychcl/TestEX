@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 
-namespace nearby.Classes
+namespace nearby.Classes.Interface.Converters
 {
     public class IsSelectedMessageConverter : IValueConverter
     {

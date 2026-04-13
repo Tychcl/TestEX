@@ -4,7 +4,7 @@
              x:Class="nearby.Views.Main.ChatsPage"
              xmlns:viewModels="clr-namespace:nearby.ViewModels"
              xmlns:models="clr-namespace:nearby.Models"
-             xmlns:converters="clr-namespace:nearby.Classes"
+             xmlns:converters="clr-namespace:nearby.Classes.Interface.Converters"
              Title="Чаты"
              x:DataType="viewModels:ChatsViewModel">
 

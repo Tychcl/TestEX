@@ -9,15 +9,13 @@ public class ApiClient
 {
     private readonly HttpClient _httpClient;
     private readonly ITokenService _tokenService;
-    private readonly IAuthService _authService;
 
-    public ApiClient(HttpClient httpClient, ITokenService tokenService, IAuthService authService)
+    public ApiClient(HttpClient httpClient, ITokenService tokenService)
     {
         _httpClient = httpClient;
         _httpClient.Timeout = TimeSpan.FromSeconds(20);
         _httpClient.BaseAddress = new Uri("http://10.0.2.2:8080/api/");
         _tokenService = tokenService;
-        _authService = authService;
     }
 
     private async Task<HttpRequestMessage> CreateRequestAsync(HttpMethod method, string url, HttpContent? content = null)

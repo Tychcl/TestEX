@@ -59,6 +59,11 @@ namespace nearby.Classes
             }
         }
 
+        public virtual void RefreshCommands()
+        {
+
+        }
+
         protected virtual Task ShowErrorAsync(string message)
         {
             return Application.Current.MainPage.DisplayAlert("Ошибка", message, "OK");

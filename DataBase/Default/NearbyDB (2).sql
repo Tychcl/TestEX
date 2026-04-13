@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: db:3306
--- Время создания: Апр 08 2026 г., 05:16
+-- Время создания: Апр 13 2026 г., 15:27
 -- Версия сервера: 8.0.43
 -- Версия PHP: 8.3.26
 
@@ -47,7 +47,8 @@ INSERT INTO `balance_transactions` (`id`, `user_id`, `amount`, `balance_after`, 
 (2, 6, 50.00, 100.00, 'task_reward', 'task', 3, '2026-03-30 10:23:56'),
 (3, 6, 50.00, 150.00, 'task_reward', 'task', 3, '2026-03-30 10:25:07'),
 (4, 6, 50.00, 200.00, 'task_reward', 'task', 3, '2026-04-01 11:10:58'),
-(5, 6, 50.00, 250.00, 'task_reward', 'task', 3, '2026-04-01 11:14:38');
+(5, 6, 50.00, 250.00, 'task_reward', 'task', 3, '2026-04-01 11:14:38'),
+(6, 6, 23.00, 273.00, 'task_reward', 'task', 4, '2026-04-08 21:12:51');
 
 -- --------------------------------------------------------
 
@@ -113,7 +114,15 @@ CREATE TABLE `messages` (
 --
 
 INSERT INTO `messages` (`id`, `chat_id`, `sender_id`, `content_type`, `content`, `file_url`, `transcribed_text`, `created_at`) VALUES
-(1, 1, 5, 'text', 'string', 'string', 'string', '2026-04-01 11:41:49');
+(1, 1, 5, 'text', 'string', 'string', 'string', '2026-04-01 11:41:49'),
+(2, 1, 5, 'text', '12345', NULL, NULL, '2026-04-08 06:09:25'),
+(3, 1, 5, 'text', '123', NULL, NULL, '2026-04-08 06:10:41'),
+(4, 1, 5, 'text', '123', NULL, NULL, '2026-04-08 06:11:11'),
+(5, 1, 5, 'text', '234', NULL, NULL, '2026-04-08 06:12:08'),
+(6, 1, 5, 'text', 'aboba\n2', NULL, NULL, '2026-04-08 07:01:23'),
+(7, 1, 5, 'text', '123\nпривет\nпривет', NULL, NULL, '2026-04-08 21:09:29'),
+(8, 1, 5, 'text', 'string', NULL, NULL, '2026-04-08 21:09:56'),
+(9, 1, 6, 'text', 'привет', NULL, NULL, '2026-04-08 21:12:12');
 
 -- --------------------------------------------------------
 
@@ -378,7 +387,8 @@ CREATE TABLE `tasks` (
 --
 
 INSERT INTO `tasks` (`id`, `title`, `description`, `needed_volunteers`, `priority`, `location`, `reward`, `status`, `created_by_user_id`, `created_by_organization_id`, `deadline`, `created_at`, `updated_at`) VALUES
-(3, 'Попить со мной чай и поболтать', 'да да, благодарю благодарю', 1, 'low', 'хз', 50.00, 'completed', 5, NULL, '2026-03-24 00:00:00', '2026-03-23 10:20:17', '2026-04-01 11:14:38');
+(3, 'Попить со мной чай и поболтать', 'да да, благодарю благодарю', 1, 'low', 'хз', 50.00, 'completed', 5, NULL, '2026-03-24 00:00:00', '2026-03-23 10:20:17', '2026-04-01 11:14:38'),
+(5, 'Купить продукты', 'Яблоки, мясо, печеньки, чай', 1, 'medium', 'хз', 50.00, 'searching', 5, NULL, '2026-03-24 00:00:00', '2026-03-23 10:20:17', '2026-04-01 11:14:38');
 
 -- --------------------------------------------------------
 
@@ -400,7 +410,8 @@ CREATE TABLE `task_volunteers` (
 --
 
 INSERT INTO `task_volunteers` (`id`, `task_id`, `user_id`, `status`, `assigned_at`, `updated_at`) VALUES
-(2, 3, 6, 'completed', '2026-03-23 12:43:48', '2026-04-01 11:14:38');
+(2, 3, 6, 'completed', '2026-03-23 12:43:48', '2026-04-01 11:14:38'),
+(4, 5, 6, 'rejected', '2026-04-08 22:09:31', '2026-04-08 22:10:54');
 
 -- --------------------------------------------------------
 
@@ -441,8 +452,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `full_name`, `city`, `birth_date`, `about`, `profile_picture`, `email`, `phone`, `password`, `vk_id`, `tg_id`, `balance`, `availability_status`, `is_admin`, `is_moderator`, `lastSeenAt`, `is_online`, `average_rating`, `created_at`, `updated_at`, `education_institution`, `education_degree`, `education_field`, `education_start_year`, `education_end_year`) VALUES
-(5, 'Вожегов Григорий Романович', 'Пермь2', '2006-06-07', 'Начинающий программист19', NULL, 'tocabloha@gmail.com', '+79082697661', '$2y$10$y4VrRWP/21wRwpuxa5dl/.fcYssm5EsBRX2P5nieTJjFrCJpggZeW', NULL, NULL, 0.00, 'available', 0, 0, '2026-04-05 16:04:30', 1, 0.00, '2026-03-12 22:51:22', '2026-04-05 16:04:29', '', '', '', '0000', '0000'),
-(6, 'test test2 test2', NULL, '2006-03-23', NULL, NULL, 'test@test.test', '89082697661', '$2y$10$Z.XSxoIjk0yqF86DJl0ZfO9PsGCrC8mfjgHSkTTgkn/WmZrYRY7sC', NULL, NULL, 250.00, 'available', 0, 0, '2026-03-27 00:32:49', 1, 0.00, '2026-03-18 11:22:05', '2026-04-01 11:14:38', NULL, NULL, NULL, '0000', '0000');
+(5, 'Вожегов Григорий Романович', 'Пермь2', '2006-06-07', 'Начинающий программист', NULL, 'tocabloha@gmail.com', '+79082697661', '$2y$10$y4VrRWP/21wRwpuxa5dl/.fcYssm5EsBRX2P5nieTJjFrCJpggZeW', NULL, NULL, 0.00, 'available', 0, 0, '2026-04-08 22:09:44', 1, 0.00, '2026-03-12 22:51:22', '2026-04-08 22:09:44', '', '', '', '0000', '0000'),
+(6, 'test test2 test2', NULL, '2006-03-23', NULL, NULL, 'test@test.test', '89082697661', '$2y$10$Z.XSxoIjk0yqF86DJl0ZfO9PsGCrC8mfjgHSkTTgkn/WmZrYRY7sC', NULL, NULL, 273.00, 'available', 0, 0, '2026-04-08 22:09:27', 1, 0.00, '2026-03-18 11:22:05', '2026-04-08 22:09:26', NULL, NULL, NULL, '0000', '0000');
 
 --
 -- Индексы сохранённых таблиц
@@ -605,7 +616,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT для таблицы `balance_transactions`
 --
 ALTER TABLE `balance_transactions`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT для таблицы `chats`
@@ -623,7 +634,7 @@ ALTER TABLE `chat_members`
 -- AUTO_INCREMENT для таблицы `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT для таблицы `notifications`
@@ -695,13 +706,13 @@ ALTER TABLE `ratings`
 -- AUTO_INCREMENT для таблицы `tasks`
 --
 ALTER TABLE `tasks`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT для таблицы `task_volunteers`
 --
 ALTER TABLE `task_volunteers`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT для таблицы `users`

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace nearby.Classes
+namespace nearby.Classes.Interface.Converters
 {
     public class IsEqualConverter : IValueConverter
     {

@@ -1,16 +1,17 @@
 using System.Globalization;
 
-namespace nearby.Classes;
+namespace nearby.Classes.Interface.Converters;
 
-public class MessageAlignmentConverter : IValueConverter
+public class MessageBackgroundConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
         if (value is int senderId && parameter is int currentUserId)
         {
-            return senderId == currentUserId ? LayoutOptions.End : LayoutOptions.Start;
+            // Свои сообщения - зелёные, чужие - белые
+            return senderId == currentUserId ? Color.FromArgb("#DCF8C6") : Colors.White;
         }
-        return LayoutOptions.Start;
+        return Colors.White;
     }
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

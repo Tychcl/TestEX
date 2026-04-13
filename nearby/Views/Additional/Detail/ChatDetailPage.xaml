@@ -4,7 +4,7 @@
              x:Class="nearby.Views.Additional.ChatDetailPage"
              xmlns:viewModels="clr-namespace:nearby.ViewModels"
              xmlns:models="clr-namespace:nearby.Models"
-             xmlns:converters="clr-namespace:nearby.Classes"
+             xmlns:converters="clr-namespace:nearby.Classes.Interface.Converters"
              x:DataType="viewModels:ChatDetailViewModel"
              Title="{Binding Chat.OtherUser.FullName, FallbackValue='Чат'}"
              Shell.TabBarIsVisible="False">

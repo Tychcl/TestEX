@@ -70,7 +70,7 @@ public class UserService : NotifyPropertyChanged, IUserService
         {
             var user = await LoadUserByIdAsync(_currentUser.Id);
             this.OnPropertyChanged(nameof(IUserService.CurrentUser));
-            return new ApiResponse<User>(true, "Данные обновленны", user.Object);
+            return new ApiResponse<User>(true, "Данные обновленны", user.Data);
         }
         return new ApiResponse<User>(false, json, null); ;
     }

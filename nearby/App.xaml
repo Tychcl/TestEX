@@ -2,7 +2,7 @@
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:nearby"
-             xmlns:converters="clr-namespace:nearby.Classes"
+             xmlns:converters="clr-namespace:nearby.Classes.Interface.Converters"
              x:Class="nearby.App">
     <Application.Resources>
         <ResourceDictionary>
@@ -16,6 +16,7 @@
             <converters:GreaterThanZeroConverter x:Key="GreaterThanZeroConverter"/>
             <converters:IsCurrentUserConverter x:Key="IsCurrentUserConverter"/>
             <converters:IsEqualConverter x:Key="IsEqualConverter"/>
+            <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

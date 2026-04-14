@@ -47,25 +47,25 @@ public class ValidationBehavior : Behavior<Entry>
         base.OnDetachingFrom(entry);
     }
 
-    private void OnEntryBindingContextChanged(object sender, EventArgs e)
-    {
-        if (sender is Entry entry)
-        {
-            this.BindingContext = entry.BindingContext;
-            ValidateEntry(entry, entry.Text);
-        }
-    }
-
     private void OnTextChanged(object sender, TextChangedEventArgs e)
     {
         if (sender is Entry entry)
+        {
             ValidateEntry(entry, e.NewTextValue);
+        }
     }
 
     private void ValidateEntry(Entry entry, string text)
     {
         bool isValid = ValidateFunc(text);
-        entry.TextColor = isValid ? Colors.Black : Colors.Red;
+        if (isValid)
+        {
+            entry.SetAppThemeColor(Entry.TextColorProperty, Colors.Black, Colors.White);
+        }
+        else
+        {
+            entry.TextColor = Colors.Red;
+        }
         IsValid = isValid;
     }
 }

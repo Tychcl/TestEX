@@ -15,6 +15,7 @@ namespace nearby.Classes
         public static Func<string, bool> PhoneValidator => PhoneNumber;
         public static Func<string, bool> EmailOrPhoneValidator => EmailOrPhone;
         public static Func<string, bool> PasswordValidator => Password;
+        public static Func<string, bool> NonEmptyValidator => str => !string.IsNullOrWhiteSpace(str);
 
         public static bool EmailAdress(string str)
         {

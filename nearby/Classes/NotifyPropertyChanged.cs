@@ -9,7 +9,7 @@ using System.Windows.Input;
 
 namespace nearby.Classes
 {
-    public class NotifyPropertyChanged
+    public class NotifyPropertyChanged : INotifyPropertyChanged
     {
 
         public event PropertyChangedEventHandler? PropertyChanged;

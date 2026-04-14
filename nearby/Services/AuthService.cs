@@ -21,7 +21,7 @@ public class AuthService : IAuthService
         var request = new { login, password };
         var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
         var response = await _apiClient.PostAsync("users/signin", content);
-        //var j = await response.Content.ReadAsStringAsync();
+        var j = await response.Content.ReadAsStringAsync();
 
         if (response is null)
         {

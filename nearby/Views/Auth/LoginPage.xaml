@@ -9,21 +9,33 @@
              x:DataType="viewModels:LoginViewModel">
     <VerticalStackLayout Spacing="20" Padding="30" VerticalOptions="Center">
         <Label Text="Вход" FontSize="24" HorizontalOptions="Center"/>
-        <Entry Placeholder="Телефон или Email" Text="{Binding Login}" Keyboard="Email">
+
+        <Entry Placeholder="Телефон или Email" 
+               Text="{Binding Login}" 
+               Keyboard="Email">
             <Entry.Behaviors>
                 <behaviors:ValidationBehavior 
                     ValidateFunc="{x:Static classes:Validate.EmailOrPhoneValidator}" 
                     IsValid="{Binding IsLoginValid, Mode=TwoWay}"/>
             </Entry.Behaviors>
         </Entry>
-        <Entry Placeholder="Пароль" Text="{Binding Password}" IsPassword="True">
+
+        <Entry Placeholder="Пароль" 
+               Text="{Binding Password}" 
+               IsPassword="True">
             <Entry.Behaviors>
                 <behaviors:ValidationBehavior 
-                    ValidateFunc="{x:Static classes:Validate.PasswordValidator}" 
+                    ValidateFunc="{x:Static classes:Validate.NonEmptyValidator}" 
                     IsValid="{Binding IsPasswordValid, Mode=TwoWay}"/>
             </Entry.Behaviors>
         </Entry>
-        <Label IsVisible="True" Text="{Binding ErrorMsg}" TextColor="Red"/>
-        <Button Text="Войти" Command="{Binding LoginCommand}" IsEnabled="{Binding HasErrors, Converter={StaticResource InverseBoolConverter}}"/>
+
+        <Label IsVisible="{Binding ErrorMsgVisible}" 
+               Text="{Binding ErrorMsg}" 
+               TextColor="Red"/>
+
+        <Button Text="Войти" 
+                Command="{Binding LoginCommand}" 
+                IsEnabled="{Binding IsLoginValid}"/>
     </VerticalStackLayout>
 </ContentPage>

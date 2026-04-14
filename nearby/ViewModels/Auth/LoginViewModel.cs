@@ -17,51 +17,69 @@ namespace nearby.ViewModels
         public string Login
         {
             get => _login;
-            set => SetField(ref _login, value);
+            set
+            {
+                if (SetField(ref _login, value) && !_isLoginValid && !_errorMsgVisible)
+                {
+                    ErrorMsgVisible = !IsLoginValid && !string.IsNullOrWhiteSpace(Login);
+                    ErrorMsg = !IsLoginValid ? "Логин должен быть в формате +79999999999 или example@mail.com" : "";
+                }
+            }
         }
 
         private string _password;
         public string Password
         {
             get => _password;
-            set => SetField(ref _password, value);
-        }
-
-        private bool _isloginvalid;
-        public bool IsLoginValid
-        {
-            get => _isloginvalid;
-            set { if (SetField(ref _isloginvalid, value)) HasErrors = !IsLoginValid || !IsPasswordValid; }
-        }
-
-        private bool _ispasswordvalid;
-        public bool IsPasswordValid
-        {
-            get => _ispasswordvalid;
-            set { if (SetField(ref _ispasswordvalid, value)) HasErrors = !IsLoginValid || !IsPasswordValid; }
-        }
-
-        private string? _errormsg = "Необходимо заполнить поля";
-        public string? ErrorMsg
-        {
-            get => _errormsg;
-            set => SetField(ref _errormsg, value);
-        }
-
-        private bool _he;
-        public bool HasErrors
-        {
-            get => _he;
-            set 
-            { 
-                if (SetField(ref _he, value))
+            set
+            {
+                if (SetField(ref _password, value))
                 {
                     RefreshCommands();
                 }
-                ErrorMsg = IsLoginValid ? "Логин должен быть в формате +79999999999 или example@mail.com"
-                        : !IsPasswordValid ? "" :
-                        "Пароль должен содержать:\nТолько латинские буквы\nХотя бы одну заглавную букву\nХотя бы одну строчную букву\nХотя бы одну цифру\nХотя бы один специальный символ #?!@$%^&*-._\nБыть длиной не менее 8 символов";
             }
+        }
+
+        private bool _isLoginValid;
+        public bool IsLoginValid
+        {
+            get => _isLoginValid;
+            set
+            {
+                if (SetField(ref _isLoginValid, value))
+                {
+                    RefreshCommands();
+                    ErrorMsgVisible = !IsLoginValid && !string.IsNullOrWhiteSpace(Login);
+                    ErrorMsg = !IsLoginValid ? "Логин должен быть в формате +79999999999 или example@mail.com" : "";
+                }
+            }
+        }
+
+        private bool _isPasswordValid;
+        public bool IsPasswordValid
+        {
+            get => _isPasswordValid;
+            set
+            {
+                if (SetField(ref _isPasswordValid, value))
+                {
+                    RefreshCommands();
+                }
+            }
+        }
+
+        private string? _errorMsg;
+        public string? ErrorMsg
+        {
+            get => _errorMsg;
+            set => SetField(ref _errorMsg, value);
+        }
+
+        private bool _errorMsgVisible;
+        public bool ErrorMsgVisible
+        {
+            get => _errorMsgVisible;
+            set => SetField(ref _errorMsgVisible, value);
         }
 
         public ICommand LoginCommand { get; }
@@ -72,8 +90,13 @@ namespace nearby.ViewModels
             _userService = userService;
             _serviceProvider = serviceProvider;
 
-            HasErrors = true;
-            LoginCommand = new Command(async () => await ExecuteAsync(LoginAsync, LoginCommand), () => !HasErrors);
+            IsLoginValid = false;
+            IsPasswordValid = false;
+
+            LoginCommand = new Command(
+                execute: async () => await ExecuteAsync(LoginAsync, LoginCommand),
+                canExecute: () => IsLoginValid && IsPasswordValid
+            );
         }
 
         public override void RefreshCommands()
@@ -83,8 +106,13 @@ namespace nearby.ViewModels
 
         private async Task LoginAsync()
         {
+            ErrorMsgVisible = false;
             if (string.IsNullOrWhiteSpace(Login) || string.IsNullOrWhiteSpace(Password))
-                throw new Exception("Заполните все поля");
+            {
+                ErrorMsgVisible = true;
+                ErrorMsg = "Заполните все поля";
+                return;
+            }
 
             var success = await _authService.LoginAsync(Login, Password);
             if (success.result is not true)

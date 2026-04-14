@@ -284,7 +284,7 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="projects" idMethod="native" phpName="Projects" description="Проекты (большие задачи)">
+  <table name="projects" idMethod="native" phpName="Projects">
     <column name="id" phpName="Id" type="INTEGER" sqlType="int unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="title" phpName="Title" type="VARCHAR" size="255" required="true"/>
     <column name="description" phpName="Description" type="LONGVARCHAR"/>
@@ -315,7 +315,7 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="ratings" idMethod="native" phpName="Ratings" description="Оценки (рейтинг)">
+  <table name="ratings" idMethod="native" phpName="Ratings">
     <column name="id" phpName="Id" type="INTEGER" sqlType="int unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="rater_id" phpName="RaterId" type="INTEGER" sqlType="int unsigned" description="Кто оценивает (пользователь)" required="true"/>
     <column name="rated_user_id" phpName="RatedUserId" type="INTEGER" sqlType="int unsigned" description="Кого оценивают (пользователь)" required="true"/>
@@ -366,7 +366,7 @@
     <column name="id" phpName="Id" type="INTEGER" sqlType="int unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="task_id" phpName="TaskId" type="INTEGER" sqlType="int unsigned" required="true"/>
     <column name="user_id" phpName="UserId" type="INTEGER" sqlType="int unsigned" required="true"/>
-    <column name="status" phpName="Status" type="CHAR" sqlType="enum('pending','accepted','rejected','cancelled')" description="Статус участия" defaultValue="pending"/>
+    <column name="status" phpName="Status" type="CHAR" sqlType="enum('pending','accepted','rejected','cancelled','completed')" description="Статус участия" defaultValue="pending"/>
     <column name="assigned_at" phpName="AssignedAt" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP"/>
     <column name="updated_at" phpName="UpdatedAt" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"/>
     <foreign-key foreignTable="tasks" name="task_volunteers_ibfk_1" onDelete="CASCADE">
@@ -386,7 +386,7 @@
       <parameter name="Engine" value="InnoDB"/>
     </vendor>
   </table>
-  <table name="tasks" idMethod="native" phpName="Tasks" description="Простые задачи">
+  <table name="tasks" idMethod="native" phpName="Tasks">
     <column name="id" phpName="Id" type="INTEGER" sqlType="int unsigned" primaryKey="true" autoIncrement="true" required="true"/>
     <column name="title" phpName="Title" type="VARCHAR" size="255" required="true"/>
     <column name="description" phpName="Description" type="LONGVARCHAR"/>

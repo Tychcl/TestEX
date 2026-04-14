@@ -556,7 +556,7 @@ class TasksController
             $data = $this->formatTasks($tasks);
     
             return new Response(200, [
-                'object' => $data,
+                'data' => $data,
                 'total' => $total,
                 'page' => $page,
                 'limit' => $limit,
@@ -729,7 +729,7 @@ class TasksController
             $data = $this->formatTasks($tasks);
 
             return new Response(200, [
-                'object' => $data,
+                'data' => $data,
                 'total' => $total,
                 'page' => $page,
                 'limit' => $limit,

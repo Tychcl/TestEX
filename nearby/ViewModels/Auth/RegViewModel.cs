@@ -1,62 +1,71 @@
-﻿using System.Windows.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using nearby.Classes.VM;
+using nearby.Classes.Validation;
 using nearby.Interfaces;
-using nearby.Classes;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace nearby.ViewModels
 {
-    public class RegViewModel : BaseViewModel
+    public partial class RegViewModel : BaseViewModel2
     {
         private readonly IAuthService _authService;
 
+        [ObservableProperty]
+        [NotifyDataErrorInfo]
+        [Required(ErrorMessage = "ФИО не может быть пустым")]
+        [ValidateWithValidator(validatorName: nameof(Validate.FIOValidator), ErrorMessage = "Неверный формат ФИО")]
         private string _fullName;
-        public string FullName
-        {
-            get => _fullName;
-            set => SetField(ref _fullName, value);
-        }
 
+        [ObservableProperty]
+        [NotifyDataErrorInfo]
+        [Required(ErrorMessage = "Номер телефона не может быть пустым")]
+        [ValidateWithValidator(validatorName: nameof(Validate.PhoneValidator), ErrorMessage = "Неверный формат телефона")]
         private string _phone;
-        public string Phone
-        {
-            get => _phone;
-            set => SetField(ref _phone, value);
-        }
 
+        [ObservableProperty]
+        [NotifyDataErrorInfo]
+        [Required(ErrorMessage = "Почта не может быть пустым")]
+        [ValidateWithValidator(validatorName: nameof(Validate.EmailValidator), ErrorMessage = "Неверный формат почты")]
         private string _email;
-        public string Email
-        {
-            get => _email;
-            set => SetField(ref _email, value);
-        }
 
+        [ObservableProperty]
+        [NotifyDataErrorInfo]
+        [Required(ErrorMessage = "Пароль не может быть пустым")]
+        [ValidateWithValidator(validatorName: nameof(Validate.PasswordValidator), ErrorMessage = "Неверный формат gароля")]
         private string _password;
-        public string Password
+        partial void OnPasswordChanged(string value)
         {
-            get => _password;
-            set => SetField(ref _password, value);
+            ValidateProperty(Confirm, nameof(Confirm));
         }
 
+        [ObservableProperty]
+        [NotifyDataErrorInfo]
+        [Required(ErrorMessage = "Подтверждение пароля не может быть пустым")]
+        [ValidateWithValidator(validatorName: nameof(Validate.PasswordValidator), ErrorMessage = "Неверный формат подтверждения пароля")]
+        [property: Compare(nameof(Password), ErrorMessage = "Пароли не совпадают")]
         private string _confirm;
-        public string Confirm
-        {
-            get => _confirm;
-            set => SetField(ref _confirm, value);
-        }
-
-        public ICommand RegisterCommand { get; }
 
         public RegViewModel(IAuthService authService)
         {
             _authService = authService;
-            RegisterCommand = new Command(async () => await ExecuteAsync(RegisterAsync, RegisterCommand));
+            ValidateAllProperties();
+            ErrorsChanged += OnErrorsChanged;
         }
 
+        protected override void OnErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
+        {
+            base.OnErrorsChanged(sender, e);
+            RegisterCommand.NotifyCanExecuteChanged();
+        }
+
+        private bool CanReg() => !HasErrors;
+        [RelayCommand(CanExecute = nameof(CanReg))]
         private async Task RegisterAsync()
         {
-            if (string.IsNullOrWhiteSpace(FullName) ||
-                (string.IsNullOrWhiteSpace(Phone) && string.IsNullOrWhiteSpace(Email)) ||
-                string.IsNullOrWhiteSpace(Password) || string.IsNullOrWhiteSpace(Confirm))
-                throw new Exception("Заполните обязательные поля");
+            ValidateAllProperties();
+            if (HasErrors) return;
 
             if (Password != Confirm)
                 throw new Exception("Пароли не совпадают");

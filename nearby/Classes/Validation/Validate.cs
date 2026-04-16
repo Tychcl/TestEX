@@ -12,6 +12,7 @@ namespace nearby.Classes.Validation
     public static class Validate
     {
         public static Func<string, bool> EmailValidator => EmailAdress;
+        public static Func<string, bool> FIOValidator => FIO;
         public static Func<string, bool> PhoneValidator => PhoneNumber;
         public static Func<string, bool> EmailOrPhoneValidator => EmailOrPhone;
         public static Func<string, bool> PasswordValidator => Password;

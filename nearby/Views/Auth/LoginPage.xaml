@@ -6,7 +6,8 @@
              xmlns:behaviors="clr-namespace:nearby.Classes.Interface.Behaviors"
              xmlns:classes="clr-namespace:nearby.Classes"
              xmlns:converter="clr-namespace:nearby.Classes.Interface.Converters"
-             x:Class="nearby.Views.Auth.LoginPage">
+             x:Class="nearby.Views.Auth.LoginPage"
+             x:DataType="viewModels:LoginViewModel">
     <VerticalStackLayout Spacing="20" Padding="30" VerticalOptions="Center">
         <Label Text="Вход" FontSize="24" HorizontalOptions="Center"/>
 
@@ -20,12 +21,11 @@
                IsPassword="True">
         </Entry>
 
-        <Label IsVisible="{Binding ErrorMsgVisible}" 
-               Text="{Binding ErrorMsg}" 
-               TextColor="Red"/>
+        <Label IsVisible="{Binding HasErrors}" 
+                Text="{Binding ErrorMessage}" 
+                TextColor="Red"/>
 
         <Button Text="Войти" 
-                Command="{Binding LoginCommand}" 
-                IsEnabled="{Binding IsLoginValid}"/>
+                Command="{Binding LoginCommand}" />
     </VerticalStackLayout>
 </ContentPage>

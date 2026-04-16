@@ -70,8 +70,5 @@ namespace nearby.Classes
         {
             return Application.Current.MainPage.DisplayAlert("Ошибка", message, "OK");
         }
-    
-    
-
     }
 }

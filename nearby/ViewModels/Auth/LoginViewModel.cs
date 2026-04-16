@@ -1,12 +1,16 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.ComponentModel.DataAnnotations;
+using nearby.Classes.Validation;
+using nearby.Classes.VM;
 using nearby.Interfaces;
 using nearby.Services;
 using nearby.Views.Main;
-using nearby.Classes.Validation;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
-public partial class LoginViewModel : ObservableValidator
+namespace nearby.ViewModels;
+
+public partial class LoginViewModel : BaseViewModel2
 {
     private readonly IAuthService _authService;
     private readonly IUserService _userService;
@@ -14,7 +18,7 @@ public partial class LoginViewModel : ObservableValidator
 
     [ObservableProperty]
     [NotifyDataErrorInfo]
-    [Required(ErrorMessage = "Поле обязательно для заполнения")]
+    [Required(ErrorMessage = "Логин не может быть пустым")]
     [ValidateWithValidator(validatorName: nameof(Validate.EmailOrPhoneValidator), ErrorMessage = "Неверный логин")]
     private string _login;
 
@@ -23,8 +27,21 @@ public partial class LoginViewModel : ObservableValidator
     [Required(ErrorMessage = "Пароль не может быть пустым")]
     private string _password;
 
-    public string ErrorMessage => string.Join(Environment.NewLine, GetErrors().Select(e => e.ErrorMessage));
-    public bool HasErrors => HasErrors;
+    public LoginViewModel(IAuthService authService, IUserService userService, IServiceProvider serviceProvider)
+    {
+        _authService = authService;
+        _userService = userService;
+        _serviceProvider = serviceProvider;
+
+        ValidateAllProperties();
+        ErrorsChanged += OnErrorsChanged;
+    }
+
+    protected override void OnErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
+    {
+        base.OnErrorsChanged(sender, e);
+        LoginCommand.NotifyCanExecuteChanged();
+    }
 
     private bool CanLogin() => !HasErrors;
     [RelayCommand(CanExecute = nameof(CanLogin))]
@@ -33,11 +50,16 @@ public partial class LoginViewModel : ObservableValidator
         ValidateAllProperties();
         if (HasErrors) return;
 
-        var success = await _authService.LoginAsync(Login, Password);
-        if (success.result is not true)
-            throw new Exception(success.message ?? "Ошибка входа");
-
-        _userService.CurrentUser = success.Data;
-        Application.Current.MainPage = _serviceProvider.GetRequiredService<MainShell>();
+        try
+        {
+            var success = await _authService.LoginAsync(Login, Password);
+            _userService.CurrentUser = success.Data;
+            Application.Current.MainPage = _serviceProvider.GetRequiredService<MainShell>();
+        }
+        catch (Exception e)
+        {
+            await ShowErrorAsync(e.Message);
+            return;
+        }
     }
 }

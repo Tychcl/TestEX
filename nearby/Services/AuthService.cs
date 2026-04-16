@@ -16,36 +16,36 @@ public class AuthService : IAuthService
         _tokenService = tokenService;
     }
 
-    public async Task<ApiResponse<User>> LoginAsync(string login, string password)
+    public async Task<ApiResponse<User>?> LoginAsync(string login, string password)
     {
         var request = new { login, password };
         var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
         var response = await _apiClient.PostAsync("users/signin", content);
-        var j = await response.Content.ReadAsStringAsync();
+        //var j = await response.Content.ReadAsStringAsync();
 
         if (response is null)
         {
-            return new ApiResponse<User>(null, "Неудается подключиться к серверу", null);
+            throw new Exception("Неудается подключиться к серверу");
         }
 
-        if (response.IsSuccessStatusCode)
+        if (!response.IsSuccessStatusCode)
         {
-            if (response.Headers.TryGetValues("Set-Cookie", out var cookieValues))
-            {
-                var jwtCookie = cookieValues.FirstOrDefault(c => c.StartsWith("jwt="));
-                if (jwtCookie != null)
-                {
-                    var token = jwtCookie.Substring("jwt=".Length).Split(';').FirstOrDefault();
-                    await _tokenService.SetTokenAsync(token);
-                    var json = await response.Content.ReadAsStringAsync();
-                    var user = JsonConvert.DeserializeObject<User>(json);
-                    return new ApiResponse<User>(true, "", user);
-                }
-            }
-            return new ApiResponse<User>(false, "Успешный ответ, но кука jwt отсутствует", null);
-            //System.Diagnostics.Debug.WriteLine();
+            throw new Exception("Неверный логин или пароль");
         }
-        return new ApiResponse<User>(false, "Неверный логин или пароль", null);
+
+        if (response.Headers.TryGetValues("Set-Cookie", out var cookieValues))
+        {
+            var jwtCookie = cookieValues.FirstOrDefault(c => c.StartsWith("jwt="));
+            if (jwtCookie != null)
+            {
+                var token = jwtCookie.Substring("jwt=".Length).Split(';').FirstOrDefault();
+                await _tokenService.SetTokenAsync(token);
+                var json = await response.Content.ReadAsStringAsync();
+                var user = JsonConvert.DeserializeObject<User>(json);
+                return new ApiResponse<User>(true, "", user);
+            }
+        }
+        return new ApiResponse<User>(false, "Успешный ответ, но кука jwt отсутствует", null);
     }
 
     public async Task<ApiResponse<bool?>> RegisterAsync(string fullName, string phone, string email, string password)
@@ -53,6 +53,10 @@ public class AuthService : IAuthService
         var request = new { full_name = fullName, phone, email, password, confirm = password };
         var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
         var response = await _apiClient.PostAsync("users/register", content);
+        if (response is null)
+        {
+            return new ApiResponse<bool?>(null, "Неудается подключиться к серверу", null);
+        }
         var json = await response.Content.ReadAsStringAsync();
         return new ApiResponse<bool?>(response?.IsSuccessStatusCode, json, null);
     }

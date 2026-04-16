@@ -2,20 +2,13 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewModels="clr-namespace:nearby.ViewModels"
-             xmlns:classes="clr-namespace:nearby.Classes"
              xmlns:behaviors="clr-namespace:nearby.Classes.Interface.Behaviors"
              x:Class="nearby.Views.Auth.RegPage"
              x:DataType="viewModels:RegViewModel">
     <ScrollView>
         <VerticalStackLayout Spacing="20" Padding="30" VerticalOptions="Center">
             <Label Text="Регистрация" FontSize="24" HorizontalOptions="Center"/>
-            <Entry Placeholder="ФИО" Text="{Binding FullName}">
-                <Entry.Behaviors>
-                    <behaviors:ValidationBehavior 
-                        ValidateFunc="{x:Static classes:Validate.EmailOrPhoneValidator}" 
-                        IsValid="{Binding IsLoginValid, Mode=TwoWay}"/>
-                </Entry.Behaviors>
-            </Entry>
+            <Entry Placeholder="ФИО" Text="{Binding FullName}"/>
             <Entry Placeholder="Телефон" Text="{Binding Phone}" Keyboard="Telephone"/>
             <Entry Placeholder="Email" Text="{Binding Email}" Keyboard="Email"/>
             <Entry Placeholder="Пароль" Text="{Binding Password}" IsPassword="True"/>

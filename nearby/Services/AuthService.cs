@@ -3,6 +3,7 @@ using nearby.Interfaces;
 using nearby.Classes;
 using nearby.Models;
 using Newtonsoft.Json;
+using System.Diagnostics;
 
 //signin, signup, signout
 public class AuthService : IAuthService
@@ -27,9 +28,10 @@ public class AuthService : IAuthService
         {
             throw new Exception("Неудается подключиться к серверу");
         }
-
+        var json = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
+            Debug.WriteLine(json);
             throw new Exception("Неверный логин или пароль");
         }
 
@@ -40,7 +42,6 @@ public class AuthService : IAuthService
             {
                 var token = jwtCookie.Substring("jwt=".Length).Split(';').FirstOrDefault();
                 await _tokenService.SetTokenAsync(token);
-                var json = await response.Content.ReadAsStringAsync();
                 var user = JsonConvert.DeserializeObject<User>(json);
                 return new ApiResponse<User>(true, "", user);
             }

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Maui.ApplicationModel.Communication;
 using static Microsoft.Maui.ApplicationModel.Permissions;
 
-namespace nearby.Classes
+namespace nearby.Classes.Validation
 {
     public static class Validate
     {
@@ -19,30 +19,27 @@ namespace nearby.Classes
 
         public static bool EmailAdress(string str)
         {
-            str = str.Trim();
-            if (string.IsNullOrWhiteSpace(str)) return false;
-            return Regex.IsMatch(str, @"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.IgnoreCase);
+            return string.IsNullOrWhiteSpace(str) ? false : Regex.IsMatch(str.Trim(), @"^[^@\s]+@[^@\s]+\.[^@\s]+$", RegexOptions.IgnoreCase);
         }
 
         public static bool PhoneNumber(string str)
         {
-            str = str.Trim();
-            if (string.IsNullOrWhiteSpace(str)) return false;
-            return Regex.IsMatch(str, @"^\+[0-9]{10,15}$");
+            return string.IsNullOrWhiteSpace(str) ? false : Regex.IsMatch(str.Trim(), @"^\+[0-9]{10,15}$");
         } 
 
         public static bool EmailOrPhone(string str)
         {
-            str = str.Trim();
-            if (string.IsNullOrWhiteSpace(str)) return false;
-            return EmailAdress(str) || PhoneNumber(str);
+            return string.IsNullOrWhiteSpace(str) ? false : EmailAdress(str) || PhoneNumber(str);
         }
 
         public static bool Password(string str)
         {
-            str = str.Trim();
-            if (string.IsNullOrWhiteSpace(str)) return false;
-            return Regex.IsMatch(str, "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-._]).{8,}$");
+            return string.IsNullOrWhiteSpace(str) ? false : Regex.IsMatch(str.Trim(), "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-._]).{8,}$");
+        }
+
+        public static bool FIO(string str)
+        {
+            return string.IsNullOrWhiteSpace(str) ? false : Regex.IsMatch(str.Trim(), @"^[А-ЯЁ][а-яё]+\s[А-ЯЁ][а-яё]+\s[А-ЯЁ][а-яё]+$");
         }
     }
 }

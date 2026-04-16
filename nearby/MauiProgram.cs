@@ -1,13 +1,13 @@
-﻿using Microsoft.Extensions.Logging;
-
+﻿using CommunityToolkit.Maui;
+using Microsoft.Extensions.Logging;
+using nearby.Classes;
 using nearby.Interfaces;
 using nearby.Services;
-using nearby.Classes;
 using nearby.ViewModels;
 using nearby.Views;
+using nearby.Views.Additional;
 using nearby.Views.Auth;
 using nearby.Views.Main;
-using nearby.Views.Additional;
 
 namespace nearby
 {
@@ -17,7 +17,7 @@ namespace nearby
         {
             var builder = MauiApp.CreateBuilder();
             builder
-                .UseMauiApp<App>()
+                .UseMauiApp<App>().UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Bold.ttf", "OpenSansBold");

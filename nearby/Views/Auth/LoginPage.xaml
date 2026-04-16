@@ -1,33 +1,23 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
              xmlns:viewModels="clr-namespace:nearby.ViewModels"
              xmlns:behaviors="clr-namespace:nearby.Classes.Interface.Behaviors"
              xmlns:classes="clr-namespace:nearby.Classes"
              xmlns:converter="clr-namespace:nearby.Classes.Interface.Converters"
-             x:Class="nearby.Views.Auth.LoginPage"
-             x:DataType="viewModels:LoginViewModel">
+             x:Class="nearby.Views.Auth.LoginPage">
     <VerticalStackLayout Spacing="20" Padding="30" VerticalOptions="Center">
         <Label Text="Вход" FontSize="24" HorizontalOptions="Center"/>
 
         <Entry Placeholder="Телефон или Email" 
                Text="{Binding Login}" 
                Keyboard="Email">
-            <Entry.Behaviors>
-                <behaviors:ValidationBehavior 
-                    ValidateFunc="{x:Static classes:Validate.EmailOrPhoneValidator}" 
-                    IsValid="{Binding IsLoginValid, Mode=TwoWay}"/>
-            </Entry.Behaviors>
         </Entry>
 
         <Entry Placeholder="Пароль" 
                Text="{Binding Password}" 
                IsPassword="True">
-            <Entry.Behaviors>
-                <behaviors:ValidationBehavior 
-                    ValidateFunc="{x:Static classes:Validate.NonEmptyValidator}" 
-                    IsValid="{Binding IsPasswordValid, Mode=TwoWay}"/>
-            </Entry.Behaviors>
         </Entry>
 
         <Label IsVisible="{Binding ErrorMsgVisible}" 

@@ -31,6 +31,8 @@ namespace nearby.Classes
             set => SetField(ref _isBusy, value);
         }
 
+
+
         protected async Task ExecuteAsync(Func<Task> action, params ICommand[] dependentCommands)
         {
             if (IsBusy) return;
@@ -68,5 +70,8 @@ namespace nearby.Classes
         {
             return Application.Current.MainPage.DisplayAlert("Ошибка", message, "OK");
         }
+    
+    
+
     }
 }

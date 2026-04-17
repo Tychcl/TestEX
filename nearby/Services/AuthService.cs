@@ -22,8 +22,6 @@ public class AuthService : IAuthService
         var request = new { login, password };
         var content = new StringContent(JsonConvert.SerializeObject(request), Encoding.UTF8, "application/json");
         var response = await _apiClient.PostAsync("users/signin", content);
-        //var j = await response.Content.ReadAsStringAsync();
-
         if (response is null)
         {
             throw new Exception("Неудается подключиться к серверу");
@@ -34,7 +32,6 @@ public class AuthService : IAuthService
             Debug.WriteLine(json);
             throw new Exception("Неверный логин или пароль");
         }
-
         if (response.Headers.TryGetValues("Set-Cookie", out var cookieValues))
         {
             var jwtCookie = cookieValues.FirstOrDefault(c => c.StartsWith("jwt="));
@@ -59,7 +56,11 @@ public class AuthService : IAuthService
             throw new Exception("Неудается подключиться к серверу");
         }
         var json = await response.Content.ReadAsStringAsync();
-        return new ApiResponse<bool?>(response?.IsSuccessStatusCode, json, null);
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(json);
+        }
+        return new ApiResponse<bool?>(response.IsSuccessStatusCode, json, null);
     }
 
     public async Task LogoutAsync()

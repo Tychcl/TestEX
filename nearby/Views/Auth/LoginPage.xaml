@@ -14,11 +14,6 @@
                Text="{Binding Login}" 
                Keyboard="Email"/>
 
-
-        <!--<Entry Placeholder="Пароль" 
-               Text="{Binding Password}" 
-               IsPassword="True"/>-->
-
         <CVE:Password Text="{Binding Password}" Placeholder="Введите пароль" />
 
         <Label IsVisible="{Binding HasErrors}" 

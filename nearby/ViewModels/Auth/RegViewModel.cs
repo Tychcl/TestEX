@@ -65,17 +65,22 @@ namespace nearby.ViewModels
         private async Task RegisterAsync()
         {
             ValidateAllProperties();
-            if (HasErrors) return;
-
-            if (Password != Confirm)
-                throw new Exception("Пароли не совпадают");
-
-            var success = await _authService.RegisterAsync(FullName, Phone, Email, Password);
-            if (success.result is not true)
-                throw new Exception("Регистрация не удалась. Возможно, пользователь уже существует.");
-
-            await Application.Current.MainPage.DisplayAlert("Успех", "Регистрация прошла успешно. Теперь войдите.", "OK");
-            await Application.Current.MainPage.Navigation.PopAsync();
+            if (HasErrors)
+            {
+                await ShowInnerErrorsAsync();
+                return;
+            }
+            try
+            {
+                var success = await _authService.RegisterAsync(FullName, Phone, Email, Password);
+                await ShowMsgAsync("Успех", "Регистрация прошла успешно. Теперь войдите.", "OK");
+                await Application.Current.MainPage.Navigation.PopAsync();
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex.Message);
+            }
+            
         }
     }
 }

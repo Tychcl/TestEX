@@ -26,7 +26,17 @@ namespace nearby.Classes.VM
 
         protected virtual Task ShowErrorAsync(string message)
         {
-            return Application.Current.MainPage.DisplayAlert("Ошибка", message, "OK");
+            return ShowMsgAsync("Ошибка", message, "OK");
+        }
+
+        protected virtual Task ShowMsgAsync(string title, string message, string cancel)
+        {
+            return Application.Current.MainPage.DisplayAlert(title, message, cancel);
+        }
+
+        protected virtual Task ShowInnerErrorsAsync()
+        {
+            return ShowMsgAsync("Ошибка", ErrorMessage, "OK");
         }
     }
 }

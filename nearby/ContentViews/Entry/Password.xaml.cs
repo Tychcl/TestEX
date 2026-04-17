@@ -32,6 +32,6 @@ public partial class Password : ContentView
     private void OnTogglePasswordClicked(object sender, EventArgs e)
     {
         PEntry.IsPassword = !PEntry.IsPassword;
-        ToggleButton.Source = PEntry.IsPassword ? "eye_closed.svg" : "eye_open.svg";
+        ToggleButton.Source = PEntry.IsPassword ? "eye_closed.svg" : "eye_opened.svg";
     }
 }

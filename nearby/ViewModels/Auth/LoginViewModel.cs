@@ -48,8 +48,11 @@ public partial class LoginViewModel : BaseViewModel2
     private async Task LoginAsync()
     {
         ValidateAllProperties();
-        if (HasErrors) return;
-
+        if (HasErrors)
+        {
+            await ShowInnerErrorsAsync();
+            return;
+        }
         try
         {
             var success = await _authService.LoginAsync(Login, Password);

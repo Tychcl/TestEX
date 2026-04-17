@@ -56,7 +56,7 @@ public class AuthService : IAuthService
         var response = await _apiClient.PostAsync("users/register", content);
         if (response is null)
         {
-            return new ApiResponse<bool?>(null, "Неудается подключиться к серверу", null);
+            throw new Exception("Неудается подключиться к серверу");
         }
         var json = await response.Content.ReadAsStringAsync();
         return new ApiResponse<bool?>(response?.IsSuccessStatusCode, json, null);

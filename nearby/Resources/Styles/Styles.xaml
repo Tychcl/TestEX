@@ -463,6 +463,10 @@
         <Setter Property="Padding" Value="0" />
     </Style>
 
+    <Style x:Key="Password" TargetType="Entry">
+        
+    </Style>
+
     <!-- РЕСУРС ДЛЯ СКРУГЛЕНИЯ БОРТИКОВ -->
     <ResourceDictionary>
         <RoundRectangle x:Key="BorderShape15" CornerRadius="15" />

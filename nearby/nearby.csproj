@@ -85,6 +85,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="ContentViews\Entry\Password.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\Additional\Detail\ChatDetailPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -97,13 +100,13 @@
 	  <MauiXaml Update="Views\Additional\AddEdit\EditProfilePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Headers\BaseHeaderView.xaml">
+	  <MauiXaml Update="ContentViews\Headers\BaseHeaderView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Headers\ProfileHeaderView.xaml">
+	  <MauiXaml Update="ContentViews\Headers\ProfileHeaderView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Headers\TasksHeaderView.xaml">
+	  <MauiXaml Update="ContentViews\Headers\TasksHeaderView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\LoadingPage.xaml">

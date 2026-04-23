@@ -3,8 +3,10 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="nearby.Views.Main.TasksPage"
              xmlns:viewModels="clr-namespace:nearby.ViewModels"
+             xmlns:models="clr-namespace:nearby.Models"
              Title="Задачи"
              xmlns:header="clr-namespace:nearby.Views.Headers"
+             xmlns:elements="clr-namespace:nearby.ContentViews.Elements"
              x:DataType="viewModels:TasksViewModel">
 
     <Grid RowDefinitions="Auto, *" Padding="10" RowSpacing="10">
@@ -43,26 +45,8 @@
                             RemainingItemsThresholdReachedCommand="{Binding LoadMoreCommand}"
                             VerticalOptions="Fill">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <SwipeView>
-                            <SwipeView.RightItems>
-                                <SwipeItem Text="Удалить" BackgroundColor="Red" 
-                                           Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:TasksViewModel}}, Path=DeleteTaskCommand}"
-                                           CommandParameter="{Binding .}"/>
-                            </SwipeView.RightItems>
-                            <Border Style="{StaticResource Card}" Padding="10" Margin="0,5">
-                                <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
-                                    <Label Grid.Row="0" Grid.Column="0" Text="{Binding Title}" FontAttributes="Bold" FontSize="16"/>
-                                    <Label Grid.Row="0" Grid.Column="1" Text="{Binding Reward, StringFormat='{0:F2}'}" TextColor="Green" HorizontalOptions="End"/>
-                                    <Label Grid.Row="1" Grid.Column="0" Text="{Binding Location}" TextColor="Gray" FontSize="12"/>
-                                    <Label Grid.Row="1" Grid.Column="1" Text="{Binding Deadline, StringFormat='{0:dd.MM.yyyy}'}" TextColor="Gray" FontSize="12" HorizontalOptions="End"/>
-                                </Grid>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:TasksViewModel}}, Path=TaskSelectedCommand}"
-                                                          CommandParameter="{Binding .}"/>
-                                </Border.GestureRecognizers>
-                            </Border>
-                        </SwipeView>
+                    <DataTemplate x:DataType="models:TaskItem">
+                        <elements:TaskView Task="{Binding .}" GoToDetailCommand="{Binding Source={RelativeSource AncestorType={x:Type viewModels:TasksViewModel}}, Path=GoToDetailCommand}"/>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
@@ -75,6 +59,6 @@
                      Margin="0,0,20,20"
                      WidthRequest="20"
                      HeightRequest="20"
-                     Command="{Binding GoToCreateTaskCommand}"/>
+                     Command="{Binding GoToCreateCommand}"/>
     </Grid>
 </ContentPage>

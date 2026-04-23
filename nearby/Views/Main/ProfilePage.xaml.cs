@@ -6,27 +6,25 @@ namespace nearby.Views.Main;
 
 public partial class ProfilePage : ContentPage
 {
-    private readonly ProfileViewModel _viewModel;
 
     public ProfilePage(ProfileViewModel viewModel)
     {
-        _viewModel = viewModel;
-        BindingContext = _viewModel;
+        BindingContext = viewModel;
         InitializeComponent();
     }
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
-        if (_viewModel is not null)
+        if(BindingContext is ProfileViewModel vm && vm.UserId == -99)
         {
-            await _viewModel.LoadData();
+            vm.UserId = -1;
         }
     }
 
-    protected override void OnDisappearing()
-    {
-        base.OnDisappearing();
-        (BindingContext as IDisposable)?.Dispose();
-    }
+    //protected override void OnDisappearing()
+    //{
+    //    base.OnDisappearing();
+    //    (BindingContext as IDisposable)?.Dispose();
+    //}
 }

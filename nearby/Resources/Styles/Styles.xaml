@@ -4,6 +4,7 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
+    <!--#region Base-->
     <Style TargetType="ActivityIndicator">
         <Setter Property="Color" Value="{AppThemeBinding Light={StaticResource Primary}, Dark={StaticResource White}}" />
     </Style>
@@ -436,6 +437,7 @@
         <Setter Property="UnselectedTabColor" Value="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray950}}" />
         <Setter Property="SelectedTabColor" Value="{AppThemeBinding Light={StaticResource Gray950}, Dark={StaticResource Gray200}}" />
     </Style>
+    <!--#endregion-->
     
     <!-- КАСТОМНЫЕ СТИЛИ -->
 
@@ -463,14 +465,52 @@
         <Setter Property="Padding" Value="0" />
     </Style>
 
-    <Style x:Key="Password" TargetType="Entry">
-        
+    <Style x:Key="EditLabel" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource CTextSecondaryLight}"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Margin" Value="0,0,0,4"/>
     </Style>
 
+    <Style x:Key="EditEntry" TargetType="Entry">
+        <Setter Property="BackgroundColor" Value="{StaticResource CSurfaceLight}"/>
+        <Setter Property="TextColor" Value="{StaticResource CTextPrimaryLight}"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="Margin" Value="0,0,0,12"/>
+        <Setter Property="PlaceholderColor" Value="{StaticResource CTextSecondaryLight}"/>
+    </Style>
+
+    <Style x:Key="EditEditor" TargetType="Editor">
+        <Setter Property="BackgroundColor" Value="{StaticResource CSurfaceLight}"/>
+        <Setter Property="TextColor" Value="{StaticResource CTextPrimaryLight}"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="Margin" Value="0,0,0,12"/>
+        <Setter Property="PlaceholderColor" Value="{StaticResource CTextSecondaryLight}"/>
+        <Setter Property="AutoSize" Value="TextChanges"/>
+    </Style>
+
+    <!-- Карточка секции -->
+    <Style x:Key="EditSection" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource CBackgroundLight}"/>
+        <Setter Property="Stroke" Value="{StaticResource CBorderLight}"/>
+        <Setter Property="StrokeThickness" Value="1"/>
+        <Setter Property="StrokeShape" Value="RoundRectangle 12"/>
+        <Setter Property="Padding" Value="16"/>
+        <Setter Property="Margin" Value="20,0,20,12"/>
+    </Style>
+
+    <!-- Заголовок секции -->
+    <Style x:Key="SectionTitle" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource CTextPrimaryLight}"/>
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontAttributes" Value="Bold"/>
+        <Setter Property="Margin" Value="0,0,0,12"/>
+    </Style>
+    
     <!-- РЕСУРС ДЛЯ СКРУГЛЕНИЯ БОРТИКОВ -->
     <ResourceDictionary>
         <RoundRectangle x:Key="BorderShape15" CornerRadius="15" />
     </ResourceDictionary>
+    
     <Style x:Key="Contacts" TargetType="Border">
         <Setter Property="StrokeShape" Value="{StaticResource BorderShape15}" />
         <Setter Property="Background" Value="{StaticResource CLightBlue}"/>
@@ -479,6 +519,18 @@
     <Style x:Key="Fields" TargetType="Border">
         <Setter Property="StrokeShape" Value="{StaticResource BorderShape15}" />
         <Setter Property="Background" Value="{StaticResource White}"/>
+    </Style>
+    
+    <!--Чаты или задачи-->
+    <Style x:Key="Card" TargetType="Border">
+        <Setter Property="Margin" Value="0,5"/>
+        <Setter Property="Padding" Value="5"/>
+        <Setter Property="StrokeThickness" Value="2"/>
+        <Setter Property="StrokeShape" Value="20"/>
+    </Style>
+
+    <Style x:Key="Button" TargetType="Border" BasedOn="{StaticResource Card}">
+        <Setter Property="Stroke" Value="{StaticResource CBorderLight}"/>
     </Style>
 
 </ResourceDictionary>

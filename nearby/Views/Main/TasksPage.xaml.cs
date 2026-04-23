@@ -15,7 +15,7 @@ public partial class TasksPage : ContentPage
         base.OnAppearing();
         if (BindingContext is TasksViewModel vm && vm.Tasks.Count == 0)
         {
-            vm.LoadTasksCommand.Execute(null);
+            await vm.LoadTasksCommand.ExecuteAsync(true);
         }
     }
 }

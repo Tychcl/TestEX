@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using nearby.Classes;
 
 namespace nearby.Models
@@ -10,7 +11,25 @@ namespace nearby.Models
     public class User: Clone<User>
     {
         public int Id { get; set; }
-        public string FullName { get; set; } = string.Empty;
+        public string Surname { get; set; }
+        public string Name { get; set; }
+        public string Patronymic { get; set; }
+        private string _fullname { get; set; }
+        public string FullName 
+        { 
+            get => _fullname;
+            set
+            {
+                _fullname = value;
+                string[]? fio = value?.Split(' ');
+                if (fio != null)
+                {
+                    Surname = fio.Length > 0 ? fio[0] : "";
+                    Name = fio.Length > 1 ? fio[1] : "";
+                    Patronymic = fio.Length > 2 ? fio[2] : "";
+                }
+            }
+        }
         public string? Phone { get; set; }
         public string? Email { get; set; }
         public string? City { get; set; }
@@ -30,7 +49,7 @@ namespace nearby.Models
         public string? EducationInstitution { get; set; }
         public string? EducationDegree { get; set; }
         public string? EducationField { get; set; }
-        public int? EducationStartYear { get; set; }
-        public int? EducationEndYear { get; set; }
+        public int EducationStartYear { get; set; }
+        public int EducationEndYear { get; set; }
     }
 }

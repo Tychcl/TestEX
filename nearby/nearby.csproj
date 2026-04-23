@@ -85,6 +85,12 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <MauiXaml Update="ContentViews\Elements\ContactView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="ContentViews\Elements\TaskView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="ContentViews\Entry\Password.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

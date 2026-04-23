@@ -4,26 +4,23 @@
              x:Class="nearby.Views.Main.ProfilePage"
              xmlns:header="clr-namespace:nearby.Views.Headers"
              xmlns:models="clr-namespace:nearby.Models"
+             xmlns:elements="clr-namespace:nearby.ContentViews.Elements"
              xmlns:local="clr-namespace:nearby.ViewModels"
              x:DataType="local:ProfileViewModel">
-
-    <Shell.TitleView>
-        <header:ProfileHeaderView BindingContext="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext}" IsVisible="{Binding IsOwnProfile}"/>
-    </Shell.TitleView>
 
     <Grid RowDefinitions="Auto, *" RowSpacing="10">
         <!-- Строка 0: информация о пользователе -->
         <ScrollView Grid.Row="0" Orientation="Vertical" VerticalScrollBarVisibility="Never">
             <VerticalStackLayout>
                 <!-- Шапка с аватаром -->
-                <Grid ColumnDefinitions="Auto, *" Margin="25, 0">
-                    <VerticalStackLayout Grid.Column="0">
-                        <Label Text="{Binding Name}" Style="{StaticResource BoldLabel}"/>
-                        <Label Text="{Binding Surname}" Style="{StaticResource BoldLabel}"/>
-                        <Label Text="{Binding BirthDate}" Style="{StaticResource GrayLabel}" Margin="0,7,0,0"/>
+                <Grid ColumnDefinitions="Auto, *, Auto" Margin="25, 0" ColumnSpacing="5">
+                    <VerticalStackLayout Grid.Column="1">
+                        <Label Text="{Binding User.Name}" Style="{StaticResource BoldLabel}"/>
+                        <Label Text="{Binding User.Surname}" Style="{StaticResource BoldLabel}"/>
+                        <Label Text="{Binding User.BirthDate, StringFormat='{0:dd.MM.yyyy}'}" Style="{StaticResource GrayLabel}" Margin="0,7,0,0"/>
                     </VerticalStackLayout>
-
-                    <Image Grid.Column="1"
+                    
+                    <Image Grid.Column="0"
                            Source="test_profile_image.jpg"
                            HeightRequest="70"
                            WidthRequest="70"
@@ -34,6 +31,18 @@
                             <RoundRectangleGeometry CornerRadius="15" Rect="0,0,70,70" />
                         </Image.Clip>
                     </Image>
+
+                    <Border Style="{StaticResource Card}" Grid.Column="2" WidthRequest="70" HeightRequest="70" IsVisible="{Binding IsOwnProfile, Converter={StaticResource InverseBoolConverter}}">
+                        <Image Source="chats.svg" Scale="0.5" />
+                    </Border>
+
+                    <Border Style="{StaticResource Button}" Grid.Column="2" WidthRequest="70" HeightRequest="70" IsVisible="{Binding IsOwnProfile}">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding LogoutCommand}"/>
+                        </Border.GestureRecognizers>
+                        <Image Source="logout.svg" Scale="0.5" />
+                    </Border>
+
                 </Grid>
 
                 <!-- Контакты -->
@@ -41,55 +50,33 @@
 
                 <ScrollView HorizontalScrollBarVisibility="Never" Orientation="Horizontal">
                     <HorizontalStackLayout Spacing="10">
-                        <Border Style="{StaticResource Fields}" Margin="25, 0, 0, 0" Padding="15">
-                            <Image Source="chats.svg" Margin="5" Scale="1.2"/>
-                        </Border>
-
-                        <Border Style="{StaticResource Contacts}">
-                            <Grid ColumnDefinitions="Auto, *" Padding="7">
-                                <Image Grid.Column="0" Source="phone.svg" Margin="5" Scale="1.2"/>
-                                <Grid Grid.Column="1" HorizontalOptions="Start" RowDefinitions="*, *" Margin="5,0">
-                                    <Label Style="{StaticResource BoldLabel}" Grid.Row="0" Text="Телефон" />
-                                    <Label Style="{StaticResource GrayLabel}" Grid.Row="1" Text="{Binding Phone}" Margin="0,5,0,0"/>
-                                </Grid>
-                            </Grid>
-                        </Border>
-
-                        <Border Style="{StaticResource Contacts}">
-                            <Grid ColumnDefinitions="Auto, *" Padding="7">
-                                <Image Grid.Column="0" Source="email.svg" Margin="5" Scale="1.2"/>
-                                <Grid Grid.Column="1" HorizontalOptions="Start" RowDefinitions="*, *" Margin="5,0">
-                                    <Label Style="{StaticResource BoldLabel}" Grid.Row="0" Text="Почта" />
-                                    <Label Style="{StaticResource GrayLabel}" Grid.Row="1" Text="{Binding Email}" Margin="0,5,0,0"/>
-                                </Grid>
-                            </Grid>
-                        </Border>
-
-                        <Border Style="{StaticResource Contacts}" Margin="0,0,25,0">
-                            <Grid ColumnDefinitions="Auto, *" Padding="7">
-                                <Image Grid.Column="0" Source="telegram.svg" Margin="5" Scale="1.2"/>
-                                <Grid Grid.Column="1" HorizontalOptions="Start" RowDefinitions="*, *" Margin="5,0">
-                                    <Label Style="{StaticResource BoldLabel}" Grid.Row="0" Text="Телеграм" />
-                                    <Label Style="{StaticResource GrayLabel}" Grid.Row="1" Text="@Tychcl" Margin="0,5,0,0"/>
-                                </Grid>
-                            </Grid>
-                        </Border>
+                        <elements:ContactView Image="phone.svg" Title="Телефон" Text="{Binding User.Phone}" Margin="25,0,0,0"/>
+                        <elements:ContactView Image="email.svg" Title="Почта" Text="{Binding User.Email}"/>
+                        <elements:ContactView Image="telegram.svg" Title="Телеграм" Text="@Tychcl" Margin="0,0,25,0"/>
                     </HorizontalStackLayout>
                 </ScrollView>
 
                 <!-- О себе и образование -->
                 <VerticalStackLayout Margin="25,20">
                     <Label Style="{StaticResource BoldLabel}" Text="О себе"/>
-                    <Border Style="{StaticResource Fields}" Margin="0,7">
-                        <Label Style="{StaticResource CommonLabel}" Text="{Binding About}" Padding="10"/>
+                    <Border Style="{StaticResource Card}" Margin="0,7">
+                        <Label Style="{StaticResource CommonLabel}" Text="{Binding User.About}" Padding="3"/>
                     </Border>
 
                     <Label Style="{StaticResource BoldLabel}" Text="Образование" Margin="0,12"/>
-                    <Border Style="{StaticResource Fields}">
-                        <VerticalStackLayout Padding="10">
-                            <Label Style="{StaticResource CommonLabel}" Text="Пермский авиационный техникум имени А.Д. Швецова" />
-                            <Label Style="{StaticResource CommonLabel}" Text="2022 - 2026" TextColor="{StaticResource Gray600}" Margin="0,5,0,0"/>
-                            <Label Style="{StaticResource CommonLabel}" Text="Среднее специальное" TextColor="{StaticResource Gray600}"/>
+                    <Border Style="{StaticResource Card}">
+                        <VerticalStackLayout Padding="3">
+                            <Label Style="{StaticResource CommonLabel}" Text="{Binding User.EducationInstitution}" />
+                            <Label Style="{StaticResource CommonLabel}" Text="{Binding User.EducationField}" />
+                            <Label Style="{StaticResource CommonLabel}" Text="{Binding User.EducationDegree}" TextColor="{StaticResource Gray600}"/>
+                            <Label Style="{StaticResource CommonLabel}" TextColor="{StaticResource Gray600}" Margin="0,5,0,0">
+                                <Label.Text>
+                                    <MultiBinding StringFormat="{}{0} - {1}">
+                                        <Binding Path="User.EducationStartYear" />
+                                        <Binding Path="User.EducationEndYear" />
+                                    </MultiBinding>
+                                </Label.Text>
+                            </Label>
                         </VerticalStackLayout>
                     </Border>
                 </VerticalStackLayout>
@@ -137,21 +124,23 @@
                             VerticalOptions="Fill">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:TaskItem">
-                        <Border Style="{StaticResource Card}" Padding="10" Margin="0,5">
-                            <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
-                                <Label Grid.Row="0" Grid.Column="0" Text="{Binding Title}" FontAttributes="Bold" FontSize="14"/>
-                                <Label Grid.Row="0" Grid.Column="1" Text="{Binding Reward, StringFormat='{0:F2}₽'}" TextColor="Green" HorizontalOptions="End"/>
-                                <Label Grid.Row="1" Grid.Column="0" Text="{Binding Location}" TextColor="Gray" FontSize="12"/>
-                                <Label Grid.Row="1" Grid.Column="1" Text="{Binding Deadline, StringFormat='{0:dd.MM.yyyy}'}" TextColor="Gray" FontSize="12" HorizontalOptions="End"/>
-                            </Grid>
-                            <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type local:ProfileViewModel}}, Path=TaskSelectedCommand}"
-                                                      CommandParameter="{Binding .}"/>
-                            </Border.GestureRecognizers>
-                        </Border>
+                        <elements:TaskView Task="{Binding .}" GoToDetailCommand="{Binding Source={RelativeSource AncestorType={x:Type local:ProfileViewModel}}, Path=TaskSelectedCommand}"/>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </Grid>
+
+        <Border Style="{StaticResource Button}" 
+                Grid.Row="2"
+                VerticalOptions="End"
+                HorizontalOptions="End"
+                Margin="0,0,40,40"
+                StrokeShape="30"
+                IsVisible="{Binding IsOwnProfile}">
+            <Image Source="edit.svg" WidthRequest="30" HeightRequest="30"/>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding GoToEditCommand}"/>
+            </Border.GestureRecognizers>
+        </Border>
     </Grid>
 </ContentPage>

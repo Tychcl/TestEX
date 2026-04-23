@@ -48,6 +48,30 @@
     <Color x:Key="CLightCream">#f5f5f5</Color>
     <Color x:Key="CLightBlue">#F1F4F9</Color>
 
+    <!--Светлая тема-->
+    <Color x:Key="CPrimaryLight">#014BAA</Color>        <!--Основной фон страницы-->
+    <Color x:Key="CBackgroundLight">#FFFFFF</Color>     <!--Карточки, блоки, фон полей-->
+    <Color x:Key="CSurfaceLight">#F1F4F9</Color>        <!--Обводки, разделители-->
+    <Color x:Key="CBorderLight">#D4DCE8</Color>         <!--Основной акцент (кнопки, иконки, ссылки)-->
+    <Color x:Key="CTextPrimaryLight">#0F172A</Color>    <!--Основной текст-->
+    <Color x:Key="CTextSecondaryLight">#5A6B80</Color>  <!--Вторичный текст (дата, подписи)-->
+
+    <!--Темный Ораньжевый-->
+    <Color x:Key="CPrimaryDark">#FF8A00</Color>         <!--Основной фон страницы-->
+    <Color x:Key="CBackgroundDark">#121212</Color>      <!--Карточки, блоки, фон полей-->
+    <Color x:Key="CSurfaceDark">#1E1E1E</Color>         <!--Обводки, разделители-->
+    <Color x:Key="CBorderDark">#2A2A2A</Color>          <!--Основной акцент (кнопки, иконки, ссылки)-->
+    <Color x:Key="CTextPrimaryDark">#F2F2F2</Color>     <!--Основной текст-->
+    <Color x:Key="CTextSecondaryDark">#9E9E9E</Color>   <!--Вторичный текст (дата, подписи)-->
+
+    <!--Темный Зеленый-->
+    <Color x:Key="CPrimaryDark2">#10B981</Color>         <!--Основной фон страницы-->
+    <Color x:Key="CBackgroundDark2">#0F1115</Color>      <!--Карточки, блоки, фон полей-->
+    <Color x:Key="CSurfaceDark2">#1A1C20</Color>         <!--Обводки, разделители-->
+    <Color x:Key="CBorderDark2">#26282D</Color>          <!--Основной акцент (кнопки, иконки, ссылки)-->
+    <Color x:Key="CTextPrimaryDark2">#E8EAF0</Color>     <!--Основной текст-->
+    <Color x:Key="CTextSecondaryDark2">#9CA3AF</Color>   <!--Вторичный текст (дата, подписи)-->
+
     <SolidColorBrush x:Key="CRoyalBlueBrush" Color="{StaticResource CRoyalBlue}"/>
     <SolidColorBrush x:Key="CLightCreamBrush" Color="{StaticResource CLightCream}"/>
 

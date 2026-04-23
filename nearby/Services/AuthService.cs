@@ -29,7 +29,6 @@ public class AuthService : IAuthService
         var json = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
-            Debug.WriteLine(json);
             throw new Exception("Неверный логин или пароль");
         }
         if (response.Headers.TryGetValues("Set-Cookie", out var cookieValues))
@@ -43,7 +42,7 @@ public class AuthService : IAuthService
                 return new ApiResponse<User>(true, "", user);
             }
         }
-        return new ApiResponse<User>(false, "Успешный ответ, но кука jwt отсутствует", null);
+        throw new Exception("Успешный ответ, но кука jwt отсутствует");
     }
 
     public async Task<ApiResponse<bool?>> RegisterAsync(string fullName, string phone, string email, string password)

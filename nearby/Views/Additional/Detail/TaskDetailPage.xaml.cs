@@ -10,13 +10,4 @@ public partial class TaskDetailPage : ContentPage
         BindingContext = viewModel;
         InitializeComponent();
     }
-
-    protected override async void OnAppearing()
-    {
-        base.OnAppearing();
-        if (BindingContext is TaskDetailViewModel vm && vm.InitializationTask != null)
-        {
-            await vm.InitializationTask;
-        }
-    }
 }

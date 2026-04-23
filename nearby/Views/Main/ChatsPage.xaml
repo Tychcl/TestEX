@@ -32,9 +32,9 @@
                 VerticalOptions="Fill">
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:Chat">
-                        <Border Style="{StaticResource Card}" Padding="5" Margin="0,5" StrokeThickness="2" StrokeShape="20">
+                        <Border Style="{StaticResource Card}">
                             <Border.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChatsViewModel}}, Path=ChatSelectedCommand}" CommandParameter="{Binding .}"/>
+                                <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:ChatsViewModel}}, Path=GoToChatDetailCommand}" CommandParameter="{Binding .}"/>
                             </Border.GestureRecognizers>
                             <Grid ColumnDefinitions="Auto, *, Auto" RowDefinitions="Auto, *" ColumnSpacing="5">
                                 <Image Grid.Column="0" Grid.RowSpan="2" VerticalOptions="Center" HorizontalOptions="Start" Source="test_profile_image.jpg" WidthRequest="50" HeightRequest="50" Aspect="AspectFill" Margin="0">

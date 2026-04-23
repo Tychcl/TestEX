@@ -769,7 +769,12 @@ class UserController
             'IsOnline' => $user->getIsOnline(),
             'AverageRating' => $user->getAverageRating(),
             'CreatedAt' => $user->getCreatedAt() ? $user->getCreatedAt()->format('Y-m-d H:i:s') : null,
-            'UpdatedAt' => $user->getUpdatedAt() ? $user->getUpdatedAt()->format('Y-m-d H:i:s') : null
+            'UpdatedAt' => $user->getUpdatedAt() ? $user->getUpdatedAt()->format('Y-m-d H:i:s') : null,
+            'EducationDegree' => $user->getEducationDegree(),
+            'EducationEndYear' => $user->getEducationEndYear(),
+            'EducationStartYear' => $user->getEducationStartYear(),
+            'EducationField' => $user->getEducationField(),
+            'EducationInstitution' => $user->getEducationInstitution(),
         ];
     }
 }

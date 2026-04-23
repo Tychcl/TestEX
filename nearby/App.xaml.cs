@@ -25,17 +25,23 @@ namespace nearby
         protected override async void OnStart()
         {
             base.OnStart();
-            var token = await _tokenService.GetTokenAsync();
-            if (!string.IsNullOrEmpty(token))
+            try
             {
-                await _userService.LoadUserByIdAsync();
-                if (_userService.CurrentUser is not null)
+                var token = await _tokenService.GetTokenAsync();
+                if (!string.IsNullOrEmpty(token))
                 {
-                    MainPage = _serviceProvider.GetRequiredService<MainShell>();
-                    return;
+                    await _userService.LoadUserByIdAsync();
+                    if (_userService.CurrentUser is not null)
+                    {
+                        MainPage = _serviceProvider.GetRequiredService<MainShell>();
+                        return;
+                    }
                 }
             }
-            MainPage = _serviceProvider.GetRequiredService<AuthShell>();
+            catch
+            {
+                MainPage = _serviceProvider.GetRequiredService<AuthShell>();
+            }
         }
     }
 }

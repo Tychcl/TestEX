@@ -20,16 +20,16 @@ public class TaskService : ITaskService
         var response = await _apiClient.GetAsync($"tasks/user/{userId}?status={status}&page={page}&limit={pageSize}");
         if(response is null)
         {
-            return new ApiResponse<List<TaskItem>>(null, "Ошибка подключения к серверу", null);
+            throw new Exception("Ошибка подключения к серверу");
         }
         var json = await response.Content.ReadAsStringAsync();
-        if (response.IsSuccessStatusCode)
+        if (!response.IsSuccessStatusCode)
         {
-            ApiResponse<List<TaskItem>> r = JsonConvert.DeserializeObject<ApiResponse<List<TaskItem>>>(json) ?? new();
-            r.result = true;
-            return r;
+            throw new Exception(json);
         }
-        return new ApiResponse<List<TaskItem>>(false, json, null);
+        ApiResponse<List<TaskItem>> r = JsonConvert.DeserializeObject<ApiResponse<List<TaskItem>>>(json) ?? new();
+        r.result = true;
+        return r;
     }
 
     public async Task<ApiResponse<List<TaskItem>>> GetTasksAsync(int page = 1, int limit = 10, string status = null, string priority = null, string city = null)
@@ -45,16 +45,16 @@ public class TaskService : ITaskService
         var response = await _apiClient.GetAsync(url);
         if (response is null)
         {
-            return new ApiResponse<List<TaskItem>>(null, "Ошибка подключения к серверу", null);
+            throw new Exception("Ошибка подключения к серверу");
         }
         var json = await response.Content.ReadAsStringAsync();
-        if (response.IsSuccessStatusCode)
+        if (!response.IsSuccessStatusCode)
         {
-            var result = JsonConvert.DeserializeObject<ApiResponse<List<TaskItem>>>(json);
-            result.result = true;
-            return result;
+            throw new Exception(json);
         }
-        return new ApiResponse<List<TaskItem>>(false, json, null);
+        var result = JsonConvert.DeserializeObject<ApiResponse<List<TaskItem>>>(json);
+        result.result = true;
+        return result;
     }
 
     public async Task<ApiResponse<TaskItem>> GetTaskAsync(int id)
@@ -62,15 +62,15 @@ public class TaskService : ITaskService
         var response = await _apiClient.GetAsync($"tasks/{id}");
         if (response is null)
         {
-            return new ApiResponse<TaskItem>(null, "Ошибка подключения к серверу", null);
+            throw new Exception("Ошибка подключения к серверу");
         }
         var json = await response.Content.ReadAsStringAsync();
-        if (response.IsSuccessStatusCode)
+        if (!response.IsSuccessStatusCode)
         {
-            var r = JsonConvert.DeserializeObject<TaskItem>(json);
-            return new ApiResponse<TaskItem>(true, "", r);
+            throw new Exception(json);
         }
-        return new ApiResponse<TaskItem>(false, json, null);
+        var r = JsonConvert.DeserializeObject<TaskItem>(json);
+        return new ApiResponse<TaskItem>(true, "", r);
     }
 
     public async Task<ApiResponse<TaskItem>> CreateTaskAsync(TaskItem task)
@@ -80,9 +80,13 @@ public class TaskService : ITaskService
         var response = await _apiClient.PostAsync("tasks", content);
         if (response is null)
         {
-            return new ApiResponse<TaskItem>(null, "Ошибка подключения к серверу", null);
+            throw new Exception("Ошибка подключения к серверу");
         }
         json = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(json);
+        }
         return new ApiResponse<TaskItem>(response.IsSuccessStatusCode, json, null);
     }
 
@@ -93,9 +97,13 @@ public class TaskService : ITaskService
         var response = await _apiClient.PutAsync($"tasks/{id}", content);
         if (response is null)
         {
-            return new ApiResponse<TaskItem>(null, "Ошибка подключения к серверу", null);
+            throw new Exception("Ошибка подключения к серверу");
         }
         json = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(json);
+        }
         return new ApiResponse<TaskItem>(response.IsSuccessStatusCode, json, null);
     }
 
@@ -104,9 +112,13 @@ public class TaskService : ITaskService
         var response = await _apiClient.DeleteAsync($"tasks/{id}");
         if (response is null)
         {
-            return new ApiResponse<TaskItem>(null, "Ошибка подключения к серверу", null);
+            throw new Exception("Ошибка подключения к серверу");
         }
         var json = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(json);
+        }
         return new ApiResponse<TaskItem>(response.IsSuccessStatusCode, json, null);
     }
 
@@ -115,9 +127,13 @@ public class TaskService : ITaskService
         var response = await _apiClient.PostAsync($"tasks/{taskId}/volunteer", null);
         if (response is null)
         {
-            return new ApiResponse<TaskItem>(null, "Ошибка подключения к серверу", null);
+            throw new Exception("Ошибка подключения к серверу");
         }
         var json = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(json);
+        }
         return new ApiResponse<TaskItem>(response.IsSuccessStatusCode, json, null);
     }
 
@@ -126,14 +142,14 @@ public class TaskService : ITaskService
         var response = await _apiClient.GetAsync($"tasks/{taskId}/volunteers");
         if (response is null)
         {
-            return new ApiResponse<List<TaskVolunteerInfo>>(null, "Ошибка подключения к серверу", null);
+            throw new Exception("Ошибка подключения к серверу");
         }
         var json = await response.Content.ReadAsStringAsync();
-        if (response.IsSuccessStatusCode)
+        if (!response.IsSuccessStatusCode)
         {
-            return new ApiResponse<List<TaskVolunteerInfo>>(true, "", JsonConvert.DeserializeObject<List<TaskVolunteerInfo>>(json));
+            throw new Exception(json);
         }
-        return new ApiResponse<List<TaskVolunteerInfo>>(response.IsSuccessStatusCode, json, null);
+        return new ApiResponse<List<TaskVolunteerInfo>>(true, "", JsonConvert.DeserializeObject<List<TaskVolunteerInfo>>(json));
     }
 
     public async Task<ApiResponse<TaskItem>> AcceptVolunteerAsync(int taskId, int volunteerUserId)
@@ -141,9 +157,13 @@ public class TaskService : ITaskService
         var response = await _apiClient.PutAsync($"tasks/{taskId}/volunteers/{volunteerUserId}/accept", null);
         if (response is null)
         {
-            return new ApiResponse<TaskItem>(null, "Ошибка подключения к серверу", null);
+            throw new Exception("Ошибка подключения к серверу");
         }
         var json = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(json);
+        }
         return new ApiResponse<TaskItem>(response.IsSuccessStatusCode, json, null);
     }
 
@@ -152,9 +172,13 @@ public class TaskService : ITaskService
         var response = await _apiClient.PutAsync($"tasks/{taskId}/volunteers/{volunteerUserId}/reject", null);
         if (response is null)
         {
-            return new ApiResponse<TaskItem>(null, "Ошибка подключения к серверу", null);
+            throw new Exception("Ошибка подключения к серверу");
         }
         var json = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(json);
+        }
         return new ApiResponse<TaskItem>(response.IsSuccessStatusCode, json, null);
     }
 
@@ -163,9 +187,13 @@ public class TaskService : ITaskService
         var response = await _apiClient.PutAsync($"tasks/{taskId}/start", null);
         if (response is null)
         {
-            return new ApiResponse<TaskItem>(null, "Ошибка подключения к серверу", null);
+            throw new Exception("Ошибка подключения к серверу");
         }
         var json = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(json);
+        }
         return new ApiResponse<TaskItem>(response.IsSuccessStatusCode, json, null);
     }
 
@@ -174,9 +202,13 @@ public class TaskService : ITaskService
         var response = await _apiClient.PutAsync($"tasks/{taskId}/complete", null);
         if (response is null)
         {
-            return new ApiResponse<TaskItem>(null, "Ошибка подключения к серверу", null);
+            throw new Exception("Ошибка подключения к серверу");
         }
         var json = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+        {
+            throw new Exception(json);
+        }
         return new ApiResponse<TaskItem>(response.IsSuccessStatusCode, json, null);
     }
 
@@ -185,15 +217,15 @@ public class TaskService : ITaskService
         var response = await _apiClient.GetAsync($"tasks/{taskId}/my-status");
         if (response is null)
         {
-            return new ApiResponse<string>(null, "Ошибка подключения к серверу", null);
+            throw new Exception("Ошибка подключения к серверу");
         }
         var json = await response.Content.ReadAsStringAsync();
-        if (response.IsSuccessStatusCode)
+        if (!response.IsSuccessStatusCode)
         {
-            var data = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-            return new ApiResponse<string>(true, "", data?.GetValueOrDefault("status"));
+            throw new Exception(json);
         }
-        return new ApiResponse<string>(false, json, null);
+        var data = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
+        return new ApiResponse<string>(true, "", data?.GetValueOrDefault("status"));
     }
 
 }

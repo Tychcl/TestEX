@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
-using System.Windows.Input;
-using nearby.Classes;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using nearby.Classes.VM;
 using nearby.Interfaces;
 using nearby.Models;
 using nearby.Services;
@@ -8,124 +9,76 @@ using nearby.Services;
 namespace nearby.ViewModels
 {
     [QueryProperty(nameof(ChatId), "id")]
-    public class ChatDetailViewModel : BaseViewModel, IQueryAttributable
+    public partial class ChatDetailViewModel : BaseViewModel2
     {
         private readonly IChatService _chatService;
         private readonly IUserService _userService;
-        private readonly IServiceProvider _serviceProvider;
 
-        private int _chatId;
-        private Chat _chat;
-        private ObservableCollection<User> _participants = new();
-        private ObservableCollection<Message> _messages = new();
-        private string _newMessageText;
+        private const int PageSize = 50;
         private int _currentPage = 1;
         private bool _hasMoreMessages = true;
-        private const int PageSize = 50;
 
+        [ObservableProperty]
+        private int _chatId;
+
+        [ObservableProperty]
+        private Chat? _chat;
+
+        [ObservableProperty]
+        private ObservableCollection<User> _participants = new();
+
+        [ObservableProperty]
+        private ObservableCollection<Message> _messages = new();
+
+        [ObservableProperty]
+        private string _newMessageText = string.Empty;
+
+        [ObservableProperty]
         private bool _isMenuVisible;
-        public bool IsMenuVisible
-        {
-            get => _isMenuVisible;
-            set => SetField(ref _isMenuVisible, value);
-        }
 
-        private Message _selectedMessage;
-        public Message SelectedMessage
-        {
-            get => _selectedMessage;
-            set => SetField(ref _selectedMessage, value);
-        }
-
-        public int ChatId
-        {
-            get => _chatId;
-            set => SetField(ref _chatId, value);
-        }
-
-        public Chat Chat
-        {
-            get => _chat;
-            set => SetField(ref _chat, value);
-        }
-
-        public ObservableCollection<User> Participants
-        {
-            get => _participants;
-            set => SetField(ref _participants, value);
-        }
-
-        public ObservableCollection<Message> Messages
-        {
-            get => _messages;
-            set => SetField(ref _messages, value);
-        }
-
-        public string NewMessageText
-        {
-            get => _newMessageText;
-            set
-            {
-                if (SetField(ref _newMessageText, value))
-                    (SendMessageCommand as Command)?.ChangeCanExecute();
-            }
-        }
+        [ObservableProperty]
+        private Message? _selectedMessage;
 
         public int CurrentUserId => _userService.CurrentUser?.Id ?? 0;
 
-        public ICommand LoadMessagesCommand { get; }
-        public ICommand SendMessageCommand { get; }
-        public ICommand LoadMoreMessagesCommand { get; }
-        public ICommand AddMemberCommand { get; }
-        public ICommand RemoveMemberCommand { get; }
-        public ICommand EditMessageCommand { get; }
-        public ICommand DeleteMessageCommand { get; }
-        public ICommand OpenMenuCommand { get; }
-        public ICommand CloseMenuCommand { get; }
-        public ICommand CopyMessageCommand { get; }
-
-        public ChatDetailViewModel(IChatService chatService, IUserService userService, IServiceProvider serviceProvider)
+        public ChatDetailViewModel(IChatService chatService, IUserService userService)
         {
             _chatService = chatService;
             _userService = userService;
-            _serviceProvider = serviceProvider;
-
-            LoadMessagesCommand = new Command(async () => await ExecuteAsync(() => LoadMessagesAsync(true), LoadMessagesCommand));
-            SendMessageCommand = new Command(async () => await ExecuteAsync(SendMessageAsync, SendMessageCommand),
-                () => !string.IsNullOrWhiteSpace(NewMessageText) && !IsBusy);
-            LoadMoreMessagesCommand = new Command(async () => await ExecuteAsync(() => LoadMessagesAsync(false), LoadMoreMessagesCommand));
-            AddMemberCommand = new Command(async () => await ExecuteAsync(AddMemberAsync, AddMemberCommand));
-            RemoveMemberCommand = new Command<User>(async (user) => await ExecuteAsync(() => RemoveMemberAsync(user), RemoveMemberCommand));
-            EditMessageCommand = new Command<Message>(async (message) => await ExecuteAsync(() => EditMessageAsync(message), EditMessageCommand));
-            DeleteMessageCommand = new Command<Message>(async (message) => await ExecuteAsync(() => DeleteMessageAsync(message), DeleteMessageCommand));
-            OpenMenuCommand = new Command<Message>(async (message) => await ExecuteAsync(() => OpenMenuAsync(message), OpenMenuCommand));
-            CloseMenuCommand = new Command(async () => await ExecuteAsync(CloseMenu, CloseMenuCommand));
-            CopyMessageCommand = new Command<Message>(async (message) => await ExecuteAsync(() => CopyMessage(message), CopyMessageCommand));
-            GoBackCommand = new Command(async () => await ExecuteAsync(GoBackAsync, GoBackCommand));
         }
 
-        public Task InitializationTask { get; private set; }
-        public void ApplyQueryAttributes(IDictionary<string, object> query)
+        async partial void OnChatIdChanged(int value)
         {
-            if (query.TryGetValue("id", out var idObj) && idObj is int id)
+            if (value > 0)
             {
-                _chatId = id;
-                InitializationTask = InitializeAsync();
+                IsBusy = true;
+                try
+                {
+                    await LoadChatDetailAsync();
+                    await LoadMessagesBaseAsync(true);
+                }
+                finally
+                {
+                    IsBusy = false;
+                }
             }
         }
 
-        private async Task InitializeAsync()
+        partial void OnChatChanged(Chat? value)
         {
-            await ExecuteAsync(async () =>
-            {
-                await LoadChatDetailAsync();
-                await LoadMessagesAsync(true);
-            }, LoadMessagesCommand, SendMessageCommand);
+            if (value != null)
+                PageTitle = value.OtherUser?.FullName ?? "Чат";
         }
+        protected override void OnBusyStateChanged(bool isBusy)
+        {
+            base.OnBusyStateChanged(isBusy);
+            RefreshCommands();
+        }
+        partial void OnNewMessageTextChanged(string value) => SendMessageCommand.NotifyCanExecuteChanged();
 
         private async Task LoadChatDetailAsync()
         {
-            var response = await _chatService.GetChatByIdAsync(_chatId, _currentPage, PageSize);
+            var response = await _chatService.GetChatByIdAsync(ChatId, _currentPage, PageSize);
             if (response.result != true)
                 throw new Exception(response.message ?? "Не удалось загрузить чат");
 
@@ -134,14 +87,18 @@ namespace nearby.ViewModels
                 Chat = response.Data.Chat;
                 Participants.Clear();
                 if (response.Data.Participants != null)
-                {
                     foreach (var p in response.Data.Participants)
                         Participants.Add(p);
-                }
             }
         }
 
-        private async Task LoadMessagesAsync(bool reset)
+        [RelayCommand]
+        private async Task LoadMessages() => await LoadMessagesBaseAsync(true);
+
+        [RelayCommand]
+        private async Task LoadMoreMessages() => await LoadMessagesBaseAsync(false);
+
+        private async Task LoadMessagesBaseAsync(bool reset)
         {
             if (reset)
             {
@@ -152,7 +109,7 @@ namespace nearby.ViewModels
 
             if (!_hasMoreMessages) return;
 
-            var response = await _chatService.GetMessagesAsync(_chatId, _currentPage, PageSize);
+            var response = await _chatService.GetMessagesAsync(ChatId, _currentPage, PageSize);
             if (response.result != true)
                 throw new Exception(response.message ?? "Не удалось загрузить сообщения");
 
@@ -176,12 +133,13 @@ namespace nearby.ViewModels
             }
         }
 
-        private async Task SendMessageAsync()
+        [RelayCommand(CanExecute = nameof(CanSendMessage))]
+        private async Task SendMessage()
         {
             if (string.IsNullOrWhiteSpace(NewMessageText)) return;
 
             var messageModel = new MessageSendModel { content_type = "text", content = NewMessageText };
-            var response = await _chatService.SendMessageAsync(_chatId, messageModel);
+            var response = await _chatService.SendMessageAsync(ChatId, messageModel);
             if (response.result != true)
                 throw new Exception(response.message ?? "Не удалось отправить сообщение");
 
@@ -200,34 +158,40 @@ namespace nearby.ViewModels
             Messages.Add(newMessage);
             NewMessageText = string.Empty;
         }
+        private bool CanSendMessage() => !string.IsNullOrWhiteSpace(NewMessageText) && !IsBusy;
 
-        private async Task AddMemberAsync()
+        [RelayCommand]
+        private async Task AddMember()
         {
-            var idString = await Application.Current.MainPage.DisplayPromptAsync("Добавить участника", "Введите ID пользователя:");
+            var idString = await Application.Current!.MainPage!.DisplayPromptAsync("Добавить участника", "Введите ID пользователя:");
             if (!int.TryParse(idString, out int userId)) return;
 
-            var result = await _chatService.AddMemberAsync(_chatId, userId);
+            var result = await _chatService.AddMemberAsync(ChatId, userId);
             if (result.result != true)
                 throw new Exception(result.message ?? "Не удалось добавить участника");
 
             await LoadChatDetailAsync();
         }
 
-        private async Task RemoveMemberAsync(User user)
+        [RelayCommand(CanExecute = nameof(CanModifyMember))]
+        private async Task RemoveMember(User user)
         {
-            var confirm = await Application.Current.MainPage.DisplayAlert("Удаление", $"Удалить {user.FullName} из чата?", "Да", "Нет");
+            var confirm = await Application.Current!.MainPage!.DisplayAlert("Удаление", $"Удалить {user.FullName} из чата?", "Да", "Нет");
             if (!confirm) return;
 
-            var result = await _chatService.RemoveMemberAsync(_chatId, user.Id);
+            var result = await _chatService.RemoveMemberAsync(ChatId, user.Id);
             if (result.result != true)
                 throw new Exception(result.message ?? "Не удалось удалить участника");
 
             Participants.Remove(user);
         }
+        private bool CanModifyMember() => !IsBusy;
 
-        private async Task EditMessageAsync(Message message)
+        [RelayCommand(CanExecute = nameof(CanModifyMessage))]
+        private async Task EditMessage(Message? message)
         {
-            var newText = await Application.Current.MainPage.DisplayPromptAsync("Редактировать", "", "OK", "Отмена", placeholder: message.Content, maxLength: 500);
+            if (message == null) return;
+            var newText = await Application.Current!.MainPage!.DisplayPromptAsync("Редактировать", "", "OK", "Отмена", placeholder: message.Content, maxLength: 500);
             if (string.IsNullOrWhiteSpace(newText)) return;
 
             var result = await _chatService.EditMessageAsync(message.Id, newText);
@@ -235,12 +199,17 @@ namespace nearby.ViewModels
                 throw new Exception(result.message ?? "Не удалось редактировать");
 
             message.Content = newText;
-            // Обновляем UI (можно вызвать Refresh)
+            // Для обновления UI можно заменить объект в ObservableCollection
+            var index = Messages.IndexOf(message);
+            if (index >= 0)
+                Messages[index] = message;
         }
 
-        private async Task DeleteMessageAsync(Message message)
+        [RelayCommand(CanExecute = nameof(CanModifyMessage))]
+        private async Task DeleteMessage(Message? message)
         {
-            var confirm = await Application.Current.MainPage.DisplayAlert("Удаление", "Удалить сообщение?", "Да", "Нет");
+            if (message == null) return;
+            var confirm = await Application.Current!.MainPage!.DisplayAlert("Удаление", "Удалить сообщение?", "Да", "Нет");
             if (!confirm) return;
 
             var result = await _chatService.DeleteMessageAsync(message.Id);
@@ -249,9 +218,12 @@ namespace nearby.ViewModels
 
             Messages.Remove(message);
         }
+        private bool CanModifyMessage() => !IsBusy;
 
-        private async Task OpenMenuAsync(Message message)
+        [RelayCommand]
+        private async Task OpenMenu(Message? message)
         {
+            if (message == null) return;
             bool isOwnMessage = message.SenderId == CurrentUserId;
 
             var actions = new List<string>();
@@ -259,29 +231,22 @@ namespace nearby.ViewModels
             {
                 actions.Add("Редактировать");
                 actions.Add("Удалить");
-                actions.Add("Копировать текст");
-                actions.Add("Отмена");
             }
-            else
-            {
-                actions.Add("Копировать текст");
-                actions.Add("Отмена");
-            }
+            actions.Add("Копировать текст");
+            actions.Add("Отмена");
 
-            var result = await Application.Current.MainPage.DisplayActionSheet(
-                "Действия с сообщением",
-                null,
-                null,
-                actions.ToArray());
+            var result = await Application.Current!.MainPage!.DisplayActionSheet(
+                "Действия с сообщением", null, null, actions.ToArray());
 
             if (result == "Редактировать")
-                await EditMessageAsync(message);
+                await EditMessageCommand.ExecuteAsync(message);
             else if (result == "Удалить")
-                await DeleteMessageAsync(message);
+                await DeleteMessageCommand.ExecuteAsync(message);
             else if (result == "Копировать текст")
                 await CopyMessage(message);
         }
 
+        [RelayCommand]
         private Task CloseMenu()
         {
             IsMenuVisible = false;
@@ -289,9 +254,24 @@ namespace nearby.ViewModels
             return Task.CompletedTask;
         }
 
-        private async Task CopyMessage(Message message)
+        [RelayCommand]
+        private async Task CopyMessage(Message? message)
         {
+            if (message == null) return;
             await Clipboard.Default.SetTextAsync(message.Content);
+            IsMenuVisible = false;
+            SelectedMessage = null;
+        }
+
+        private void RefreshCommands()
+        {
+            SendMessageCommand.NotifyCanExecuteChanged();
+            AddMemberCommand.NotifyCanExecuteChanged();
+            RemoveMemberCommand.NotifyCanExecuteChanged();
+            EditMessageCommand.NotifyCanExecuteChanged();
+            DeleteMessageCommand.NotifyCanExecuteChanged();
+            LoadMessagesCommand.NotifyCanExecuteChanged();
+            LoadMoreMessagesCommand.NotifyCanExecuteChanged();
         }
     }
 }

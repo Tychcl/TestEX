@@ -14,11 +14,12 @@ public class ApiClient
     {
         _httpClient = httpClient;
         _httpClient.Timeout = TimeSpan.FromSeconds(20);
-        #if __MOBILE__
-            _httpClient.BaseAddress = new Uri("http://192.168.0.15:8080/api/");
-        #else
-            _httpClient.BaseAddress = new Uri("http://127.0.0.1:8080/api/");
-        #endif
+//#if __MOBILE__
+//        _httpClient.BaseAddress = new Uri("http://192.168.0.10:8080/api/");
+//#else
+//        _httpClient.BaseAddress = new Uri("http://127.0.0.1:8080/api/");
+//#endif
+        _httpClient.BaseAddress = new Uri("http://10.0.2.2:8080/api/");
         _tokenService = tokenService;
     }
 

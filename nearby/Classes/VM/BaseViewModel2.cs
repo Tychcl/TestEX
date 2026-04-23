@@ -1,42 +1,64 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
-using System;
-using System.Collections.Generic;
+using CommunityToolkit.Mvvm.Input;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
 
 namespace nearby.Classes.VM
 {
-    public partial class BaseViewModel2 : ObservableValidator
+    public abstract partial class BaseViewModel2 : ObservableValidator
     {
+        [ObservableProperty]
+        private string _pageTitle = string.Empty;
+
+        [ObservableProperty]
+        private bool _isBusy;
+
         private string? _errorMessage;
         public string? ErrorMessage
         {
             get => _errorMessage;
-            private set => SetProperty(ref _errorMessage, value);
+            protected set => SetProperty(ref _errorMessage, value);
         }
+
+        protected BaseViewModel2()
+        {
+            ErrorsChanged += OnErrorsChanged;
+        }
+
         protected virtual void OnErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
         {
             var allErrors = GetErrors()
                 .SelectMany(err => err.ErrorMessage != null ? new[] { err.ErrorMessage } : Array.Empty<string>())
                 .Distinct();
             ErrorMessage = string.Join(Environment.NewLine, allErrors);
+            OnPropertyChanged(nameof(HasErrors));
         }
 
-        protected virtual Task ShowErrorAsync(string message)
+        protected void ValidateAndNotify(string propertyName)
         {
-            return ShowMsgAsync("Ошибка", message, "OK");
-        }
-
-        protected virtual Task ShowMsgAsync(string title, string message, string cancel)
-        {
-            return Application.Current.MainPage.DisplayAlert(title, message, cancel);
+            ValidateProperty(propertyName);
         }
 
         protected virtual Task ShowInnerErrorsAsync()
+            => ShowErrorAsync(ErrorMessage);
+
+        protected virtual Task ShowErrorAsync(string message)
+            => ShowMsgAsync("Ошибка", message, "OK");
+
+        protected virtual Task ShowMsgAsync(string title, string message, string cancel = "OK")
+            => Application.Current!.MainPage!.DisplayAlert(title, message, cancel);
+
+        [RelayCommand]
+        private async Task GoBackAsync() => await Shell.Current.GoToAsync("..");
+
+        partial void OnIsBusyChanged(bool value)
         {
-            return ShowMsgAsync("Ошибка", ErrorMessage, "OK");
+            OnBusyStateChanged(value);
+        }
+
+        protected virtual void OnBusyStateChanged(bool isBusy)
+        {
+
         }
     }
 }

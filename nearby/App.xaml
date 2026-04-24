@@ -9,6 +9,10 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
+                <ResourceDictionary Source="/Resources/Themes/LightBlueTheme.xaml" />
+                <ResourceDictionary Source="/Resources/Themes/LightPurpleTheme.xaml" />
+                <ResourceDictionary Source="/Resources/Themes/DarkOrangeTheme.xaml" />
+                <ResourceDictionary Source="/Resources/Themes/DarkGreenTheme.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <!--CONVERTERS-->
             <converters:IsGroupConverter x:Key="IsGroupConverter"/>

@@ -3,6 +3,7 @@ using nearby.Services;
 using nearby.Views;
 using nearby.Views.Main;
 using nearby.Views.Auth;
+using nearby.Classes;
 
 namespace nearby
 {
@@ -19,6 +20,7 @@ namespace nearby
             _tokenService = tokenService;
             _userService = userService;
             _serviceProvider = serviceProvider;
+            ThemeManager.LoadSavedTheme();
             MainPage = _serviceProvider.GetRequiredService<LoadingPage>();
         }
 
@@ -28,14 +30,12 @@ namespace nearby
             try
             {
                 var token = await _tokenService.GetTokenAsync();
-                if (!string.IsNullOrEmpty(token))
+                if(string.IsNullOrEmpty(token)) MainPage = _serviceProvider.GetRequiredService<AuthShell>();
+                await _userService.LoadUserByIdAsync();
+                if (_userService.CurrentUser is not null)
                 {
-                    await _userService.LoadUserByIdAsync();
-                    if (_userService.CurrentUser is not null)
-                    {
-                        MainPage = _serviceProvider.GetRequiredService<MainShell>();
-                        return;
-                    }
+                    MainPage = _serviceProvider.GetRequiredService<MainShell>();
+                    return;
                 }
             }
             catch

@@ -66,6 +66,7 @@ namespace nearby
             builder.Services.AddTransient<TasksPage>();
             builder.Services.AddTransient<MainShell>();
             builder.Services.AddTransient<ChatsPage>();
+            builder.Services.AddTransient<SettingsPage>();
             //дополнительные
             builder.Services.AddTransient<EditProfilePage>();
             builder.Services.AddTransient<TaskDetailPage>();

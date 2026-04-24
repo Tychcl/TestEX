@@ -1,74 +1,64 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
 
-namespace nearby.Classes
+namespace nearby
 {
-    public class BaseViewModel: NotifyPropertyChanged
+    public abstract partial class BaseViewModel : ObservableValidator
     {
-        public ICommand GoBackCommand { get; set; }
-        public static async Task GoBackAsync()
-        {
-            await Shell.Current.GoToAsync("..");
-        }
+        [ObservableProperty]
+        private string _pageTitle = string.Empty;
 
-        private string? _pagetitle;
-        public string? PageTitle
-        {
-            get => _pagetitle;
-            set => SetField(ref _pagetitle, value);
-        }
-
+        [ObservableProperty]
         private bool _isBusy;
-        public bool IsBusy
+
+        private string? _errorMessage;
+        public string? ErrorMessage
         {
-            get => _isBusy;
-            set => SetField(ref _isBusy, value);
+            get => _errorMessage;
+            protected set => SetProperty(ref _errorMessage, value);
         }
 
-
-
-        protected async Task ExecuteAsync(Func<Task> action, params ICommand[] dependentCommands)
+        protected BaseViewModel()
         {
-            if (IsBusy) return;
-            IsBusy = true;
-            RefreshCommands(dependentCommands);
-            try
-            {
-                await action();
-            }
-            catch (Exception ex)
-            {
-                await Application.Current.MainPage.DisplayAlert("Ошибка", ex.Message, "OK");
-            }
-            finally
-            {
-                IsBusy = false;
-                RefreshCommands(dependentCommands);
-            }
+            ErrorsChanged += OnErrorsChanged;
         }
 
-        protected void RefreshCommands(params ICommand[] commands)
+        protected virtual void OnErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
         {
-            foreach (var cmd in commands)
-            {
-                (cmd as Command)?.ChangeCanExecute();
-            }
+            var allErrors = GetErrors()
+                .SelectMany(err => err.ErrorMessage != null ? new[] { err.ErrorMessage } : Array.Empty<string>())
+                .Distinct();
+            ErrorMessage = string.Join(Environment.NewLine, allErrors);
+            OnPropertyChanged(nameof(HasErrors));
         }
 
-        public virtual void RefreshCommands()
+        protected void ValidateAndNotify(string propertyName)
         {
-
+            ValidateProperty(propertyName);
         }
+
+        protected virtual Task ShowInnerErrorsAsync()
+            => ShowErrorAsync(ErrorMessage);
 
         protected virtual Task ShowErrorAsync(string message)
+            => ShowMsgAsync("Ошибка", message, "OK");
+
+        protected virtual Task ShowMsgAsync(string title, string message, string cancel = "OK")
+            => Application.Current!.MainPage!.DisplayAlert(title, message, cancel);
+
+        [RelayCommand]
+        private async Task GoBackAsync() => await Shell.Current.GoToAsync("..");
+
+        partial void OnIsBusyChanged(bool value)
         {
-            return Application.Current.MainPage.DisplayAlert("Ошибка", message, "OK");
+            OnBusyStateChanged(value);
+        }
+
+        protected virtual void OnBusyStateChanged(bool isBusy)
+        {
+
         }
     }
 }

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using nearby.Classes.VM;
+
 using nearby.Interfaces;
 using nearby.Models;
 using nearby.Services;
@@ -11,7 +11,7 @@ using nearby.Views.Main;
 namespace nearby.ViewModels
 {
     [QueryProperty(nameof(TaskId), "id")]
-    public partial class TaskDetailViewModel : BaseViewModel2
+    public partial class TaskDetailViewModel : BaseViewModel
     {
         private readonly ITaskService _taskService;
         private readonly IUserService _userService;

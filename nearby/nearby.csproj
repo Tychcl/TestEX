@@ -76,6 +76,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <Compile Update="Resources\Themes\DarkGreenTheme.xaml.cs">
+	    <DependentUpon>DarkGreenTheme.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\Themes\DarkOrangeTheme.xaml.cs">
+	    <DependentUpon>DarkOrangeTheme.xaml</DependentUpon>
+	  </Compile>
+	  <Compile Update="Resources\Themes\LightBlueTheme.xaml.cs">
+	    <DependentUpon>LightBlueTheme.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\Auth\AuthShell.xaml.cs">
 	    <DependentUpon>AuthShell.xaml</DependentUpon>
 	  </Compile>
@@ -88,10 +97,25 @@
 	  <MauiXaml Update="ContentViews\Elements\ContactView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="ContentViews\Elements\SettingsItem.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="ContentViews\Elements\TaskView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="ContentViews\Entry\Password.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Themes\DarkGreenTheme.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Themes\DarkOrangeTheme.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Themes\LightBlueTheme.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Resources\Themes\LightPurpleTheme.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Additional\Detail\ChatDetailPage.xaml">
@@ -131,6 +155,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Main\ProfilePage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Main\SettingsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Main\TasksPage.xaml">

@@ -2,14 +2,14 @@
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using nearby.Classes.VM;
+
 using nearby.Interfaces;
 using nearby.Models;
 using nearby.Views.Additional;
 
 namespace nearby.ViewModels
 {
-    public partial class ChatsViewModel : BaseViewModel2
+    public partial class ChatsViewModel : BaseViewModel
     {
         private readonly IChatService _chatService;
         private readonly IServiceProvider _serviceProvider;

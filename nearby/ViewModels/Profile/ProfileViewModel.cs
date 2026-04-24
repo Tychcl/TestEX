@@ -7,8 +7,7 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using nearby.Classes.VM;
-using nearby.Classes.VM.Messanger;
+
 using nearby.Interfaces;
 using nearby.Models;
 using nearby.Services;
@@ -20,7 +19,7 @@ namespace nearby.ViewModels
     public enum TaskCategory { Created, InProgress, Completed }
 
     [QueryProperty(nameof(UserId), "id")] //-1 - current user
-    public partial class ProfileViewModel : BaseViewModel2, IDisposable
+    public partial class ProfileViewModel : BaseViewModel, IDisposable
     {
         private readonly IUserService _userService;
         private readonly IAuthService _authService;

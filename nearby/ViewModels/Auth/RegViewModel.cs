@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using nearby.Classes.VM;
+
 using nearby.Classes.Validation;
 using nearby.Interfaces;
 using System.ComponentModel;
@@ -8,7 +8,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace nearby.ViewModels
 {
-    public partial class RegViewModel : BaseViewModel2
+    public partial class RegViewModel : BaseViewModel
     {
         private readonly IAuthService _authService;
 

@@ -7,20 +7,21 @@
              xmlns:CVE="clr-namespace:nearby.ContentViews.Entry"
              x:Class="nearby.Views.Auth.LoginPage"
              x:DataType="viewModels:LoginViewModel">
-    <VerticalStackLayout Spacing="20" Padding="30" VerticalOptions="Center">
-        <Label Text="Вход" FontSize="24" HorizontalOptions="Center"/>
+    <Border Margin="10,0" Style="{StaticResource EditSection}" VerticalOptions="Center">
+    <VerticalStackLayout Spacing="15">
+            <Label Text="Вход" FontSize="24" HorizontalOptions="Center" Style="{StaticResource SectionTitle}" Margin="0"/>
 
         <Entry Placeholder="Телефон или Email" 
+               Style="{StaticResource EditEntry}"
                Text="{Binding Login}" 
-               Keyboard="Email"/>
-
+               Keyboard="Email" Margin="0"/>
         <CVE:Password Text="{Binding Password}" Placeholder="Введите пароль" />
-
         <Label IsVisible="{Binding HasErrors}" 
                 Text="{Binding ErrorMessage}" 
-                TextColor="Red"/>
+                Style="{StaticResource ErrorLabel}" Margin="0"/>
 
         <Button Text="Войти" 
                 Command="{Binding LoginCommand}" />
     </VerticalStackLayout>
+    </Border>
 </ContentPage>

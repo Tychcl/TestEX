@@ -1,7 +1,7 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using nearby.Classes.VM;
+
 using nearby.Interfaces;
 using nearby.Models;
 using nearby.Services;
@@ -9,7 +9,7 @@ using nearby.Services;
 namespace nearby.ViewModels
 {
     [QueryProperty(nameof(ChatId), "id")]
-    public partial class ChatDetailViewModel : BaseViewModel2
+    public partial class ChatDetailViewModel : BaseViewModel
     {
         private readonly IChatService _chatService;
         private readonly IUserService _userService;
@@ -78,17 +78,21 @@ namespace nearby.ViewModels
 
         private async Task LoadChatDetailAsync()
         {
-            var response = await _chatService.GetChatByIdAsync(ChatId, _currentPage, PageSize);
-            if (response.result != true)
-                throw new Exception(response.message ?? "Не удалось загрузить чат");
-
-            if (response.Data != null)
+            try
             {
-                Chat = response.Data.Chat;
-                Participants.Clear();
-                if (response.Data.Participants != null)
-                    foreach (var p in response.Data.Participants)
-                        Participants.Add(p);
+                var response = await _chatService.GetChatByIdAsync(ChatId, _currentPage, PageSize);
+                if (response.Data != null)
+                {
+                    Chat = response.Data.Chat;
+                    Participants.Clear();
+                    if (response.Data.Participants != null)
+                        foreach (var p in response.Data.Participants)
+                            Participants.Add(p);
+                }
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex.Message);
             }
         }
 
@@ -100,123 +104,151 @@ namespace nearby.ViewModels
 
         private async Task LoadMessagesBaseAsync(bool reset)
         {
-            if (reset)
+            try
             {
-                _currentPage = 1;
-                _hasMoreMessages = true;
-                Messages.Clear();
-            }
-
-            if (!_hasMoreMessages) return;
-
-            var response = await _chatService.GetMessagesAsync(ChatId, _currentPage, PageSize);
-            if (response.result != true)
-                throw new Exception(response.message ?? "Не удалось загрузить сообщения");
-
-            if (response.Data?.Object != null && response.Data.Object.Any())
-            {
-                var newMessages = response.Data.Object.OrderBy(m => m.CreatedAt).ToList();
-                foreach (var msg in newMessages)
+                if (reset)
                 {
-                    bool isOwn = msg.SenderId == CurrentUserId;
-                    msg.layout = isOwn ? LayoutOptions.End : LayoutOptions.Start;
-                    msg.corner = isOwn ? new CornerRadius(15, 15, 15, 0) : new CornerRadius(15, 15, 0, 15);
-                    Messages.Add(msg);
+                    _currentPage = 1;
+                    _hasMoreMessages = true;
+                    Messages.Clear();
                 }
-                _currentPage++;
-                if (response.Data.Object.Count < PageSize)
+
+                if (!_hasMoreMessages) return;
+
+                var response = await _chatService.GetMessagesAsync(ChatId, _currentPage, PageSize);
+                if (response.result != true)
+                    throw new Exception(response.message ?? "Не удалось загрузить сообщения");
+
+                if (response.Data?.Object != null && response.Data.Object.Any())
+                {
+                    var newMessages = response.Data.Object.OrderBy(m => m.CreatedAt).ToList();
+                    foreach (var msg in newMessages)
+                    {
+                        bool isOwn = msg.SenderId == CurrentUserId;
+                        msg.layout = isOwn ? LayoutOptions.End : LayoutOptions.Start;
+                        msg.corner = isOwn ? new CornerRadius(15, 15, 15, 0) : new CornerRadius(15, 15, 0, 15);
+                        Messages.Add(msg);
+                    }
+                    _currentPage++;
+                    if (response.Data.Object.Count < PageSize)
+                        _hasMoreMessages = false;
+                }
+                else
+                {
                     _hasMoreMessages = false;
+                }
             }
-            else
+            catch (Exception ex)
             {
-                _hasMoreMessages = false;
+                await ShowErrorAsync(ex.Message);
             }
         }
 
         [RelayCommand(CanExecute = nameof(CanSendMessage))]
         private async Task SendMessage()
         {
-            if (string.IsNullOrWhiteSpace(NewMessageText)) return;
-
-            var messageModel = new MessageSendModel { content_type = "text", content = NewMessageText };
-            var response = await _chatService.SendMessageAsync(ChatId, messageModel);
-            if (response.result != true)
-                throw new Exception(response.message ?? "Не удалось отправить сообщение");
-
-            var newMessage = new Message
+            try
             {
-                Id = response.Data?.Id ?? 0,
-                Content = NewMessageText,
-                ContentType = "text",
-                CreatedAt = DateTime.UtcNow,
-                SenderId = CurrentUserId,
-                SenderName = _userService.CurrentUser?.FullName ?? "Вы",
-                SenderProfilePicture = _userService.CurrentUser?.ProfilePicture,
-                layout = LayoutOptions.End,
-                corner = new CornerRadius(15, 15, 15, 0)
-            };
-            Messages.Add(newMessage);
-            NewMessageText = string.Empty;
+                if (string.IsNullOrWhiteSpace(NewMessageText)) return;
+
+                var messageModel = new MessageSendModel { content_type = "text", content = NewMessageText };
+                var response = await _chatService.SendMessageAsync(ChatId, messageModel);
+
+                var newMessage = new Message
+                {
+                    Id = response.Data?.Id ?? 0,
+                    Content = NewMessageText,
+                    ContentType = "text",
+                    CreatedAt = DateTime.UtcNow,
+                    SenderId = CurrentUserId,
+                    SenderName = _userService.CurrentUser?.FullName ?? "Вы",
+                    SenderProfilePicture = _userService.CurrentUser?.ProfilePicture,
+                    layout = LayoutOptions.End,
+                    corner = new CornerRadius(15, 15, 15, 0)
+                };
+                Messages.Add(newMessage);
+                NewMessageText = string.Empty;
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex.Message);
+            }
         }
         private bool CanSendMessage() => !string.IsNullOrWhiteSpace(NewMessageText) && !IsBusy;
 
         [RelayCommand]
         private async Task AddMember()
         {
-            var idString = await Application.Current!.MainPage!.DisplayPromptAsync("Добавить участника", "Введите ID пользователя:");
-            if (!int.TryParse(idString, out int userId)) return;
-
-            var result = await _chatService.AddMemberAsync(ChatId, userId);
-            if (result.result != true)
-                throw new Exception(result.message ?? "Не удалось добавить участника");
-
-            await LoadChatDetailAsync();
+            try
+            {
+                var idString = await Application.Current!.MainPage!.DisplayPromptAsync("Добавить участника", "Введите ID пользователя:");
+                if (!int.TryParse(idString, out int userId)) return;
+                var result = await _chatService.AddMemberAsync(ChatId, userId);
+                await LoadChatDetailAsync();
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex.Message);
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanModifyMember))]
         private async Task RemoveMember(User user)
         {
-            var confirm = await Application.Current!.MainPage!.DisplayAlert("Удаление", $"Удалить {user.FullName} из чата?", "Да", "Нет");
-            if (!confirm) return;
+            try
+            {
+                var confirm = await Application.Current!.MainPage!.DisplayAlert("Удаление", $"Удалить {user.FullName} из чата?", "Да", "Нет");
+                if (!confirm) return;
 
-            var result = await _chatService.RemoveMemberAsync(ChatId, user.Id);
-            if (result.result != true)
-                throw new Exception(result.message ?? "Не удалось удалить участника");
+                var result = await _chatService.RemoveMemberAsync(ChatId, user.Id);
+                if (result.result != true)
+                    throw new Exception(result.message ?? "Не удалось удалить участника");
 
-            Participants.Remove(user);
+                Participants.Remove(user);
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex.Message);
+            }
         }
         private bool CanModifyMember() => !IsBusy;
 
         [RelayCommand(CanExecute = nameof(CanModifyMessage))]
         private async Task EditMessage(Message? message)
         {
-            if (message == null) return;
-            var newText = await Application.Current!.MainPage!.DisplayPromptAsync("Редактировать", "", "OK", "Отмена", placeholder: message.Content, maxLength: 500);
-            if (string.IsNullOrWhiteSpace(newText)) return;
-
-            var result = await _chatService.EditMessageAsync(message.Id, newText);
-            if (result.result != true)
-                throw new Exception(result.message ?? "Не удалось редактировать");
-
-            message.Content = newText;
-            // Для обновления UI можно заменить объект в ObservableCollection
-            var index = Messages.IndexOf(message);
-            if (index >= 0)
-                Messages[index] = message;
+            try
+            {
+                if (message == null) return;
+                var newText = await Application.Current!.MainPage!.DisplayPromptAsync("Редактировать", "", "OK", "Отмена", placeholder: message.Content, maxLength: 500);
+                if (string.IsNullOrWhiteSpace(newText)) return;
+                var result = await _chatService.EditMessageAsync(message.Id, newText);
+                message.Content = newText;
+                // Для обновления UI можно заменить объект в ObservableCollection
+                var index = Messages.IndexOf(message);
+                if (index >= 0)
+                    Messages[index] = message;
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex.Message);
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanModifyMessage))]
         private async Task DeleteMessage(Message? message)
         {
-            if (message == null) return;
-            var confirm = await Application.Current!.MainPage!.DisplayAlert("Удаление", "Удалить сообщение?", "Да", "Нет");
-            if (!confirm) return;
-
-            var result = await _chatService.DeleteMessageAsync(message.Id);
-            if (result.result != true)
-                throw new Exception(result.message ?? "Не удалось удалить сообщение");
-
-            Messages.Remove(message);
+            try
+            {
+                if (message == null) return;
+                var confirm = await Application.Current!.MainPage!.DisplayAlert("Удаление", "Удалить сообщение?", "Да", "Нет");
+                if (!confirm) return;
+                var result = await _chatService.DeleteMessageAsync(message.Id);
+                Messages.Remove(message);
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex.Message);
+            }
         }
         private bool CanModifyMessage() => !IsBusy;
 

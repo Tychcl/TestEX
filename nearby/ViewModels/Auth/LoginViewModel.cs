@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using nearby.Classes.Validation;
-using nearby.Classes.VM;
 using nearby.Interfaces;
 using nearby.Services;
 using nearby.Views.Main;
@@ -10,7 +9,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace nearby.ViewModels;
 
-public partial class LoginViewModel : BaseViewModel2
+public partial class LoginViewModel : BaseViewModel
 {
     private readonly IAuthService _authService;
     private readonly IUserService _userService;
@@ -62,7 +61,6 @@ public partial class LoginViewModel : BaseViewModel2
         catch (Exception e)
         {
             await ShowErrorAsync(e.Message);
-            return;
         }
     }
 }

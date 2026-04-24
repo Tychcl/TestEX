@@ -4,14 +4,13 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
 using nearby.Classes;
-using nearby.Classes.VM;
-using nearby.Classes.VM.Messanger;
+
 using nearby.Models;
 using nearby.Services;
 
 namespace nearby.ViewModels
 {
-    public partial class EditProfileViewModel : BaseViewModel2
+    public partial class EditProfileViewModel : BaseViewModel
     {
         private readonly IUserService _userService;
 

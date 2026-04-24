@@ -4,7 +4,6 @@ using System.Text;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Messaging;
 using nearby.Classes;
-using nearby.Classes.VM.Messanger;
 using nearby.Interfaces;
 using nearby.Models;
 using Newtonsoft.Json;

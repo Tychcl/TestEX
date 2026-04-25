@@ -61,9 +61,9 @@
                             <Border Style="{StaticResource Button}" 
                                     WidthRequest="50" HeightRequest="50"
                                     BackgroundColor="#FFE5E5"
-                                    Stroke="#FFCDD2"
+                                    Stroke="{DynamicResource CError}"
                                     IsVisible="{Binding IsOwnProfile}">
-                                <Image Source="logout.svg" Scale="0.5"/>
+                                <Image Source="logout.png" Scale="0.5" Style="{StaticResource AutoTint}"/>
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding LogoutCommand}"/>
                                 </Border.GestureRecognizers>

@@ -20,15 +20,6 @@ public partial class SettingsItem : ContentView
         set => SetValue(TextProperty, value);
     }
 
-    public static readonly BindableProperty PageProperty =
-    BindableProperty.Create(nameof(Page), typeof(string), typeof(SettingsItem),
-        default(string), BindingMode.OneWay);
-    public string Page
-    {
-        get => (string)GetValue(PageProperty);
-        set => SetValue(PageProperty, value);
-    }
-
     public SettingsItem()
 	{
 		InitializeComponent();

@@ -3,8 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="nearby.ContentViews.Elements.SettingsItem"
              x:Name="thisControl">
-    <Grid ColumnDefinitions="auto, *" ColumnSpacing="10">
-        <Image Grid.Column="0" Source="{Binding Image, Source={x:Reference thisControl}}" Margin="5" Scale="1.2"/>
-        <Label Grid.Column="1" Style="{StaticResource EditLabel}" Text="{Binding Text, Source={x:Reference thisControl}}" HorizontalOptions="Start"/>
-    </Grid>
+    <VerticalStackLayout>
+        <Grid ColumnDefinitions="auto, *" ColumnSpacing="10">
+            <Image Grid.Column="0" Source="{Binding Image, Source={x:Reference thisControl}}" Margin="5" Scale="1.2"/>
+            <Label Grid.Column="1" Style="{StaticResource CommonLabel}" Text="{Binding Text, Source={x:Reference thisControl}}" HorizontalOptions="Start"/>
+        </Grid>
+        <BoxView HeightRequest="2" BackgroundColor="{DynamicResource CBorder}"/>
+    </VerticalStackLayout>
 </ContentView>

@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using nearby.Views.Additional.Settings;
 
 namespace nearby.ViewModels
 {
@@ -14,26 +10,33 @@ namespace nearby.ViewModels
         public string Image { get; set; }
         public string Text { get; set; }
         public string Page { get; set; }
-        public SettingsItem(string image, string text, string page)
-        {
-            Image = image;
-            Text = text;
-            Page = page;
-        }
     }
 
     public partial class SettingsViewModel : BaseViewModel
     {
         [ObservableProperty]
-        private ObservableCollection<SettingsItem> _settingsItems = new()
+        private ObservableCollection<SettingsItem> settingsItems;
+
+        public SettingsViewModel()
         {
-            new("lightdark.svg", "Сменить цветовую тему", "no page yet :C ")
-        };
+            settingsItems = new ObservableCollection<SettingsItem>
+            {
+                new SettingsItem
+                {
+                    Image = "lightdark.svg",
+                    Text = "Сменить цветовую тему",
+                    Page = nameof(ThemeChangePage)
+                }
+            };
+        }
 
         [RelayCommand]
-        private async void ChangeThemeAsync()
+        private async Task GoToPageAsync(string page)
         {
+            if (string.IsNullOrEmpty(page))
+                return;
 
+            await Shell.Current.GoToAsync(page);
         }
     }
 }

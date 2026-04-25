@@ -9,19 +9,29 @@ using nearby.Resources.Themes;
 
 namespace nearby.Classes
 {
+    public class ThemeDescription
+    {
+        public string Name;
+        public string Mode;
+        public string Color;
+        public ThemeDescription(string name = "Такой", bool light = false, string color = "Нет")
+        {
+            Name = name;
+            Mode = light ? "Светлая" : "Темная";
+            Color = color;
+        }
+    }
+    
     public static class ThemeManager
     {
         public const string LightBlue = "LightBlue";
         public const string LightPurple = "LightPurple";
         public const string DarkOrange = "DarkOrange";
         public const string DarkGreen = "DarkGreen";
-        public static void ApplyTheme(string name)
+
+        public static ResourceDictionary GetTheme(string name)
         {
-            var merged = Application.Current.Resources.MergedDictionaries;
-            var oldThemes = merged.Where(md => md is ResourceDictionary rd && rd.Source?.OriginalString?.Contains("Theme") == true).ToList();
-            foreach (var old in oldThemes)
-                merged.Remove(old);
-            ResourceDictionary theme = name switch
+            return name switch
             {
                 LightBlue => new LightBlueTheme(),
                 LightPurple => new LightPurpleTheme(),
@@ -29,8 +39,28 @@ namespace nearby.Classes
                 DarkGreen => new DarkGreenTheme(),
                 _ => new LightBlueTheme()
             };
-            merged.Add(theme);
+        }
+
+        public static void ApplyTheme(string name)
+        {
+            var merged = Application.Current.Resources.MergedDictionaries;
+            var oldThemes = merged.Where(md => md is ResourceDictionary rd && rd.Source?.OriginalString?.Contains("Theme") == true).ToList();
+            foreach (var old in oldThemes)
+                merged.Remove(old);
+            merged.Add(GetTheme(name));
             Preferences.Set("user_theme", name);
+        }
+
+        public static ThemeDescription GetDescription(string name)
+        {
+            return name switch
+            {
+                LightBlue => new ThemeDescription("Холодное море", true, "Синяя"),
+                LightPurple => new ThemeDescription("Нежная лаванда", true, "Фиолетовая"),
+                DarkOrange => new ThemeDescription("Шоколад с апельсином", false, "Оранжевая"),
+                DarkGreen => new ThemeDescription("Хвойный лес", false, "Зеленая"),
+                _ => new ThemeDescription()
+            };
         }
 
         public static void LoadSavedTheme()

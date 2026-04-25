@@ -85,6 +85,9 @@
 	  <Compile Update="Resources\Themes\LightBlueTheme.xaml.cs">
 	    <DependentUpon>LightBlueTheme.xaml</DependentUpon>
 	  </Compile>
+	  <Compile Update="Views\Additional\Settings\ThemeChangePage.xaml.cs">
+	    <DependentUpon>ThemeChangePage.xaml</DependentUpon>
+	  </Compile>
 	  <Compile Update="Views\Auth\AuthShell.xaml.cs">
 	    <DependentUpon>AuthShell.xaml</DependentUpon>
 	  </Compile>
@@ -101,6 +104,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="ContentViews\Elements\TaskView.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="ContentViews\Elements\ThemeMiniView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="ContentViews\Entry\Password.xaml">
@@ -122,6 +128,9 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Additional\Detail\TaskDetailPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Additional\Settings\ThemeChangePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Auth\AuthShell.xaml">
@@ -163,10 +172,6 @@
 	  <MauiXaml Update="Views\Main\TasksPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Views\Additional\Settings\" />
 	</ItemGroup>
 
 </Project>

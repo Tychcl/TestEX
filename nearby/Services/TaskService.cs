@@ -28,7 +28,6 @@ public class TaskService : ITaskService
             throw new Exception(json);
         }
         ApiResponse<List<TaskItem>> r = JsonConvert.DeserializeObject<ApiResponse<List<TaskItem>>>(json) ?? new();
-        r.result = true;
         return r;
     }
 
@@ -53,7 +52,6 @@ public class TaskService : ITaskService
             throw new Exception(json);
         }
         var result = JsonConvert.DeserializeObject<ApiResponse<List<TaskItem>>>(json);
-        result.result = true;
         return result;
     }
 
@@ -70,7 +68,7 @@ public class TaskService : ITaskService
             throw new Exception(json);
         }
         var r = JsonConvert.DeserializeObject<TaskItem>(json);
-        return new ApiResponse<TaskItem>(true, "", r);
+        return new ApiResponse<TaskItem>("", r);
     }
 
     public async Task<ApiResponse<TaskItem>> CreateTaskAsync(TaskItem task)
@@ -87,7 +85,7 @@ public class TaskService : ITaskService
         {
             throw new Exception(json);
         }
-        return new ApiResponse<TaskItem>(response.IsSuccessStatusCode, json, null);
+        return new ApiResponse<TaskItem>(json, null);
     }
 
     public async Task<ApiResponse<TaskItem>> UpdateTaskAsync(int id, TaskItem task)
@@ -104,7 +102,7 @@ public class TaskService : ITaskService
         {
             throw new Exception(json);
         }
-        return new ApiResponse<TaskItem>(response.IsSuccessStatusCode, json, null);
+        return new ApiResponse<TaskItem>(json, null);
     }
 
     public async Task<ApiResponse<TaskItem>> DeleteTaskAsync(int id)
@@ -119,7 +117,7 @@ public class TaskService : ITaskService
         {
             throw new Exception(json);
         }
-        return new ApiResponse<TaskItem>(response.IsSuccessStatusCode, json, null);
+        return new ApiResponse<TaskItem>(json, null);
     }
 
     public async Task<ApiResponse<TaskItem>> VolunteerForTaskAsync(int taskId)
@@ -134,7 +132,7 @@ public class TaskService : ITaskService
         {
             throw new Exception(json);
         }
-        return new ApiResponse<TaskItem>(response.IsSuccessStatusCode, json, null);
+        return new ApiResponse<TaskItem>(json, null);
     }
 
     public async Task<ApiResponse<List<TaskVolunteerInfo>>> GetTaskVolunteersAsync(int taskId)
@@ -149,7 +147,7 @@ public class TaskService : ITaskService
         {
             throw new Exception(json);
         }
-        return new ApiResponse<List<TaskVolunteerInfo>>(true, "", JsonConvert.DeserializeObject<List<TaskVolunteerInfo>>(json));
+        return new ApiResponse<List<TaskVolunteerInfo>>("", JsonConvert.DeserializeObject<List<TaskVolunteerInfo>>(json));
     }
 
     public async Task<ApiResponse<TaskItem>> AcceptVolunteerAsync(int taskId, int volunteerUserId)
@@ -164,7 +162,7 @@ public class TaskService : ITaskService
         {
             throw new Exception(json);
         }
-        return new ApiResponse<TaskItem>(response.IsSuccessStatusCode, json, null);
+        return new ApiResponse<TaskItem>(json, null);
     }
 
     public async Task<ApiResponse<TaskItem>> RejectVolunteerAsync(int taskId, int volunteerUserId)
@@ -179,7 +177,7 @@ public class TaskService : ITaskService
         {
             throw new Exception(json);
         }
-        return new ApiResponse<TaskItem>(response.IsSuccessStatusCode, json, null);
+        return new ApiResponse<TaskItem>(json, null);
     }
 
     public async Task<ApiResponse<TaskItem>> StartTaskAsync(int taskId)
@@ -194,7 +192,7 @@ public class TaskService : ITaskService
         {
             throw new Exception(json);
         }
-        return new ApiResponse<TaskItem>(response.IsSuccessStatusCode, json, null);
+        return new ApiResponse<TaskItem>(json, null);
     }
 
     public async Task<ApiResponse<TaskItem>> CompleteTaskAsync(int taskId)
@@ -209,7 +207,7 @@ public class TaskService : ITaskService
         {
             throw new Exception(json);
         }
-        return new ApiResponse<TaskItem>(response.IsSuccessStatusCode, json, null);
+        return new ApiResponse<TaskItem>(json, null);
     }
 
     public async Task<ApiResponse<string>> GetMyVolunteerStatusAsync(int taskId)
@@ -225,7 +223,7 @@ public class TaskService : ITaskService
             throw new Exception(json);
         }
         var data = JsonConvert.DeserializeObject<Dictionary<string, string>>(json);
-        return new ApiResponse<string>(true, "", data?.GetValueOrDefault("status"));
+        return new ApiResponse<string>("", data?.GetValueOrDefault("status"));
     }
 
 }

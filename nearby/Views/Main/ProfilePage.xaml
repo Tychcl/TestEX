@@ -9,7 +9,8 @@
              x:DataType="local:ProfileViewModel"
              BackgroundColor="{StaticResource CBackgroundLight}"
              NavigationPage.HasNavigationBar="False"
-             Shell.NavBarHasShadow="False">
+             Shell.NavBarHasShadow="False"
+             xmlns:mct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
 
     <Grid RowDefinitions="*">
 
@@ -19,24 +20,25 @@
 
                 <!-- Секция: Профиль (аватар + имя) -->
                 <Border Style="{StaticResource EditSection}">
-                    <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="16">
+                    <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="8" Padding="0" Margin="0">
 
                         <!-- Аватар -->
                         <Border Grid.Column="0"
                                 WidthRequest="70" HeightRequest="70"
                                 Stroke="{StaticResource CBorderLight}"
-                                StrokeThickness="1"
-                                StrokeShape="RoundRectangle 15">
+                                StrokeThickness="2"
+                                StrokeShape="RoundRectangle 12"
+                                Margin="0">
                             <Image Source="{Binding User.ProfilePicture, TargetNullValue='test_profile_image.jpg'}"
                                    Aspect="AspectFill">
                                 <Image.Clip>
-                                    <RoundRectangleGeometry CornerRadius="15" Rect="0,0,70,70"/>
+                                    <RoundRectangleGeometry CornerRadius="12" Rect="0,0,70,70"/>
                                 </Image.Clip>
                             </Image>
                         </Border>
 
                         <!-- Имя и дата рождения -->
-                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                        <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="0">
                             <Label Text="{Binding User.Name}" Style="{StaticResource SectionTitle}" Margin="0,0,0,2"/>
                             <Label Text="{Binding User.Surname}" Style="{StaticResource SectionTitle}" Margin="0,0,0,4"/>
                             <Label Text="{Binding User.BirthDate, StringFormat='{0:dd.MM.yyyy}'}" 
@@ -59,11 +61,12 @@
 
                             <!-- Кнопка выхода (для своего профиля) -->
                             <Border Style="{StaticResource Button}" 
-                                    WidthRequest="50" HeightRequest="50"
+                                    WidthRequest="70" HeightRequest="70"
                                     BackgroundColor="#FFE5E5"
                                     Stroke="{DynamicResource CError}"
-                                    IsVisible="{Binding IsOwnProfile}">
-                                <Image Source="logout.png" Scale="0.5" Style="{StaticResource AutoTint}"/>
+                                    IsVisible="{Binding IsOwnProfile}"
+                                    Margin="0">
+                                <Image Source="logout.svg" Scale="0.7"/>
                                 <Border.GestureRecognizers>
                                     <TapGestureRecognizer Command="{Binding LogoutCommand}"/>
                                 </Border.GestureRecognizers>
@@ -173,7 +176,7 @@
 
                         <!-- Табы категорий -->
                         <ScrollView HorizontalScrollBarVisibility="Never" Orientation="Horizontal" Margin="-16,-8,-16,8">
-                            <HorizontalStackLayout Spacing="8" Padding="16,0">
+                            <HorizontalStackLayout Spacing="8" HorizontalOptions="Center">
                                 <Border Padding="16,10" 
                                         BackgroundColor="{Binding SelectedCategory, Converter={StaticResource CategoryToColor}, ConverterParameter={x:Static local:TaskCategory.Created}}"
                                         StrokeThickness="0"
@@ -212,9 +215,10 @@
                                         RemainingItemsThreshold="3"
                                         RemainingItemsThresholdReachedCommand="{Binding LoadUserTasksCommand}"
                                         VerticalOptions="Fill"
+                                        HorizontalOptions="Fill"
                                         HeightRequest="300">
                             <CollectionView.EmptyView>
-                                <VerticalStackLayout Padding="20" HorizontalOptions="Center">
+                                <VerticalStackLayout HorizontalOptions="Center">
                                     <Image Source="empty_tasks.svg" WidthRequest="80" HeightRequest="80" Opacity="0.5"/>
                                     <Label Text="Задач пока нет" 
                                            Style="{StaticResource CommonLabel}" 
@@ -225,8 +229,7 @@
                             </CollectionView.EmptyView>
                             <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="models:TaskItem">
-                                    <elements:TaskView Task="{Binding .}" 
-                                                       GoToDetailCommand="{Binding Source={RelativeSource AncestorType={x:Type local:ProfileViewModel}}, Path=TaskSelectedCommand}"/>
+                                    <elements:TaskView Task="{Binding .}" GoToDetailCommand="{Binding Source={RelativeSource AncestorType={x:Type local:ProfileViewModel}}, Path=TaskSelectedCommand}" Padding="-20,0,-20,0"/>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>
                         </CollectionView>

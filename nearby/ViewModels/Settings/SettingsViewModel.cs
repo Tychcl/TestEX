@@ -7,7 +7,7 @@ namespace nearby.ViewModels
 {
     public class SettingsItem
     {
-        public string Image { get; set; }
+        public string Icon { get; set; }
         public string Text { get; set; }
         public string Page { get; set; }
     }
@@ -23,8 +23,14 @@ namespace nearby.ViewModels
             {
                 new SettingsItem
                 {
-                    Image = "lightdark.svg",
-                    Text = "Сменить цветовую тему",
+                    Icon = (string)Application.Current.Resources["Theme"],
+                    Text = "Смена темы",
+                    Page = nameof(ThemeChangePage)
+                },
+                new SettingsItem
+                {
+                    Icon = (string)Application.Current.Resources["Language"],
+                    Text = "Смена Языка",
                     Page = nameof(ThemeChangePage)
                 }
             };

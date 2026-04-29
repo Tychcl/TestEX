@@ -6,9 +6,10 @@
     <Border Style="{StaticResource EditSection}" 
             Padding="12,8" 
             Margin="0"
-            HorizontalOptions="Start">
+            HorizontalOptions="Start"
+            StrokeShape="RoundRectangle 6">
         <Grid ColumnDefinitions="Auto, *">
-            <Image Grid.Column="0" Source="{Binding Image, Source={x:Reference thisControl}}" Margin="5" Scale="1.2"/>
+            <Image Grid.Column="0" Source="{Binding Image, Source={x:Reference thisControl}}" Margin="5" Scale="1.2" Style="{StaticResource AutoTint}"/>
             <VerticalStackLayout Grid.Column="1" HorizontalOptions="Start" Margin="5,0">
                 <Label Style="{StaticResource EditLabel}" Text="{Binding Title, Source={x:Reference thisControl}}" />
                 <Label Style="{StaticResource CommonLabel}" FontAttributes="Bold" Text="{Binding Text, Source={x:Reference thisControl}}" Margin="0,5,0,0"/>

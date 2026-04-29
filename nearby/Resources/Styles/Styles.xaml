@@ -2,8 +2,7 @@
 <?xaml-comp compile="true" ?>
 <ResourceDictionary 
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:mct="http://schemas.microsoft.com/dotnet/2022/maui/toolkit">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
 
     <!--#region Base-->
     <Style TargetType="ActivityIndicator">
@@ -455,7 +454,7 @@
         <Setter Property="Stroke" Value="{DynamicResource CBorder}"/>
         <Setter Property="StrokeThickness" Value="2"/>
         <Setter Property="StrokeShape" Value="RoundRectangle 12"/>
-        <Setter Property="Padding" Value="16"/>
+        <Setter Property="Padding" Value="12"/>
         <Setter Property="Margin" Value="20,0,20,12"/>
     </Style>
 
@@ -468,34 +467,27 @@
     </Style>
 
     <!--Чаты или задачи-->
-    <Style x:Key="Card" TargetType="Border">
-        <Setter Property="Margin" Value="0,5"/>
-        <Setter Property="Padding" Value="5"/>
-        <Setter Property="StrokeThickness" Value="2"/>
-        <Setter Property="StrokeShape" Value="20"/>
+    <Style x:Key="Card" TargetType="Border" BasedOn="{StaticResource EditSection}">
+        <Setter Property="Padding" Value="8"/>
     </Style>
 
     <Style x:Key="Button" TargetType="Border" BasedOn="{StaticResource Card}">
         <Setter Property="Stroke" Value="{DynamicResource CBorder}"/>
     </Style>
 
-    <Style TargetType="Image">
-        <Setter Property="Behaviors">
-            <Setter.Value>
-                <mct:IconTintColorBehavior TintColor="{DynamicResource CPrimary}" />
-            </Setter.Value>
-        </Setter>
-    </Style>
-
-    <Style x:Key="AutoTint"  TargetType="Image">
-        <Setter Property="Behaviors">
-            <Setter.Value>
-                <mct:IconTintColorBehavior TintColor="{DynamicResource CPrimary}" />
-            </Setter.Value>
-        </Setter>
-    </Style>
-
     <Style x:Key="ErrorLabel" TargetType="Label" BasedOn="{StaticResource CommonLabel}">
         <Setter Property="TextColor" Value="{DynamicResource CError}"/>
+    </Style>
+
+    <Style x:Key="BorderButton" TargetType="Button">
+        <Setter Property="BorderWidth" Value="3"/>
+        <Setter Property="BorderColor" Value="{DynamicResource CBorder}"/>
+        <Setter Property="Padding" Value="0"/>
+    </Style>
+
+    <Style x:Key="ImageButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="Transparent"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0"/>
     </Style>
 </ResourceDictionary>

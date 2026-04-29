@@ -39,7 +39,7 @@ public class AuthService : IAuthService
                 var token = jwtCookie.Substring("jwt=".Length).Split(';').FirstOrDefault();
                 await _tokenService.SetTokenAsync(token);
                 var user = JsonConvert.DeserializeObject<User>(json);
-                return new ApiResponse<User>(true, "", user);
+                return new ApiResponse<User>("", user);
             }
         }
         throw new Exception("Успешный ответ, но кука jwt отсутствует");
@@ -59,7 +59,7 @@ public class AuthService : IAuthService
         {
             throw new Exception(json);
         }
-        return new ApiResponse<bool?>(response.IsSuccessStatusCode, json, null);
+        return new ApiResponse<bool?>(json, null);
     }
 
     public async Task LogoutAsync()

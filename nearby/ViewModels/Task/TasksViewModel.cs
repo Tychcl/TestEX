@@ -128,15 +128,18 @@ namespace nearby.ViewModels
         [RelayCommand]
         private async Task DeleteTaskAsync(TaskItem task)
         {
-            var confirm = await Application.Current.MainPage.DisplayAlert("Удаление", $"Удалить задачу \"{task.Title}\"?", "Да", "Нет");
-            if (!confirm) return;
-
-            var success = await _taskService.DeleteTaskAsync(task.Id);
-            if (success.result is not true)
-                throw new Exception(success.message);
-
-            Tasks.Remove(task);
-            await Application.Current.MainPage.DisplayAlert("Успех", "Задача удалена", "OK");
+            try
+            {
+                var confirm = await Application.Current.MainPage.DisplayAlert("Удаление", $"Удалить задачу \"{task.Title}\"?", "Да", "Нет");
+                if (!confirm) return;
+                var success = await _taskService.DeleteTaskAsync(task.Id);
+                Tasks.Remove(task);
+                await Application.Current.MainPage.DisplayAlert("Успех", "Задача удалена", "OK");
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex.Message);
+            }
         }
     }
 }

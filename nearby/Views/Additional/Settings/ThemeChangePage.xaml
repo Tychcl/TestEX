@@ -5,9 +5,7 @@
              x:Class="nearby.Views.Additional.Settings.ThemeChangePage"
              Title="ThemeChangePage">
     <ScrollView>
-        <VerticalStackLayout BindableLayout.ItemsSource="{Binding .}" 
-                             Spacing="8" 
-                             Padding="16">
+        <VerticalStackLayout BindableLayout.ItemsSource="{Binding .}">
             <BindableLayout.ItemTemplate>
                 <DataTemplate x:DataType="x:String">
                     <el:ThemeMiniView Theme="{Binding .}"/>

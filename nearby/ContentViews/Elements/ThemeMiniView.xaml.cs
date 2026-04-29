@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using CommunityToolkit.Maui.Behaviors;
 using nearby.Classes;
 
 namespace nearby.ContentViews.Elements;
@@ -40,6 +41,13 @@ public partial class ThemeMiniView : ContentView
         Desc.Text = $"{ThemeDesc.Mode} • {ThemeDesc.Color}";
         Resources.Clear();
         Resources.Add(ThemeManager.GetTheme(themeName));
+    }
+
+    protected override void OnApplyTemplate()
+    {
+        base.OnApplyTemplate();
+        if (!string.IsNullOrEmpty(Theme))
+            UpdateThemeResources(Theme);
     }
 
     private void OnThemeCardTapped(object sender, TappedEventArgs e)

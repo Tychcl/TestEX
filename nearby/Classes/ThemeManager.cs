@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Maui.Controls;
 using nearby.Resources.Themes;
 
@@ -47,8 +48,10 @@ namespace nearby.Classes
             var oldThemes = merged.Where(md => md is ResourceDictionary rd && rd.Source?.OriginalString?.Contains("Theme") == true).ToList();
             foreach (var old in oldThemes)
                 merged.Remove(old);
-            merged.Add(GetTheme(name));
+            var theme = GetTheme(name);
+            merged.Add(theme);
             Preferences.Set("user_theme", name);
+            WeakReferenceMessenger.Default.Send<ResourceDictionary>(theme);
         }
 
         public static ThemeDescription GetDescription(string name)

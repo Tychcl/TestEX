@@ -75,8 +75,6 @@ namespace nearby.ViewModels
             try
             {
                 var taskResponse = await _taskService.GetTaskAsync(taskId);
-                if (taskResponse.result != true)
-                    throw new Exception(taskResponse.message ?? "Ошибка загрузки задачи");
 
                 Task = taskResponse.Data!;
                 IsOwner = _userService.CurrentUser?.Id == Task.CreatorId;
@@ -105,93 +103,123 @@ namespace nearby.ViewModels
 
         private async Task LoadVolunteersAsync()
         {
-            var response = await _taskService.GetTaskVolunteersAsync(Task.Id);
-            if (response.result != true) return;
-
-            Volunteers.Clear();
-            if (response.Data != null)
+            try
             {
-                foreach (var v in response.Data)
-                    Volunteers.Add(v);
+                var response = await _taskService.GetTaskVolunteersAsync(Task.Id);
+                Volunteers.Clear();
+                if (response.Data != null)
+                {
+                    foreach (var v in response.Data)
+                        Volunteers.Add(v);
+                }
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex.Message);
             }
         }
 
         private async Task LoadMyVolunteerStatusAsync(int taskId)
         {
-            var response = await _taskService.GetMyVolunteerStatusAsync(taskId);
-            if (response.result != true) return;
-
-            (CanVolunteer, HasVolunteered, VolunteerStatus) = response.Data switch
+            try
             {
-                "pending" => (false, true, "Ожидание ответа"),
-                "accepted" => (false, true, "Вас приняли"),
-                "rejected" => (false, true, "Вам отказали"),
-                "cancelled" => (false, true, "Отменено"),
-                "completed" => (false, true, "Задача завершена"),
-                _ => (true, false, "")
-            };
+                var response = await _taskService.GetMyVolunteerStatusAsync(taskId);
+                (CanVolunteer, HasVolunteered, VolunteerStatus) = response.Data switch
+                {
+                    "pending" => (false, true, "Ожидание ответа"),
+                    "accepted" => (false, true, "Вас приняли"),
+                    "rejected" => (false, true, "Вам отказали"),
+                    "cancelled" => (false, true, "Отменено"),
+                    "completed" => (false, true, "Задача завершена"),
+                    _ => (true, false, "")
+                };
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex.Message);
+            }
+            
         }
 
         [RelayCommand(CanExecute = nameof(CanVolunteerExecute))]
         private async Task VolunteerAsync()
         {
-            var response = await _taskService.VolunteerForTaskAsync(Task.Id);
-            if (response.result != true)
-                throw new Exception(response.message ?? "Не удалось откликнуться");
-
-            CanVolunteer = false;
-            HasVolunteered = true;
-            VolunteerStatus = "Ожидание ответа";
-            await ShowMsgAsync("Успех", "Вы откликнулись на задачу", "OK");
+            try
+            {
+                var response = await _taskService.VolunteerForTaskAsync(Task.Id);
+                CanVolunteer = false;
+                HasVolunteered = true;
+                VolunteerStatus = "Ожидание ответа";
+                await ShowMsgAsync("Успех", "Вы откликнулись на задачу", "OK");
+            }
+            catch(Exception ex)
+            {
+                await ShowErrorAsync(ex.Message);
+            }
         }
         private bool CanVolunteerExecute() => CanVolunteer && !IsBusy;
 
         [RelayCommand(CanExecute = nameof(CanAcceptRejectExecute))]
         private async Task AcceptVolunteerAsync(int volunteerId)
         {
-            var response = await _taskService.AcceptVolunteerAsync(Task.Id, volunteerId);
-            if (response.result != true)
-                throw new Exception(response.message ?? "Не удалось принять волонтёра");
-
-            await LoadVolunteersAsync();
+            try
+            {
+                var response = await _taskService.AcceptVolunteerAsync(Task.Id, volunteerId);
+                await LoadVolunteersAsync();
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex.Message);
+            }
         }
 
         [RelayCommand(CanExecute = nameof(CanAcceptRejectExecute))]
         private async Task RejectVolunteerAsync(int volunteerId)
         {
-            var response = await _taskService.RejectVolunteerAsync(Task.Id, volunteerId);
-            if (response.result != true)
-                throw new Exception(response.message ?? "Не удалось отклонить волонтёра");
-
-            await LoadVolunteersAsync();
-        }
+            try
+            {
+                var response = await _taskService.RejectVolunteerAsync(Task.Id, volunteerId);
+                await LoadVolunteersAsync();
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex.Message);
+            }
+}
         private bool CanAcceptRejectExecute() => IsOwner && !IsBusy;
 
         [RelayCommand(CanExecute = nameof(CanStartTaskExecute))]
         private async Task StartTaskAsync()
         {
-            var response = await _taskService.StartTaskAsync(Task.Id);
-            if (response.result != true)
-                throw new Exception(response.message ?? "Не удалось начать задачу");
-
-            Task.Status = "in_progress";
-            await ShowMsgAsync("Успех", "Задача начата", "OK");
+            try
+            {
+                var response = await _taskService.StartTaskAsync(Task.Id);
+                Task.Status = "in_progress";
+                await ShowMsgAsync("Успех", "Задача начата", "OK");
+            }
+            catch (Exception e)
+            {
+                await ShowErrorAsync(e.Message);
+            }
         }
         private bool CanStartTaskExecute() => IsOwner && Task?.Status == "searching" && !IsBusy;
 
         [RelayCommand(CanExecute = nameof(CanCompleteTaskExecute))]
         private async Task CompleteTaskAsync()
         {
-            var confirm = await Application.Current!.MainPage!.DisplayAlert(
+            try
+            {
+                var confirm = await Application.Current!.MainPage!.DisplayAlert(
                 "Завершение", "Вы уверены, что задача выполнена?", "Да", "Нет");
-            if (!confirm) return;
-
-            var response = await _taskService.CompleteTaskAsync(Task.Id);
-            if (response.result != true)
-                throw new Exception(response.message ?? "Не удалось завершить задачу");
-
-            Task.Status = "completed";
-            await ShowMsgAsync("Успех", "Задача завершена, награда начислена", "OK");
+                if (!confirm) return;
+                var response = await _taskService.CompleteTaskAsync(Task.Id);
+                Task.Status = "completed";
+                await ShowMsgAsync("Успех", "Задача завершена, награда начислена", "OK");
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex.Message);
+            }
         }
         private bool CanCompleteTaskExecute() => IsOwner && Task?.Status == "in_progress" && !IsBusy;
 
@@ -209,8 +237,6 @@ namespace nearby.ViewModels
             if (!confirm) return;
 
             var response = await _taskService.DeleteTaskAsync(Task.Id);
-            if (response.result != true)
-                throw new Exception(response.message ?? "Ошибка удаления");
 
             await ShowMsgAsync("Успех", "Задача удалена", "OK");
             await GoBackCommand.ExecuteAsync(null);

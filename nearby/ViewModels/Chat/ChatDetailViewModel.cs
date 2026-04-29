@@ -116,8 +116,6 @@ namespace nearby.ViewModels
                 if (!_hasMoreMessages) return;
 
                 var response = await _chatService.GetMessagesAsync(ChatId, _currentPage, PageSize);
-                if (response.result != true)
-                    throw new Exception(response.message ?? "Не удалось загрузить сообщения");
 
                 if (response.Data?.Object != null && response.Data.Object.Any())
                 {
@@ -199,11 +197,7 @@ namespace nearby.ViewModels
             {
                 var confirm = await Application.Current!.MainPage!.DisplayAlert("Удаление", $"Удалить {user.FullName} из чата?", "Да", "Нет");
                 if (!confirm) return;
-
                 var result = await _chatService.RemoveMemberAsync(ChatId, user.Id);
-                if (result.result != true)
-                    throw new Exception(result.message ?? "Не удалось удалить участника");
-
                 Participants.Remove(user);
             }
             catch (Exception ex)

@@ -4,16 +4,16 @@
              x:Class="nearby.ContentViews.Elements.TaskView"
              x:Name="thisControl"
              BindingContext="{Binding Task, Source={x:Reference thisControl}}">
-    <Border Style="{StaticResource Card}" StrokeShape="15">
+    <Border Style="{StaticResource Card}">
         <Border.GestureRecognizers>
             <TapGestureRecognizer Command="{Binding GoToDetailCommand, Source={x:Reference thisControl}}"
                               CommandParameter="{Binding .}"/>
         </Border.GestureRecognizers>
         <Grid RowDefinitions="Auto, Auto" ColumnDefinitions="*, Auto">
-            <Label Grid.Row="0" Grid.Column="0" Text="{Binding Title}" FontAttributes="Bold" FontSize="16" TextColor="Black"/>
-            <Label Grid.Row="0" Grid.Column="1" Text="{Binding Reward, StringFormat='{0:F2}'}" TextColor="Green" HorizontalOptions="End"/>
-            <Label Grid.Row="1" Grid.Column="0" Text="{Binding Location}" TextColor="Gray" FontSize="12"/>
-            <Label Grid.Row="1" Grid.Column="1" Text="{Binding Deadline, StringFormat='{0:dd.MM.yyyy}'}" TextColor="Gray" FontSize="12" HorizontalOptions="End"/>
+            <Label Grid.Row="0" Grid.Column="0" Style="{StaticResource CommonLabel}" Text="{Binding Title}" FontSize="16"/>
+            <Label Grid.Row="0" Grid.Column="1" Text="{Binding Reward, StringFormat='{0:F2}'}"  Style="{StaticResource EditLabel}" TextColor="{DynamicResource CPrimary}" HorizontalOptions="End"/>
+            <Label Grid.Row="1" Grid.Column="0" Text="{Binding Location}" Style="{StaticResource EditLabel}" />
+            <Label Grid.Row="1" Grid.Column="1" Text="{Binding Deadline, StringFormat='{0:dd.MM.yyyy}'}" Style="{StaticResource EditLabel}" HorizontalOptions="End"/>
         </Grid>
     </Border>
 </ContentView>

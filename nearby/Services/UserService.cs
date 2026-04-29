@@ -47,7 +47,7 @@ public partial class UserService : ObservableObject, IUserService
         {
             CurrentUser = user;
         }
-        return new ApiResponse<User>(true, "Данные получены", user);
+        return new ApiResponse<User>("Данные получены", user);
     }
 
     public async Task<ApiResponse<User>> UpdateUserByIdAsync(object updatedData, int id = -1)
@@ -66,6 +66,6 @@ public partial class UserService : ObservableObject, IUserService
         }
         var user = await LoadUserByIdAsync(_currentUser.Id);
         //this.OnPropertyChanged(nameof(IUserService.CurrentUser));
-        return new ApiResponse<User>(true, "Данные обновленны", user.Data);
+        return new ApiResponse<User>("Данные обновленны", user.Data);
     }
 }

@@ -9,8 +9,12 @@
     Shell.NavBarIsVisible="False">
 
     <TabBar>
-        <ShellContent Title="Вход" Icon="profile.svg" ContentTemplate="{DataTemplate auth:LoginPage}" />
-        <ShellContent Title="Регистрация" Icon="register.svg" ContentTemplate="{DataTemplate auth:RegPage}" />
+        <ShellContent Title="Вход" 
+                      Icon="login.svg" 
+                      ContentTemplate="{DataTemplate auth:LoginPage}"/>
+        <ShellContent Title="Регистрация" 
+                      Icon="register.svg"
+                      ContentTemplate="{DataTemplate auth:RegPage}"/>
     </TabBar>
 
 </Shell>

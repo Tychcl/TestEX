@@ -16,8 +16,8 @@
 
     <Shell.TitleView>
         <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
-            <Label Text="Чаты" FontSize="20" VerticalOptions="Center" HorizontalOptions="StartAndExpand"/>
-            <Button Text="Создать группу" Command="{Binding CreateGroupCommand}" HorizontalOptions="End" Margin="5,0"/>
+            <Label Style="{StaticResource Headline}" Text="Чаты" VerticalOptions="Center" HorizontalOptions="StartAndExpand"/>
+            <Button Text="Создать группу" Command="{Binding CreateGroupCommand}" HorizontalOptions="End" Margin="5,0" Style="{StaticResource Border}"/>
         </StackLayout>
     </Shell.TitleView>
 

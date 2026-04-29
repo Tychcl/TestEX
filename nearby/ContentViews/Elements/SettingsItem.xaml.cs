@@ -2,13 +2,13 @@ namespace nearby.ContentViews.Elements;
 
 public partial class SettingsItem : ContentView
 {
-    public static readonly BindableProperty ImageProperty =
-    BindableProperty.Create(nameof(Image), typeof(string), typeof(SettingsItem),
+    public static readonly BindableProperty IconProperty =
+    BindableProperty.Create(nameof(Icon), typeof(string), typeof(SettingsItem),
         default(string), BindingMode.OneWay);
-    public string Image
+    public string Icon
     {
-        get => (string)GetValue(ImageProperty);
-        set => SetValue(ImageProperty, value);
+        get => (string)GetValue(IconProperty);
+        set => SetValue(IconProperty, value);
     }
 
     public static readonly BindableProperty TextProperty =

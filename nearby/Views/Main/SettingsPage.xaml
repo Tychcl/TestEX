@@ -6,17 +6,20 @@
              xmlns:viewModels="clr-namespace:nearby.ViewModels"
              xmlns:el="clr-namespace:nearby.ContentViews.Elements"
              x:DataType="viewModels:SettingsViewModel">
-    <CollectionView ItemsSource="{Binding SettingsItems}" 
-                        SelectionMode="None"
-                        VerticalOptions="Fill">
-        <CollectionView.ItemTemplate>
-            <DataTemplate x:DataType="viewModels:SettingsItem">
-                <el:SettingsItem Image="{Binding Image}" Text="{Binding Text}">
-                    <el:SettingsItem.GestureRecognizers>
-                        <TapGestureRecognizer CommandParameter="{Binding Page}" Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:SettingsViewModel}}, Path=GoToPageCommand}"/>
-                    </el:SettingsItem.GestureRecognizers>
-                </el:SettingsItem>
-            </DataTemplate>
-        </CollectionView.ItemTemplate>
-    </CollectionView>
+    <VerticalStackLayout>
+        <BoxView HeightRequest="2" BackgroundColor="{DynamicResource CBorder}"/>
+        <CollectionView ItemsSource="{Binding SettingsItems}" 
+                            SelectionMode="None"
+                            VerticalOptions="Fill">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="viewModels:SettingsItem">
+                    <el:SettingsItem Icon="{Binding Icon}" Text="{Binding Text}">
+                        <el:SettingsItem.GestureRecognizers>
+                            <TapGestureRecognizer CommandParameter="{Binding Page}" Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:SettingsViewModel}}, Path=GoToPageCommand}"/>
+                        </el:SettingsItem.GestureRecognizers>
+                    </el:SettingsItem>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </VerticalStackLayout>
 </ContentPage>

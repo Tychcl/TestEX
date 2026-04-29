@@ -28,7 +28,6 @@ public class ChatService : IChatService
             throw new Exception(json);
         }
         var result = JsonConvert.DeserializeObject<ApiResponse<List<Chat>>>(json);
-        result.result = true;
         return result;
     }
 
@@ -45,7 +44,7 @@ public class ChatService : IChatService
             throw new Exception(json);
         }
         var chatDetail = JsonConvert.DeserializeObject<DetailChatInfo>(json);
-        return new ApiResponse<DetailChatInfo>(true, "", chatDetail);
+        return new ApiResponse<DetailChatInfo>("", chatDetail);
     }
 
     public async Task<ApiResponse<int>> CreateChatAsync(string type, string? name, List<int> userIds)
@@ -71,7 +70,7 @@ public class ChatService : IChatService
         var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
         if (data != null && data.TryGetValue("id", out var idObj) && idObj is long idLong)
         {
-            return new ApiResponse<int>(true, "", (int)idLong);
+            return new ApiResponse<int>("", (int)idLong);
         }
         throw new Exception("Не известная ошибка");
     }
@@ -91,7 +90,7 @@ public class ChatService : IChatService
         {
             throw new Exception(json);
         }
-        return new ApiResponse<bool>(response.IsSuccessStatusCode, json, response.IsSuccessStatusCode);
+        return new ApiResponse<bool>(json, response.IsSuccessStatusCode);
     }
 
     public async Task<ApiResponse<bool>> RemoveMemberAsync(int chatId, int userId)
@@ -106,7 +105,7 @@ public class ChatService : IChatService
         {
             throw new Exception(json);
         }
-        return new ApiResponse<bool>(response.IsSuccessStatusCode, json, response.IsSuccessStatusCode);
+        return new ApiResponse<bool>(json, response.IsSuccessStatusCode);
     }
 
     public async Task<ApiResponse<Message>> SendMessageAsync(int chatId, MessageSendModel message)
@@ -139,7 +138,7 @@ public class ChatService : IChatService
                 FileUrl = message.file_url ?? "",
                 TranscribedText = message.transcribed_text ?? ""
             };
-            return new ApiResponse<Message>(true, "", msg);
+            return new ApiResponse<Message>("", msg);
         }
         throw new Exception("Не известная ошибка");
     }
@@ -157,7 +156,7 @@ public class ChatService : IChatService
             throw new Exception(json);
         }
         var messages = JsonConvert.DeserializeObject<nearby.Models.Messages>(json);
-        return new ApiResponse<nearby.Models.Messages>(true, "", messages);
+        return new ApiResponse<nearby.Models.Messages>("", messages);
     }
 
     public async Task<ApiResponse<bool>> MarkMessagesAsReadAsync(int chatId, int messageId)
@@ -172,7 +171,7 @@ public class ChatService : IChatService
         {
             throw new Exception(json);
         }
-        return new ApiResponse<bool>(response.IsSuccessStatusCode, json, response.IsSuccessStatusCode);
+        return new ApiResponse<bool>(json, response.IsSuccessStatusCode);
     }
 
     public async Task<ApiResponse<Message>> EditMessageAsync(int messageId, string newContent)
@@ -195,7 +194,7 @@ public class ChatService : IChatService
             Id = messageId,
             Content = newContent
         };
-        return new ApiResponse<Message>(true, "", msg);
+        return new ApiResponse<Message>("", msg);
     }
 
     public async Task<ApiResponse<bool>> DeleteMessageAsync(int messageId)
@@ -210,6 +209,6 @@ public class ChatService : IChatService
         {
             throw new Exception(json);
         }
-        return new ApiResponse<bool>(response.IsSuccessStatusCode, json, response.IsSuccessStatusCode);
+        return new ApiResponse<bool>(json, response.IsSuccessStatusCode);
     }
 }

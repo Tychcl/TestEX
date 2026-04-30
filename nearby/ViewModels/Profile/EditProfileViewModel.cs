@@ -15,6 +15,16 @@ namespace nearby.ViewModels
         private readonly IUserService _userService;
 
         [ObservableProperty]
+        private int aboutLength;
+        [ObservableProperty]
+        private string about;
+        partial void OnAboutChanged(string value)
+        {
+            User.About = value;
+            AboutLength = value.Length;
+        }
+
+        [ObservableProperty]
         private User _user;
 
         [ObservableProperty]
@@ -26,6 +36,7 @@ namespace nearby.ViewModels
             _userService = userService;
             PageTitle = "Редактирование профиля";
             User = _userService.CurrentUser.Copy();
+            About = User.About;
         }
 
         [RelayCommand]

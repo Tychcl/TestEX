@@ -61,14 +61,19 @@
             </CollectionView>
         </RefreshView>
 
-        <Button Grid.Row="1" 
-                Style="{StaticResource ImageButton}"
-                local:IconHelper.Icon="{StaticResource AddCircle}" 
-                local:IconHelper.Color="CPrimary"
-                local:IconHelper.Size="36"
+        <Border Grid.Row="1"  
+                Style="{StaticResource Button}"
+                BackgroundColor="{DynamicResource CBackground}"
+                StrokeShape="RoundRectangle 30"
+                WidthRequest="50" HeightRequest="50"
                 VerticalOptions="End"
                 HorizontalOptions="End"
-                Margin="0,0,20,20"
-                Command="{Binding GoToCreateCommand}"/>
+                Margin="0,0,25,25"
+                Padding="0">
+            <Image local:IconHelper.Icon="{StaticResource AddCircle}" local:IconHelper.Size="36" Aspect="AspectFit"/>
+            <Border.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding GoToCreateCommand}"/>
+            </Border.GestureRecognizers>
+        </Border>
     </Grid>
 </ContentPage>

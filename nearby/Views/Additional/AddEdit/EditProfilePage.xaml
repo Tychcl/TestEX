@@ -96,10 +96,10 @@
                     <VerticalStackLayout>
                         <Label Style="{StaticResource SectionTitle}" Text="О себе"/>
                         <Editor Style="{StaticResource EditEditor}"
-                                Text="{Binding User.About, Mode=TwoWay}"
+                                Text="{Binding About, Mode=TwoWay}"
                                 Placeholder="Расскажите немного о себе..."
                                 MaxLength="500"/>
-                        <Label Text="{Binding User.About, StringFormat='{0}/500', Converter={StaticResource StringLengthConverter}}" 
+                        <Label Text="{Binding AboutLength,StringFormat='{0}/500'}" 
                                Style="{StaticResource CommonLabel}"
                                TextColor="{StaticResource CTextSecondaryLight}"
                                FontSize="11"

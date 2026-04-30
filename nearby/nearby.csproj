@@ -188,4 +188,8 @@
 	  </MauiXaml>
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Classes\Interface\Dependency\" />
+	</ItemGroup>
+
 </Project>

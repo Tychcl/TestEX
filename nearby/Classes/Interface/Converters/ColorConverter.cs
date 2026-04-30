@@ -1,18 +1,22 @@
 using System.Globalization;
+using nearby.ViewModels;
 
 namespace nearby.Classes.Interface.Converters;
 
-public class MessageBackgroundConverter : IValueConverter
+public class ColorConverter : IValueConverter
 {
     public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
     {
-        if (value is int senderId && parameter is int currentUserId)
+        if (value is TaskCategory vtc && parameter is TaskCategory ptc && vtc == ptc)
         {
-            // Свои сообщения - зелёные, чужие - белые
-            return senderId == currentUserId ? Color.FromArgb("#DCF8C6") : Colors.White;
+            return Application.Current.Resources["CPrimary"];
         }
-        return Colors.White;
+        else
+        {
+            return Application.Current.Resources["CBorder"];
+        }
     }
+        
 
     public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         => throw new NotImplementedException();

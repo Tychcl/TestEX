@@ -27,7 +27,7 @@ public static class IconHelper
             "Color",
             typeof(string),
             typeof(IconHelper),
-            default(string),
+            "CPrimary",
             defaultValueCreator: null,
             propertyChanged: OnPropertyChanged);
     public static string GetColor(BindableObject view)

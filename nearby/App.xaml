@@ -10,18 +10,17 @@
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Icons.xaml" />
+                <!--Themes-->
                 <ResourceDictionary Source="/Resources/Themes/LightBlueTheme.xaml" />
                 <ResourceDictionary Source="/Resources/Themes/LightPurpleTheme.xaml" />
                 <ResourceDictionary Source="/Resources/Themes/DarkOrangeTheme.xaml" />
                 <ResourceDictionary Source="/Resources/Themes/DarkGreenTheme.xaml" />
             </ResourceDictionary.MergedDictionaries>
             <!--CONVERTERS-->
-            <converters:IsGroupConverter x:Key="IsGroupConverter"/>
-            <converters:IsPersonalConverter x:Key="IsPersonalConverter"/>
-            <converters:GreaterThanZeroConverter x:Key="GreaterThanZeroConverter"/>
-            <converters:IsCurrentUserConverter x:Key="IsCurrentUserConverter"/>
-            <converters:IsEqualConverter x:Key="IsEqualConverter"/>
             <converters:InverseBoolConverter x:Key="InverseBoolConverter"/>
+            <converters:ColorConverter x:Key="ColorConverter"/>
+            <converters:LengthConverter x:Key="LengthConverter"/>
+            <converters:MessageAlignmentConverter x:Key="MessageAlignmentConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

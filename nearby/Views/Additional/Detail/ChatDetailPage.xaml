@@ -10,9 +10,7 @@
              Shell.TabBarIsVisible="False">
 
     <ContentPage.Resources>
-        <converters:IsCurrentUserConverter x:Key="IsCurrentUserConverter"/>
         <converters:MessageAlignmentConverter x:Key="MessageAlignmentConverter"/>
-        <converters:MessageBackgroundConverter x:Key="MessageBackgroundConverter"/>
     </ContentPage.Resources>
 
     <Grid RowDefinitions="*, Auto">

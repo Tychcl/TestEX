@@ -7,13 +7,6 @@
              xmlns:converters="clr-namespace:nearby.Classes.Interface.Converters"
              Title="Чаты"
              x:DataType="viewModels:ChatsViewModel">
-
-    <ContentPage.Resources>
-        <converters:IsGroupConverter x:Key="IsGroupConverter"/>
-        <converters:IsPersonalConverter x:Key="IsPersonalConverter"/>
-        <converters:GreaterThanZeroConverter x:Key="GreaterThanZeroConverter"/>
-    </ContentPage.Resources>
-
     <Shell.TitleView>
         <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
             <Label Style="{StaticResource Headline}" Text="Чаты" VerticalOptions="Center" HorizontalOptions="StartAndExpand"/>

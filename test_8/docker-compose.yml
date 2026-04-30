@@ -1,0 +1,11 @@
+services:
+  api:
+    build: ./api
+    container_name: OnlyTest8
+    ports:
+      - "8080:80" 
+    volumes:
+      - ./api:/var/www/html
+    environment:
+      OAUTH:
+    restart: unless-stopped

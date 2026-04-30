@@ -1,0 +1,564 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "yandex disk api",
+        "description": "API для 8 задания стажировки only",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080",
+            "description": "Локальный сервер"
+        }
+    ],
+    "paths": {
+        "/api/yadisk/check": {
+            "get": {
+                "tags": [
+                    "disk"
+                ],
+                "summary": "Проверка сервера",
+                "description": "Проверка сервера",
+                "operationId": "e040bccfd5de34b301df3776ae828bcb",
+                "responses": {
+                    "200": {
+                        "description": "Работает",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "result": {
+                                            "type": "string",
+                                            "example": "successful"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/yadisk/folder": {
+            "get": {
+                "tags": [
+                    "folder"
+                ],
+                "summary": "получить список файлов/папок в папке",
+                "operationId": "fb66afeec02098a4715a827626421e4d",
+                "parameters": [
+                    {
+                        "name": "path",
+                        "in": "query",
+                        "description": "Путь до папки для поиска",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "список файлов",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "files": {
+                                            "type": "string",
+                                            "example": "{\"0\": {},\"1\": {}}"
+                                        },
+                                        "disk": {
+                                            "type": "string",
+                                            "example": "{\"total_space\": 0,\"used_space\": 0,\"free_space\": 0}"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "folder"
+                ],
+                "summary": "Создать папку",
+                "operationId": "2c1837f2afec1168a70e261c321be279",
+                "parameters": [
+                    {
+                        "name": "path",
+                        "in": "query",
+                        "description": "Путь, по которому создать папку на Яндекс.Диске",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Название",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "example"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Результат",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "result": {
+                                            "type": "string",
+                                            "example": "successful"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/yadisk/file": {
+            "put": {
+                "tags": [
+                    "file"
+                ],
+                "summary": "Перезаписать файл",
+                "operationId": "b236c824f8fd96961ebf82c104650217",
+                "parameters": [
+                    {
+                        "name": "path",
+                        "in": "query",
+                        "description": "Путь, по которому перезапсать файл на Яндекс.Диске",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/"
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "file": {
+                                        "description": "Загружаемый файл",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Результат",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "result": {
+                                            "type": "string",
+                                            "example": "successful"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "file"
+                ],
+                "summary": "Загрузить файл",
+                "operationId": "bb7cf640eb10b2a40d580fdd14196ba9",
+                "parameters": [
+                    {
+                        "name": "path",
+                        "in": "query",
+                        "description": "Путь, по которому сохранить файл на Яндекс.Диске",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/"
+                    },
+                    {
+                        "name": "create",
+                        "in": "query",
+                        "description": "Cоздать папку, если её нет",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "default": false
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "multipart/form-data": {
+                            "schema": {
+                                "properties": {
+                                    "file": {
+                                        "description": "Загружаемый файл",
+                                        "type": "string",
+                                        "format": "binary"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Результат",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "result": {
+                                            "type": "string",
+                                            "example": "successful"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/yadisk/download": {
+            "get": {
+                "tags": [
+                    "disk"
+                ],
+                "summary": "Скачать файл/папку",
+                "operationId": "c23e7fa19b811de30d35ea046832e862",
+                "parameters": [
+                    {
+                        "name": "path",
+                        "in": "query",
+                        "description": "Путь до папки",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Название файла",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "example.txt"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ссылка на скачивание",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "result": {
+                                            "type": "string",
+                                            "example": "link"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/yadisk/delete": {
+            "delete": {
+                "tags": [
+                    "disk"
+                ],
+                "summary": "Удалить файл / папку",
+                "operationId": "d080afcdcdf78a03a060c23a26d7f823",
+                "parameters": [
+                    {
+                        "name": "path",
+                        "in": "query",
+                        "description": "Путь до файла",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Название файла",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "example.txt"
+                    },
+                    {
+                        "name": "permamently",
+                        "in": "query",
+                        "description": "Удалить без переноса в корзину",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "example": "false"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "результат",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "result": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/yadisk/move": {
+            "put": {
+                "tags": [
+                    "disk"
+                ],
+                "summary": "Переместить файл/папку",
+                "operationId": "4c411e7ad15d3ef339a529d4a85801ad",
+                "parameters": [
+                    {
+                        "name": "path",
+                        "in": "query",
+                        "description": "Путь до папки",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "description": "Название файла",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "example.txt"
+                    },
+                    {
+                        "name": "moveto",
+                        "in": "query",
+                        "description": "Путь до папки куда переместить",
+                        "required": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "/"
+                    },
+                    {
+                        "name": "rewrite",
+                        "in": "query",
+                        "description": "Перезаписать если ресурс существует?",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "example": false
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Ссылка на скачивание",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "result": {
+                                            "type": "string",
+                                            "example": "link"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Ошибка сервера",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "error": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "file",
+            "description": "Управление файлами на диске"
+        },
+        {
+            "name": "disk",
+            "description": "Управление диском"
+        },
+        {
+            "name": "folder",
+            "description": "Управление папками на диске"
+        }
+    ]
+}

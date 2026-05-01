@@ -73,7 +73,17 @@ public class TaskService : ITaskService
 
     public async Task<ApiResponse<TaskItem>> CreateTaskAsync(TaskItem task)
     {
-        var json = JsonConvert.SerializeObject(task);
+        var data = new
+        {
+            title = task.Title,
+            description = task.Description,
+            needed_volunteers = task.NeededVolunteers,
+            priority = task.Priority,
+            location = task.Location,
+            reward = task.Reward,
+            deadline = task.Deadline.ToString("yyyy-MM-dd HH:mm:ss"),
+        };
+        var json = JsonConvert.SerializeObject(data);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
         var response = await _apiClient.PostAsync("tasks", content);
         if (response is null)

@@ -1,6 +1,6 @@
 using nearby.ViewModels;
 
-namespace nearby.Views.Additional;
+namespace nearby.Views.Main;
 
 public partial class EditProfilePage : ContentPage
 {

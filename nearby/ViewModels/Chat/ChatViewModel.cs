@@ -5,7 +5,7 @@ using CommunityToolkit.Mvvm.Input;
 
 using nearby.Interfaces;
 using nearby.Models;
-using nearby.Views.Additional;
+using nearby.Views.Main;
 
 namespace nearby.ViewModels
 {

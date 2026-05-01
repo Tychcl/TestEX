@@ -45,6 +45,9 @@ namespace nearby
         protected virtual Task ShowErrorAsync(string message)
             => ShowMsgAsync("Ошибка", message, "OK");
 
+        protected virtual Task ShowSuccessfulAsync(string message)
+            => ShowMsgAsync("Успешно", message, "OK");
+
         protected virtual Task ShowMsgAsync(string title, string message, string cancel = "OK")
             => Application.Current!.MainPage!.DisplayAlert(title, message, cancel);
 

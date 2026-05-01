@@ -21,6 +21,7 @@
             <converters:ColorConverter x:Key="ColorConverter"/>
             <converters:LengthConverter x:Key="LengthConverter"/>
             <converters:MessageAlignmentConverter x:Key="MessageAlignmentConverter"/>
+            <converters:IsNotNullConverter x:Key="IsNotNullConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

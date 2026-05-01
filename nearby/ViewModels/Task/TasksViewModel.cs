@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -7,7 +8,7 @@ using nearby.Classes;
 
 using nearby.Interfaces;
 using nearby.Models;
-using nearby.Views.Additional;
+using nearby.Views.Main;
 
 
 namespace nearby.ViewModels
@@ -116,13 +117,13 @@ namespace nearby.ViewModels
         [RelayCommand]
         private async Task GoToDetailAsync(TaskItem task)
         {
-            await Shell.Current.GoToAsync(nameof(TaskDetailPage), new Dictionary<string, object?> { { "id", task.Id } });
+            await Shell.Current.GoToAsync(nameof(TaskDetailPage), new Dictionary<string, object?> { { "task", task } });
         }
 
         [RelayCommand]
         private Task GoToCreateAsync()
         {
-            return Task.CompletedTask;
+            return Shell.Current.GoToAsync(nameof(TaskAddEditPage));
         }
 
         [RelayCommand]

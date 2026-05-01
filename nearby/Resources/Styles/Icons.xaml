@@ -6,6 +6,10 @@
 
     <!--Common-->
     <x:String x:Key="Search">&#xE8B6;</x:String>
+    <x:String x:Key="Confirm">&#xF88B;</x:String>
+    <x:String x:Key="Cancel">&#xF508;</x:String>
+    <x:String x:Key="Back">&#xF46B;</x:String>
+    
     
     <!--Profile-->
     <x:String x:Key="Logout">&#xE9BA;</x:String>

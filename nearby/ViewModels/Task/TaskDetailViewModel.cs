@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
 using nearby.Interfaces;
 using nearby.Models;
 using nearby.Services;
@@ -10,14 +9,11 @@ using nearby.Views.Main;
 
 namespace nearby.ViewModels
 {
-    [QueryProperty(nameof(TaskId), "id")]
+    [QueryProperty(nameof(Task), "task")]
     public partial class TaskDetailViewModel : BaseViewModel
     {
         private readonly ITaskService _taskService;
         private readonly IUserService _userService;
-
-        [ObservableProperty]
-        private int _taskId;
 
         [ObservableProperty]
         private TaskItem _task = null!;
@@ -52,15 +48,10 @@ namespace nearby.ViewModels
             _userService = userService;
         }
 
-        partial void OnTaskIdChanged(int value)
-        {
-            if (value > 0)
-                _ = InitializeAsync(value);
-        }
-
         partial void OnTaskChanged(TaskItem? value)
         {
             if (value == null) return;
+            _ = InitializeAsync(value);
             PageTitle = value.Title;
             IsSearching = value.Status == "searching";
             InProgress = value.Status == "in_progress";
@@ -68,15 +59,12 @@ namespace nearby.ViewModels
 
         partial void OnIsOwnerChanged(bool value) => RefreshCommands();
 
-        private async Task InitializeAsync(int taskId)
+        private async Task InitializeAsync(TaskItem task)
         {
             if (_isInitialized) return;
             IsBusy = true;
             try
             {
-                var taskResponse = await _taskService.GetTaskAsync(taskId);
-
-                Task = taskResponse.Data!;
                 IsOwner = _userService.CurrentUser?.Id == Task.CreatorId;
 
                 if (IsOwner)
@@ -86,7 +74,7 @@ namespace nearby.ViewModels
                 }
                 else
                 {
-                    await LoadMyVolunteerStatusAsync(taskId);
+                    await LoadMyVolunteerStatusAsync(Task.Id);
                 }
                 _isInitialized = true;
             }

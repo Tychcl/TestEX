@@ -1,7 +1,7 @@
 using System.Reflection;
 using nearby.Classes;
 
-namespace nearby.Views.Additional.Settings;
+namespace nearby.Views.Main;
 
 public partial class ThemeChangePage : ContentPage
 {

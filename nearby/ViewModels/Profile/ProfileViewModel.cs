@@ -11,7 +11,7 @@ using CommunityToolkit.Mvvm.Messaging;
 using nearby.Interfaces;
 using nearby.Models;
 using nearby.Services;
-using nearby.Views.Additional;
+using nearby.Views.Main;
 using nearby.Views.Auth;
 
 namespace nearby.ViewModels

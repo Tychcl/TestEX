@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="nearby.Views.Additional.ChatDetailPage"
+             x:Class="nearby.Views.Main.ChatDetailPage"
              xmlns:viewModels="clr-namespace:nearby.ViewModels"
              xmlns:models="clr-namespace:nearby.Models"
              xmlns:converters="clr-namespace:nearby.Classes.Interface.Converters"

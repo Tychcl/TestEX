@@ -96,7 +96,7 @@
 	  <Compile Update="Resources\Themes\LightBlueTheme.xaml.cs">
 	    <DependentUpon>LightBlueTheme.xaml</DependentUpon>
 	  </Compile>
-	  <Compile Update="Views\Additional\Settings\ThemeChangePage.xaml.cs">
+	  <Compile Update="Views\Main\Settings\ThemeChangePage.xaml.cs">
 	    <DependentUpon>ThemeChangePage.xaml</DependentUpon>
 	  </Compile>
 	  <Compile Update="Views\Auth\AuthShell.xaml.cs">
@@ -138,28 +138,25 @@
 	  <MauiXaml Update="Resources\Themes\LightPurpleTheme.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Additional\Detail\ChatDetailPage.xaml">
+	  <MauiXaml Update="Views\Main\Chats\ChatDetailPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Additional\Detail\TaskDetailPage.xaml">
+	  <MauiXaml Update="Views\Main\Tasks\TaskAddEditPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Additional\Settings\ThemeChangePage.xaml">
+	  <MauiXaml Update="Views\Main\Tasks\TaskDetailPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
+	  <MauiXaml Update="Views\Main\Settings\ThemeChangePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Auth\AuthShell.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Additional\AddEdit\EditProfilePage.xaml">
+	  <MauiXaml Update="Views\Main\Profile\EditProfilePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="ContentViews\Headers\BaseHeaderView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="ContentViews\Headers\ProfileHeaderView.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="ContentViews\Headers\TasksHeaderView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\LoadingPage.xaml">
@@ -171,19 +168,19 @@
 	  <MauiXaml Update="Views\Auth\RegPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Main\ChatsPage.xaml">
+	  <MauiXaml Update="Views\Main\Chats\ChatsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\Main\MainShell.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Main\ProfilePage.xaml">
+	  <MauiXaml Update="Views\Main\Profile\ProfilePage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Main\SettingsPage.xaml">
+	  <MauiXaml Update="Views\Main\Settings\SettingsPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
-	  <MauiXaml Update="Views\Main\TasksPage.xaml">
+	  <MauiXaml Update="Views\Main\Tasks\TasksPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	</ItemGroup>

@@ -5,8 +5,6 @@ using nearby.Interfaces;
 using nearby.Services;
 using nearby.ViewModels;
 using nearby.Views;
-using nearby.Views.Additional;
-using nearby.Views.Additional.Settings;
 using nearby.Views.Auth;
 using nearby.Views.Main;
 
@@ -54,6 +52,7 @@ namespace nearby
             builder.Services.AddTransient<ProfileViewModel>();
             builder.Services.AddTransient<TasksViewModel>();
             builder.Services.AddTransient<TaskDetailViewModel>();
+            builder.Services.AddTransient<TaskAddEditViewModel>();
             builder.Services.AddTransient<SettingsViewModel>();
 
             //=====================
@@ -73,6 +72,7 @@ namespace nearby
             //дополнительные
             builder.Services.AddTransient<EditProfilePage>();
             builder.Services.AddTransient<TaskDetailPage>();
+            builder.Services.AddTransient<TaskAddEditPage>();
             builder.Services.AddTransient<ChatDetailPage>();
             //настройки
             builder.Services.AddTransient<ThemeChangePage>();

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:sys="clr-namespace:System;assembly=netstandard"
+             xmlns:VM="clr-namespace:nearby.ViewModels"
+             xmlns:local="clr-namespace:nearby"
+             xmlns:header="clr-namespace:nearby.ContentViews.Headers"
+             x:Class="nearby.Views.Main.TaskAddEditPage"
+             Title="TaskAddEditPage"
+             x:DataType="VM:TaskAddEditViewModel"
+             Shell.NavBarIsVisible="False"
+             x:Name="thisControl">
+    <Grid RowDefinitions="auto, *" BackgroundColor="Transparent">
+        <header:BaseHeaderView Grid.Row="0" BackCommand="{Binding GoBackCommand}" ConfirmCommand="{Binding SaveCommand}" HaveCC="True" Text="{Binding Title, Source={x:Reference thisControl}}"/>
+        <ScrollView Grid.Row="1" Orientation="Vertical">
+            <VerticalStackLayout Padding="0,0,0,20">
+                <Border Style="{StaticResource EditSection}">
+                    <VerticalStackLayout>
+                        <Label Style="{StaticResource SectionTitle}" Text="О задаче"/>
+                        <Label Style="{StaticResource EditLabel}" Text="Краткое описание"/>
+                        <Entry Style="{StaticResource EditEntry}" Text="{Binding Title, Mode=TwoWay}" Placeholder="Купить продукты"/>
+                        <Label Style="{StaticResource EditLabel}" Text="Полное описание"/>
+                        <Editor Style="{StaticResource EditEditor}" Text="{Binding Description, Mode=TwoWay}" Placeholder="Список продуктов" MaxLength="300"/>
+                        <Label Text="{Binding DescriptionLength,StringFormat='{0}/300'}"
+                               Style="{StaticResource CommonLabel}"
+                               TextColor="{StaticResource CTextSecondaryLight}"
+                               FontSize="11"
+                               HorizontalOptions="End"/>
+                    </VerticalStackLayout>
+                </Border>
+                <Border Style="{StaticResource EditSection}">
+                    <VerticalStackLayout>
+                        <Label Style="{StaticResource SectionTitle}" Text="Требования"/>
+                        <Grid ColumnDefinitions="auto, *" ColumnSpacing="10">
+                            <VerticalStackLayout Grid.Column="0">
+                                <Label Style="{StaticResource EditLabel}" Text="Кол-во волонтёров:"/>
+                                <Entry Style="{StaticResource EditEntry}" Text="{Binding NeededVolunteers, Mode=TwoWay}" Keyboard="Numeric" Placeholder="2" />
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1">
+                                <Label Style="{StaticResource EditLabel}" Text="Приоритет:"/>
+                                <Picker SelectedItem="{Binding Priority}" Style="{StaticResource EditPicker}">
+                                    <Picker.ItemsSource>
+                                        <x:Array Type="{x:Type x:String}">
+                                            <x:String>low</x:String>
+                                            <x:String>medium</x:String>
+                                            <x:String>high</x:String>
+                                        </x:Array>
+                                    </Picker.ItemsSource>
+                                </Picker>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+                <Border Style="{StaticResource EditSection}">
+                    <VerticalStackLayout>
+                        <Label Style="{StaticResource SectionTitle}" Text="Где и когда"/>
+                        <Label Style="{StaticResource EditLabel}" Text="Выполнить до:"/>
+                        <DatePicker Date="{Binding Deadline}" MinimumDate="{x:Static sys:DateTime.Today}"/>
+                        <Label Style="{StaticResource EditLabel}" Text="Адрес:"/>
+                        <Editor Style="{StaticResource EditEditor}" Text="{Binding Location, Mode=TwoWay}" Placeholder="Адрес задачи" MaxLength="150"/>
+                        <Label Text="{Binding LocationLength, StringFormat='{0}/150'}"
+                               Style="{StaticResource CommonLabel}"
+                               TextColor="{StaticResource CTextSecondaryLight}"
+                               FontSize="11"
+                               HorizontalOptions="End"/>
+                    </VerticalStackLayout>
+                </Border>
+                <Border Style="{StaticResource EditSection}">
+                    <VerticalStackLayout>
+                        <Label Style="{StaticResource SectionTitle}" Text="Награда"/>
+                        <Label Style="{StaticResource EditLabel}" Text="Кол-во нирбиков:"/>
+                        <Entry Style="{StaticResource EditEntry}" Text="{Binding Reward}" Keyboard="Numeric" Placeholder="Сумма"/>
+                    </VerticalStackLayout>
+                </Border>
+                <Border Style="{StaticResource EditSection}" IsVisible="{Binding HasErrors}">
+                    <VerticalStackLayout>
+                        <Label Style="{StaticResource SectionTitle}" Text="Ошибки заполнения"/>
+                        <Label Style="{StaticResource ErrorLabel}" Text="{Binding ErrorMessage}"/>
+                    </VerticalStackLayout>
+                </Border>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

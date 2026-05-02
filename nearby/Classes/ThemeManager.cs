@@ -9,20 +9,7 @@ using Microsoft.Maui.Controls;
 using nearby.Resources.Themes;
 
 namespace nearby.Classes
-{
-    public class ThemeDescription
-    {
-        public string Name;
-        public string Mode;
-        public string Color;
-        public ThemeDescription(string name = "Такой", bool light = false, string color = "Нет")
-        {
-            Name = name;
-            Mode = light ? "Светлая" : "Темная";
-            Color = color;
-        }
-    }
-    
+{  
     public static class ThemeManager
     {
         public const string LightBlue = "LightBlue";
@@ -44,14 +31,13 @@ namespace nearby.Classes
 
         public static void ApplyTheme(string name)
         {
-            var merged = Application.Current.Resources.MergedDictionaries;
+            var merged = ResourceManager.MergedDictionaries;
             var oldThemes = merged.Where(md => md is ResourceDictionary rd && rd.Source?.OriginalString?.Contains("Theme") == true).ToList();
             foreach (var old in oldThemes)
                 merged.Remove(old);
             var theme = GetTheme(name);
             merged.Add(theme);
             Preferences.Set("user_theme", name);
-            WeakReferenceMessenger.Default.Send<ResourceDictionary>(theme);
         }
 
         public static ThemeDescription GetDescription(string name)

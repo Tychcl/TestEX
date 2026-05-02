@@ -2,38 +2,33 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using nearby.Views.Main;
+using nearby.Classes;
 
 namespace nearby.ViewModels
 {
-    public class SettingsItem
-    {
-        public string Icon { get; set; }
-        public string Text { get; set; }
-        public string Page { get; set; }
-    }
 
     public partial class SettingsViewModel : BaseViewModel
     {
         [ObservableProperty]
-        private ObservableCollection<SettingsItem> settingsItems;
+        private ObservableCollection<SettingsItem> settingsItems = new()
+        {
+            new SettingsItem
+            {
+                Icon = (string)ResourceManager.Get("Theme"),
+                Text = "Смена темы",
+                Page = nameof(ThemeChangePage)
+            },
+            new SettingsItem
+            {
+                Icon = (string)ResourceManager.Get("Language"),
+                Text = "Смена Языка",
+                Page = nameof(ThemeChangePage)
+            }
+        };
 
         public SettingsViewModel()
         {
-            settingsItems = new ObservableCollection<SettingsItem>
-            {
-                new SettingsItem
-                {
-                    Icon = (string)Application.Current.Resources["Theme"],
-                    Text = "Смена темы",
-                    Page = nameof(ThemeChangePage)
-                },
-                new SettingsItem
-                {
-                    Icon = (string)Application.Current.Resources["Language"],
-                    Text = "Смена Языка",
-                    Page = nameof(ThemeChangePage)
-                }
-            };
+ 
         }
 
         [RelayCommand]

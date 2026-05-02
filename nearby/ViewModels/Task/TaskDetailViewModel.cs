@@ -1,11 +1,16 @@
 ﻿using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using CommunityToolkit.Maui;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using nearby.Interfaces;
+using nearby.ContentViews.Elements;
 using nearby.Models;
 using nearby.Services;
+using nearby.Classes;
 using nearby.Views.Main;
+using CommunityToolkit.Maui.Extensions;
+using System.Diagnostics;
 
 namespace nearby.ViewModels
 {
@@ -16,7 +21,10 @@ namespace nearby.ViewModels
         private readonly IUserService _userService;
 
         [ObservableProperty]
-        private User creator = null!;
+        private ObservableCollection<PopupItem> _popupItems = new();
+
+        [ObservableProperty]
+        private User _creator = null!;
 
         [ObservableProperty]
         private TaskItem _task = null!;
@@ -44,10 +52,16 @@ namespace nearby.ViewModels
 
         private bool _isInitialized;
 
+        private PopupMenu popupMenu;
         public TaskDetailViewModel(ITaskService taskService, IUserService userService)
         {
             _taskService = taskService;
             _userService = userService;
+
+            PopupItems.Add(new((string)ResourceManager.Get("EditBox"), "Редактировать", EditCommand));
+            PopupItems.Add(new((string)ResourceManager.Get("Delete"), "Удалить", DeleteCommand));
+
+            popupMenu = PopupManager.Create(PopupItems, new Thickness(0, 15, 15, 0));
         }
 
         partial void OnTaskChanged(TaskItem? value)
@@ -237,6 +251,13 @@ namespace nearby.ViewModels
         private async Task GoToProfileAsync(int userId)
         {
             await Shell.Current.GoToAsync(nameof(ProfilePage), new Dictionary<string, object?> { { "id", userId } });
+        }
+
+
+        [RelayCommand]
+        private async Task OpenPopupMenuAsync()
+        {
+            await PopupManager.Show(popupMenu);
         }
 
         private void RefreshCommands()

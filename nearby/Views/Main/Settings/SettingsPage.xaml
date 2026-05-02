@@ -4,6 +4,7 @@
              x:Class="nearby.Views.Main.SettingsPage"
              Title="Настройки"
              xmlns:viewModels="clr-namespace:nearby.ViewModels"
+             xmlns:clss="clr-namespace:nearby.Classes"
              xmlns:el="clr-namespace:nearby.ContentViews.Elements"
              x:DataType="viewModels:SettingsViewModel">
     <VerticalStackLayout>
@@ -12,7 +13,7 @@
                             SelectionMode="None"
                             VerticalOptions="Fill">
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="viewModels:SettingsItem">
+                <DataTemplate x:DataType="clss:SettingsItem">
                     <el:SettingsItem Icon="{Binding Icon}" Text="{Binding Text}">
                         <el:SettingsItem.GestureRecognizers>
                             <TapGestureRecognizer CommandParameter="{Binding Page}" Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:SettingsViewModel}}, Path=GoToPageCommand}"/>

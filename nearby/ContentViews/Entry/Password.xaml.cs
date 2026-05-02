@@ -1,4 +1,4 @@
-using Microsoft.Maui.Controls;
+using nearby.Classes;
 
 namespace nearby.ContentViews.Entry;
 
@@ -34,7 +34,7 @@ public partial class Password : ContentView
         PEntry.IsPassword = !PEntry.IsPassword;
         if (ToggleButton.Source is FontImageSource fis)
         {
-            fis.Glyph = PEntry.IsPassword ? (string)Application.Current.Resources["VisibleOff"] : (string)Application.Current.Resources["VisibleOn"];
+            fis.Glyph = PEntry.IsPassword ? (string)ResourceManager.Get("VisibleOff") : (string)ResourceManager.Get("VisibleOn");
         }
     }
 }

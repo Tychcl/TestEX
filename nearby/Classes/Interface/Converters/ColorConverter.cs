@@ -9,11 +9,11 @@ public class ColorConverter : IValueConverter
     {
         if (value is TaskCategory vtc && parameter is TaskCategory ptc && vtc == ptc)
         {
-            return Application.Current.Resources["CPrimary"];
+            return ResourceManager.Get("CPrimary");
         }
         else
         {
-            return Application.Current.Resources["CBorder"];
+            return ResourceManager.Get("CBorder");
         }
     }
         

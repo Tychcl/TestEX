@@ -6,7 +6,6 @@
              xmlns:viewModels="clr-namespace:nearby.ViewModels"
              xmlns:models="clr-namespace:nearby.Models"
              Title="Задачи"
-             xmlns:header="clr-namespace:nearby.Views.Headers"
              xmlns:elements="clr-namespace:nearby.ContentViews.Elements"
              x:DataType="viewModels:TasksViewModel">
 

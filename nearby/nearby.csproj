@@ -111,6 +111,9 @@
 	  <MauiXaml Update="ContentViews\Elements\ContactView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="ContentViews\Elements\PopupMenu.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="ContentViews\Elements\SettingsItem.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
@@ -187,6 +190,7 @@
 
 	<ItemGroup>
 	  <Folder Include="Classes\Interface\Dependency\" />
+	  <Folder Include="Classes\Interface\Popup\" />
 	</ItemGroup>
 
 </Project>

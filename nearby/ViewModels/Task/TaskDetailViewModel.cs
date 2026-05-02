@@ -16,6 +16,9 @@ namespace nearby.ViewModels
         private readonly IUserService _userService;
 
         [ObservableProperty]
+        private User creator = null!;
+
+        [ObservableProperty]
         private TaskItem _task = null!;
 
         [ObservableProperty]
@@ -39,7 +42,6 @@ namespace nearby.ViewModels
         [ObservableProperty]
         private bool _isSearching;
 
-        // Флаг, чтобы не инициализировать повторно
         private bool _isInitialized;
 
         public TaskDetailViewModel(ITaskService taskService, IUserService userService)
@@ -66,7 +68,6 @@ namespace nearby.ViewModels
             try
             {
                 IsOwner = _userService.CurrentUser?.Id == Task.CreatorId;
-
                 if (IsOwner)
                 {
                     CanVolunteer = false;
@@ -76,6 +77,7 @@ namespace nearby.ViewModels
                 {
                     await LoadMyVolunteerStatusAsync(Task.Id);
                 }
+                Creator = (await _userService.LoadUserByIdAsync(Task.CreatorId)).Data;
                 _isInitialized = true;
             }
             catch (Exception ex)
@@ -214,7 +216,7 @@ namespace nearby.ViewModels
         [RelayCommand]
         private async Task EditAsync()
         {
-            // Реализация редактирования
+            await Shell.Current.GoToAsync(nameof(TaskAddEditPage), new Dictionary<string, object?> { { "task", _task } });
         }
 
         [RelayCommand(CanExecute = nameof(CanDeleteTaskExecute))]

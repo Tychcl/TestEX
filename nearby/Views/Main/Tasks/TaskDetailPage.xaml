@@ -3,103 +3,142 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="nearby.Views.Main.TaskDetailPage"
              xmlns:viewModels="clr-namespace:nearby.ViewModels"
-             xmlns:header="clr-namespace:nearby.Views.Headers"
+             xmlns:header="clr-namespace:nearby.ContentViews.Headers"
              xmlns:models="clr-namespace:nearby.Models"
              x:DataType="viewModels:TaskDetailViewModel"
-             Title="{Binding PageTitle, FallbackValue='Задача'}">
-    <ScrollView>
-        <VerticalStackLayout Spacing="15" Padding="20">
-            <Label Text="{Binding Task.Description}" Style="{StaticResource Body}" IsVisible="{Binding Task.Description, Converter={StaticResource IsNotNullOrEmptyConverter}}"/>
-            <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto,Auto,Auto,Auto">
-                <Label Grid.Row="0" Grid.Column="0" Text="Место:" Style="{StaticResource BoldLabel}"/>
-                <Label Grid.Row="0" Grid.Column="1" Text="{Binding Task.Location}"/>
-                <Label Grid.Row="1" Grid.Column="0" Text="Награда:" Style="{StaticResource BoldLabel}"/>
-                <Label Grid.Row="1" Grid.Column="1" Text="{Binding Task.Reward, StringFormat='{0:F2} нирбиков'}"/>
-                <Label Grid.Row="2" Grid.Column="0" Text="Требуется волонтёров:" Style="{StaticResource BoldLabel}"/>
-                <Label Grid.Row="2" Grid.Column="1" Text="{Binding Task.NeededVolunteers}"/>
-                <Label Grid.Row="3" Grid.Column="0" Text="Дедлайн:" Style="{StaticResource BoldLabel}"/>
-                <Label Grid.Row="3" Grid.Column="1" Text="{Binding Task.Deadline, StringFormat='{0:dd.MM.yyyy HH:mm}'}"/>
-                <Label Grid.Row="4" Grid.Column="0" Text="Заказчик:" Style="{StaticResource BoldLabel}"/>
-                <Label Grid.Row="4" Grid.Column="1" Text="{Binding Task.CreatorFIO}" TextDecorations="Underline">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer 
-                                Command="{Binding GoToProfileCommand}"
-                                CommandParameter="{Binding Task.CreatorId}"/>
-                    </Label.GestureRecognizers>
-                </Label>
-            </Grid>
-            <Label Text="{Binding Task.Status, StringFormat='Статус: {0}'}" Style="{StaticResource GrayLabel}"/>
-            <Button Text="Откликнуться" 
+             Shell.NavBarIsVisible="False">
+    <Grid RowDefinitions="auto, *, auto">
+        <header:BaseHeaderView Grid.Row="0" Icon="{StaticResource EditBox}" BackCommand="{Binding GoBackCommand}" Text="{Binding PageTitle, FallbackValue='Задача'}" MenuIsVisible="{Binding IsOwner}" Command="{Binding EditCommand}"/>
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="0,0,0,20">
+                <Border Style="{StaticResource EditSection}">
+                    <VerticalStackLayout>
+                        <Label Style="{StaticResource SectionTitle}" Text="Информация"/>
+                        <Grid RowDefinitions="auto, auto, auto, auto, auto, auto">
+                            <Label Grid.Row="0" Style="{StaticResource CommonLabel}" Text="Награда:"/>
+                            <Label Grid.Row="0" HorizontalOptions="End" Style="{StaticResource CommonLabel}" Text="{Binding Task.Reward, StringFormat='{0:F2} нирбиков'}"/>
+                            <Label Grid.Row="1" Style="{StaticResource CommonLabel}" Text="Срок до:"/>
+                            <Label Grid.Row="1" HorizontalOptions="End" Style="{StaticResource CommonLabel}" Text="{Binding Task.Deadline, StringFormat='{0:dd.MM.yyyy}'}"/>
+                            <Label Grid.Row="2" Style="{StaticResource CommonLabel}" Text="Адрес:"/>
+                            <Label Grid.Row="2" HorizontalOptions="End" Style="{StaticResource CommonLabel}" Text="{Binding Task.Location}"/>
+                            <Label Grid.Row="3" Style="{StaticResource CommonLabel}" Text="Требуется волонтёров:"/>
+                            <Label Grid.Row="3" HorizontalOptions="End" Style="{StaticResource CommonLabel}" Text="{Binding Task.NeededVolunteers}"/>
+                            <Label Grid.Row="4" Style="{StaticResource CommonLabel}" Text="Откликнулось волонтёров:"/>
+                            <Label Grid.Row="4" HorizontalOptions="End" Style="{StaticResource CommonLabel}" Text="{Binding Volunteers.Count}"/>
+                            <Label Grid.Row="5" Style="{StaticResource CommonLabel}" Text="Статус:"/>
+                            <Label Grid.Row="5" HorizontalOptions="End" Style="{StaticResource CommonLabel}" Text="{Binding Task.Status}"/>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+                <Border Style="{StaticResource EditSection}">
+                    <VerticalStackLayout>
+                        <Label Style="{StaticResource SectionTitle}" Text="Описание"/>
+                        <Label Text="{Binding Task.Description}" Style="{StaticResource CommonLabel}"/>
+                    </VerticalStackLayout>
+                </Border>
+                <Border Style="{StaticResource EditSection}">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoToProfileCommand}" CommandParameter="{Binding Task.CreatorId}"/>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout>
+                        <Label Style="{StaticResource SectionTitle}" Text="Заказчик"/>
+                        <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="8" Padding="0" Margin="0">
+
+                            <!-- Аватар -->
+                            <Border Grid.Column="0"
+                                        WidthRequest="70" HeightRequest="70"
+                                        Stroke="{StaticResource CBorder}"
+                                        StrokeThickness="2"
+                                        StrokeShape="RoundRectangle 12"
+                                        Margin="0">
+                                <Image Source="{Binding Creator.ProfilePicture, TargetNullValue='test_profile_image.jpg'}" Aspect="AspectFill">
+                                    <Image.Clip>
+                                        <RoundRectangleGeometry CornerRadius="12" Rect="0,0,70,70"/>
+                                    </Image.Clip>
+                                </Image>
+                            </Border>
+
+                            <!-- Имя и дата рождения -->
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="0">
+                                <Label Text="{Binding Creator.Name}" Style="{StaticResource BoldCommonLabel}" Margin="0"/>
+                                <Label Text="{Binding Creator.Surname}" Style="{StaticResource BoldCommonLabel}" Margin="0"/>
+                                <Label Text="{Binding Creator.BirthDate, StringFormat='{0:dd.MM.yyyy}'}" Style="{StaticResource BoldCommonLabel}" TextColor="{StaticResource Gray500}" FontSize="14"/>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Border>
+                
+                <Button Text="Откликнуться" 
                     Command="{Binding VolunteerCommand}"
                     IsVisible="{Binding CanVolunteer}"
                     BackgroundColor="{StaticResource Primary}"/>
-            <Label Text="{Binding VolunteerStatus, StringFormat='Ваш статус: {0}'}" 
+                <Label Text="{Binding VolunteerStatus, StringFormat='Ваш статус: {0}'}" 
                    IsVisible="{Binding HasVolunteered}"/>
-            <Label Text="Кандидаты" Style="{StaticResource Headline2}" IsVisible="{Binding IsOwner}"/>
-            <CollectionView ItemsSource="{Binding Volunteers}" IsVisible="{Binding IsOwner}">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:TaskVolunteerInfo">
-                        
-                        <Grid ColumnDefinitions="auto, *">
-                            <Grid ColumnDefinitions="70, Auto" Grid.Column="0">
-                                <Grid.GestureRecognizers>
-                                    <TapGestureRecognizer 
+                <Label Text="Кандидаты" Style="{StaticResource Headline2}" IsVisible="{Binding IsOwner}"/>
+                <CollectionView ItemsSource="{Binding Volunteers}" IsVisible="{Binding IsOwner}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:TaskVolunteerInfo">
+                            <Grid ColumnDefinitions="auto, *">
+                                <Grid ColumnDefinitions="70, Auto" Grid.Column="0">
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer 
                                             Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:TaskDetailViewModel}}, Path=GoToProfileCommand}"
                                             CommandParameter="{Binding Id}"/>
-                                </Grid.GestureRecognizers>
-                                <VerticalStackLayout Grid.Column="1" Margin="5,0,0,0">
-                                    <Label Text="{Binding Name}" Style="{StaticResource BoldLabel}"/>
-                                    <Label Text="{Binding Surname}" Style="{StaticResource BoldLabel}"/>
-                                    <Label Text="{Binding BirthDate, StringFormat='{0:dd.MM.yyyy}'}" Style="{StaticResource GrayLabel}" Margin="0,7,0,0"/>
-                                </VerticalStackLayout>
-                                <Image Grid.Column="0"
+                                    </Grid.GestureRecognizers>
+                                    <VerticalStackLayout Grid.Column="1" Margin="5,0,0,0">
+                                        <Label Text="{Binding Name}" Style="{StaticResource BoldLabel}"/>
+                                        <Label Text="{Binding Surname}" Style="{StaticResource BoldLabel}"/>
+                                        <Label Text="{Binding BirthDate, StringFormat='{0:dd.MM.yyyy}'}" Style="{StaticResource GrayLabel}" Margin="0,7,0,0"/>
+                                    </VerticalStackLayout>
+                                    <Image Grid.Column="0"
                                             Source="test_profile_image.jpg"
                                             HeightRequest="70"
                                             WidthRequest="70"
                                             Aspect="AspectFill"
                                             HorizontalOptions="End"
                                             VerticalOptions="Start">
-                                    <Image.Clip>
-                                        <RoundRectangleGeometry CornerRadius="15" Rect="0,0,70,70" />
-                                    </Image.Clip>
-                                </Image>
-                            </Grid>
+                                        <Image.Clip>
+                                            <RoundRectangleGeometry CornerRadius="15" Rect="0,0,70,70" />
+                                        </Image.Clip>
+                                    </Image>
+                                </Grid>
 
-                            <HorizontalStackLayout Grid.Column="1" HorizontalOptions="End" IsVisible="{Binding pending}" Spacing="5">
-                                <Button Text="✔" 
+                                <HorizontalStackLayout Grid.Column="1" HorizontalOptions="End" IsVisible="{Binding pending}" Spacing="5">
+                                    <Button Text="✔" 
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:TaskDetailViewModel}}, Path=AcceptVolunteerCommand}"
                                         CommandParameter="{Binding Id}"
                                         BackgroundColor="Green"/>
-                                <Button Text="✖" 
+                                    <Button Text="✖" 
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:TaskDetailViewModel}}, Path=RejectVolunteerCommand}"
                                         CommandParameter="{Binding Id}"
                                         BackgroundColor="Red"/>
-                            </HorizontalStackLayout>
-                            <Label Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Center" Text="Принят" TextColor="Green" IsVisible="{Binding accepted}"/>
-                            <Label Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Center" Text="Отклонён" TextColor="Red" IsVisible="{Binding rejected}"/>
-                        </Grid>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+                                </HorizontalStackLayout>
+                                <Label Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Center" Text="Принят" TextColor="Green" IsVisible="{Binding accepted}"/>
+                                <Label Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Center" Text="Отклонён" TextColor="Red" IsVisible="{Binding rejected}"/>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
 
-            <VerticalStackLayout IsVisible="{Binding IsOwner}" Spacing="10" >
-                <Button Text="Начать выполнение" 
+                <VerticalStackLayout IsVisible="{Binding IsOwner}" Spacing="10" >
+                    <Button Text="Начать выполнение" 
                 Command="{Binding StartTaskCommand}"
                 BackgroundColor="Orange"
                             IsEnabled="{Binding IsSearching}"
                             IsVisible="{Binding IsSearching}"/>
 
-                <Button Text="Завершить задачу" 
+                    <Button Text="Завершить задачу" 
                 Command="{Binding CompleteTaskCommand}"
                 BackgroundColor="Green" TextColor="White"
                             IsEnabled="{Binding InProgress}"
                             IsVisible="{Binding InProgress}"/>
 
-                <Button Text="Удалить задачу" 
+                    <Button Text="Удалить задачу" 
                     Command="{Binding DeleteCommand}"
                     BackgroundColor="Red" TextColor="White"/>
-            </VerticalStackLayout>
+                </VerticalStackLayout>
 
-        </VerticalStackLayout>
-    </ScrollView>
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
 </ContentPage>

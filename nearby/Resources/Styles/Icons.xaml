@@ -9,7 +9,7 @@
     <x:String x:Key="Confirm">&#xF88B;</x:String>
     <x:String x:Key="Cancel">&#xF508;</x:String>
     <x:String x:Key="Back">&#xF46B;</x:String>
-    
+    <x:String x:Key="MenuDots">&#xE5D4;</x:String>
     
     <!--Profile-->
     <x:String x:Key="Logout">&#xE9BA;</x:String>

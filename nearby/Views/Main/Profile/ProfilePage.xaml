@@ -2,7 +2,6 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="nearby.Views.Main.ProfilePage"
-             xmlns:header="clr-namespace:nearby.Views.Headers"
              xmlns:models="clr-namespace:nearby.Models"
              xmlns:elements="clr-namespace:nearby.ContentViews.Elements"
              xmlns:local="clr-namespace:nearby.ViewModels"
@@ -40,11 +39,9 @@
 
                         <!-- Имя и дата рождения -->
                         <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="0">
-                            <Label Text="{Binding User.Name}" Style="{StaticResource SectionTitle}" Margin="0,0,0,2"/>
-                            <Label Text="{Binding User.Surname}" Style="{StaticResource SectionTitle}" Margin="0,0,0,4"/>
-                            <Label Text="{Binding User.BirthDate, StringFormat='{0:dd.MM.yyyy}'}" 
-                                   Style="{StaticResource EditLabel}"
-                                   FontSize="13"/>
+                            <Label Text="{Binding User.Name}" Style="{StaticResource BoldCommonLabel}" Margin="0"/>
+                            <Label Text="{Binding User.Surname}" Style="{StaticResource BoldCommonLabel}" Margin="0"/>
+                            <Label Text="{Binding User.BirthDate, StringFormat='{0:dd.MM.yyyy}'}" Style="{StaticResource BoldCommonLabel}" TextColor="{StaticResource Gray500}" FontSize="14"/>
                         </VerticalStackLayout>
 
                         <!-- Кнопки: Чат / Выход -->

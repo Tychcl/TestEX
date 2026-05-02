@@ -11,7 +11,7 @@
              Shell.NavBarIsVisible="False"
              x:Name="thisControl">
     <Grid RowDefinitions="auto, *" BackgroundColor="Transparent">
-        <header:BaseHeaderView Grid.Row="0" BackCommand="{Binding GoBackCommand}" ConfirmCommand="{Binding SaveCommand}" HaveCC="True" Text="{Binding Title, Source={x:Reference thisControl}}"/>
+        <header:BaseHeaderView Grid.Row="0" BackCommand="{Binding GoBackCommand}" Command="{Binding SaveCommand}" MenuIsVisible="True" Text="{Binding Title, Source={x:Reference thisControl}}" Icon="{StaticResource Confirm}"/>
         <ScrollView Grid.Row="1" Orientation="Vertical">
             <VerticalStackLayout Padding="0,0,0,20">
                 <Border Style="{StaticResource EditSection}">

@@ -11,9 +11,9 @@
                 <Label Style="{StaticResource SectionTitle}" Text="{Binding Text, Source={x:Reference thisControl}}" HorizontalOptions="Center" Margin="0" Padding="0" VerticalTextAlignment="Center"/>
             </HorizontalStackLayout>
         </Border>
-        <Border Grid.Column="1" Style="{StaticResource EditSection}" Padding="0" Margin="12,0,0,0" IsVisible="{Binding HaveCC, Source={x:Reference thisControl}}">
+        <Border Grid.Column="1" Style="{StaticResource EditSection}" Padding="0" Margin="12,0,0,0" IsVisible="{Binding MenuIsVisible, Source={x:Reference thisControl}}">
             <HorizontalStackLayout>
-                <ImageButton local:IconHelper.Icon="{StaticResource Confirm}" local:IconHelper.Color="CTextPrimary" Command="{Binding ConfirmCommand, Source={x:Reference thisControl}}" HorizontalOptions="Center" Margin="0"/>
+                <ImageButton local:IconHelper.Icon="{Binding Icon, Source={x:Reference thisControl}}" local:IconHelper.Color="CTextPrimary" Command="{Binding Command, Source={x:Reference thisControl}}" HorizontalOptions="Center" Margin="0"/>
             </HorizontalStackLayout>
         </Border>
     </Grid>

@@ -834,7 +834,7 @@ class TasksController
                 return new Response(404, ['error' => 'Task not found']);
             }
 
-            if ($task->getCreatorId() != $userId) {
+            if ($task->getCreatedByUserId() != $userId) {
                 return new Response(403, ['error' => 'You can only edit your own tasks']);
             }
 

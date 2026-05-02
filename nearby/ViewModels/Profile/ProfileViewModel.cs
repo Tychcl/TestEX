@@ -84,7 +84,7 @@ namespace nearby.ViewModels
         [RelayCommand]
         private async Task TaskSelectedAsync(TaskItem task)
         {
-            await Shell.Current.GoToAsync(nameof(TaskDetailPage), new Dictionary<string, object?> { { "id", task.Id } });
+            await Shell.Current.GoToAsync(nameof(TaskDetailPage), new Dictionary<string, object?> { { "task", task } });
         }
 
         [RelayCommand(CanExecute = nameof(IsOwnProfile))]

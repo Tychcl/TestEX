@@ -22,22 +22,31 @@ namespace nearby.ContentViews.Headers
             set => SetValue(BackCommandProperty, value);
         }
 
-        public static readonly BindableProperty ConfirmCommandProperty =
-        BindableProperty.Create(nameof(ConfirmCommand), typeof(ICommand), typeof(BaseHeaderView),
+        public static readonly BindableProperty CommandProperty =
+        BindableProperty.Create(nameof(Command), typeof(ICommand), typeof(BaseHeaderView),
             null, BindingMode.OneWay);
-        public ICommand ConfirmCommand
+        public ICommand Command
         {
-            get => (ICommand)GetValue(ConfirmCommandProperty);
-            set => SetValue(ConfirmCommandProperty, value);
+            get => (ICommand)GetValue(CommandProperty);
+            set => SetValue(CommandProperty, value);
         }
 
-        public static readonly BindableProperty HaveCCProperty =
-        BindableProperty.Create(nameof(HaveCC), typeof(bool), typeof(BaseHeaderView),
+        public static readonly BindableProperty MenuIsVisibleProperty =
+        BindableProperty.Create(nameof(MenuIsVisible), typeof(bool), typeof(BaseHeaderView),
             default(bool), BindingMode.OneWay);
-        public bool HaveCC
+        public bool MenuIsVisible
         {
-            get => (bool)GetValue(HaveCCProperty);
-            set => SetValue(HaveCCProperty, value);
+            get => (bool)GetValue(MenuIsVisibleProperty);
+            set => SetValue(MenuIsVisibleProperty, value);
+        }
+
+        public static readonly BindableProperty IconProperty =
+        BindableProperty.Create(nameof(Icon), typeof(string), typeof(BaseHeaderView),
+            default(string), BindingMode.OneWay);
+        public string Icon
+        {
+            get => (string)GetValue(IconProperty);
+            set => SetValue(IconProperty, value);
         }
 
         public BaseHeaderView()

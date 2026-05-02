@@ -11,26 +11,24 @@ using nearby.Views.Main;
 
 namespace nearby.ViewModels
 {
-    [QueryProperty(nameof(TaskTemp), "task")]
+    [QueryProperty(nameof(Task), "task")]
     public partial class TaskAddEditViewModel : BaseViewModel
     {
         private readonly ITaskService _taskService;
         private readonly IUserService _userService;
 
-        private TaskItem _task;
-
         [ObservableProperty]
-        private TaskItem _taskTemp;
-        partial void OnTaskTempChanged(TaskItem item)
+        private TaskItem _task = new TaskItem();
+        partial void OnTaskChanged(TaskItem item)
         {
-            _task = TaskTemp;
-            _title = _task.Title;
-            _description = _task.Description ?? string.Empty;
-            _neededVolunteers = _task.NeededVolunteers;
-            _priority = _task.Priority;
-            _location = _task.Location ?? string.Empty;
-            _reward = _task.Reward;
-            _deadline = _task.Deadline;
+            Title = _task.Title;
+            Description = _task.Description ?? string.Empty;
+            NeededVolunteers = _task.NeededVolunteers;
+            Priority = _task.Priority;
+            Location = _task.Location ?? string.Empty;
+            Reward = _task.Reward;
+            Deadline = _task.Deadline;
+            ValidateAllProperties();
         }
 
         [ObservableProperty]
@@ -83,17 +81,10 @@ namespace nearby.ViewModels
         [ObservableProperty]
         private decimal _reward;
 
-        partial void OnTitleChanged(string value) => _task.Title = value;
-        partial void OnNeededVolunteersChanged(int value) => _task.NeededVolunteers = value;
-        partial void OnPriorityChanged(string value) => _task.Priority = value;
-        partial void OnRewardChanged(decimal value) => _task.Reward = value;
-        partial void OnDeadlineChanged(DateTime value) => _task.Deadline = value;
-
         public TaskAddEditViewModel(ITaskService ts, IUserService us)
         {
             _taskService = ts;
             _userService = us;
-            TaskTemp = new TaskItem();
             ValidateAllProperties();
         }
 
@@ -104,8 +95,15 @@ namespace nearby.ViewModels
             {
                 ValidateAllProperties();
                 if (HasErrors) return;
-                var response = await _taskService.CreateTaskAsync(_task);
-                await ShowSuccessfulAsync("Задача была создана");
+                _task.Title = _title;
+                _task.Description = _description;
+                _task.NeededVolunteers = _neededVolunteers;
+                _task.Priority = _priority;
+                _task.Deadline = _deadline;
+                _task.Location = _location;
+                _task.Reward = _reward;
+                var response = Task.Id != 0 ? await _taskService.UpdateTaskAsync(_task.Id, _task) : await _taskService.CreateTaskAsync(_task);
+                await ShowSuccessfulAsync(Task.Id != 0 ? "Задача была обновлена" : "Задача была создана");
                 await GoBackCommand.ExecuteAsync(null);
             }
             catch (Exception ex)

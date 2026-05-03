@@ -10,4 +10,5 @@
     <Color x:Key="CTextSecondary">#9CA3AF</Color>
     <Color x:Key="CError">#F87171</Color>
     <Color x:Key="CSuccess">#4ADE80</Color>
+    <Color x:Key="CWarning">#F59E0B</Color>
 </ResourceDictionary>

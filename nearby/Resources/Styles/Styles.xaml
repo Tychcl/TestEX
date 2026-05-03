@@ -505,4 +505,20 @@
         <Setter Property="FontAttributes" Value="Bold" />
         <Setter Property="FontSize" Value="14" />
     </Style>
+
+    <Style x:Key="ImageButtonBorder" TargetType="Button" BasedOn="{StaticResource BorderButton}">
+        <Setter Property="BackgroundColor" Value="Transparent"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="TextColor" Value="{DynamicResource CTextPrimary}"/>
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style x:Key="ImageButtonIB" TargetType="ImageButton">
+        <Setter Property="BorderWidth" Value="3"/>
+        <Setter Property="BorderColor" Value="{DynamicResource CBorder}"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Margin" Value="0"/>
+    </Style>
 </ResourceDictionary>

@@ -10,4 +10,5 @@
     <Color x:Key="CTextSecondary">#5A6B80</Color>   <!-- Вторичный текст (дата, подписи) -->
     <Color x:Key="CError">#DC2626</Color>
     <Color x:Key="CSuccess">#059669</Color>
+    <Color x:Key="CWarning">#D97706</Color>
 </ResourceDictionary>

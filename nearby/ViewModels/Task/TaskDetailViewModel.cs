@@ -49,6 +49,8 @@ namespace nearby.ViewModels
 
         [ObservableProperty]
         private bool _isSearching;
+        [ObservableProperty]
+        private bool _completed;
 
         private bool _isInitialized;
 
@@ -71,6 +73,7 @@ namespace nearby.ViewModels
             PageTitle = value.Title;
             IsSearching = value.Status == "searching";
             InProgress = value.Status == "in_progress";
+            Completed = value.Status == "completed";
         }
 
         partial void OnIsOwnerChanged(bool value) => RefreshCommands();
@@ -199,6 +202,8 @@ namespace nearby.ViewModels
             {
                 var response = await _taskService.StartTaskAsync(Task.Id);
                 Task.Status = "in_progress";
+                IsSearching = false;
+                InProgress = true;
                 await ShowMsgAsync("Успех", "Задача начата", "OK");
             }
             catch (Exception e)
@@ -218,6 +223,8 @@ namespace nearby.ViewModels
                 if (!confirm) return;
                 var response = await _taskService.CompleteTaskAsync(Task.Id);
                 Task.Status = "completed";
+                InProgress = false;
+                Completed = true;
                 await ShowMsgAsync("Успех", "Задача завершена, награда начислена", "OK");
             }
             catch (Exception ex)

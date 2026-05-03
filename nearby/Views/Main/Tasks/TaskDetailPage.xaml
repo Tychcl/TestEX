@@ -75,10 +75,9 @@
                     </VerticalStackLayout>
                 </Border>
                 <Button Style="{StaticResource BorderButton}" Margin="20,0" Text="Откликнуться" Command="{Binding VolunteerCommand}" IsVisible="{Binding CanVolunteer}"/>
-                <Border Style="{StaticResource EditSection}" IsVisible="{Binding HasVolunteered}">
+                <Border Style="{StaticResource EditSection}" IsVisible="{Binding HasVolunteered}" Padding="6">
                     <Label Style="{StaticResource SectionTitle}" Text="{Binding VolunteerStatus, StringFormat='Ваш статус: {0}'}" Margin="0"/>
                 </Border>
-
                 <Border Style="{StaticResource EditSection}" IsVisible="{Binding IsOwner}">
                     <VerticalStackLayout>
                     <Label Style="{StaticResource SectionTitle}" Text="Кандидаты"/>
@@ -107,18 +106,26 @@
                                                 <Label Text="{Binding Surname}" Style="{StaticResource BoldCommonLabel}" Margin="0"/>
                                                 <Label Text="{Binding BirthDate, StringFormat='{0:dd.MM.yyyy}'}" Style="{StaticResource BoldCommonLabel}" TextColor="{StaticResource Gray500}" FontSize="14"/>
                                             </VerticalStackLayout>
-                                            <HorizontalStackLayout Grid.Column="3" HorizontalOptions="End" IsVisible="{Binding pending}" Spacing="5">
-                                                <Button Text="✔" 
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:TaskDetailViewModel}}, Path=AcceptVolunteerCommand}"
-                                        CommandParameter="{Binding Id}"
-                                        BackgroundColor="Green"/>
-                                                <Button Text="✖" 
-                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:TaskDetailViewModel}}, Path=RejectVolunteerCommand}"
-                                        CommandParameter="{Binding Id}"
-                                        BackgroundColor="Red"/>
+                                            <HorizontalStackLayout Grid.Column="3" HorizontalOptions="End" IsVisible="{Binding pending}" Spacing="5" VerticalOptions="Center">
+                                                <Button ih:IconHelper.Icon="{StaticResource Confirm}" 
+                                                        ih:IconHelper.Color="CSuccess" 
+                                                        Style="{StaticResource ImageButtonBorder}" 
+                                                        ih:IconHelper.Size="36" 
+                                                        BorderColor="{DynamicResource CSuccess}"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:TaskDetailViewModel}}, Path=AcceptVolunteerCommand}"
+                                                        CommandParameter="{Binding Id}"/>
+                                                <Button ih:IconHelper.Icon="{StaticResource Cancel}" 
+                                                        ih:IconHelper.Color="CError" 
+                                                        Style="{StaticResource ImageButtonBorder}" 
+                                                        ih:IconHelper.Size="36" 
+                                                        BorderColor="{DynamicResource CError}"
+                                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:TaskDetailViewModel}}, Path=RejectVolunteerCommand}"
+                                                        CommandParameter="{Binding Id}"/>
                                             </HorizontalStackLayout>
-                                            <Label Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Center" Text="Принят" TextColor="Green" IsVisible="{Binding accepted}"/>
-                                            <Label Grid.Column="1" VerticalOptions="Center" HorizontalOptions="Center" Text="Отклонён" TextColor="Red" IsVisible="{Binding rejected}"/>
+                                            <HorizontalStackLayout Grid.Column="3" HorizontalOptions="End" IsVisible="{Binding pending, Converter={StaticResource InverseBoolConverter}}" VerticalOptions="Center">
+                                                <Label Style="{StaticResource SectionTitle}" VerticalTextAlignment="Center" VerticalOptions="Center" Text="Принят" TextColor="{DynamicResource CSuccess}" IsVisible="{Binding accepted}" Margin="0"/>
+                                                <Label Style="{StaticResource SectionTitle}" VerticalTextAlignment="Center" VerticalOptions="Center" Text="Отклонён" TextColor="{DynamicResource CError}" IsVisible="{Binding rejected}" Margin="0"/>
+                                            </HorizontalStackLayout>
                                         </Grid>
                                     </Border>
                                 </DataTemplate>
@@ -127,19 +134,22 @@
                     </VerticalStackLayout>
                 </Border>
                 <VerticalStackLayout IsVisible="{Binding IsOwner}" Spacing="10" >
-                    <Button Text="Начать выполнение" 
-                Command="{Binding StartTaskCommand}"
-                BackgroundColor="Orange"
+                    <Button Style="{StaticResource BorderButton}" 
+                            Margin="20,0" Text="Начать выполнение" 
+                            Command="{Binding StartTaskCommand}" 
                             IsEnabled="{Binding IsSearching}"
-                            IsVisible="{Binding IsSearching}"/>
-
-                    <Button Text="Завершить задачу" 
-                Command="{Binding CompleteTaskCommand}"
-                BackgroundColor="Green" TextColor="White"
+                            IsVisible="{Binding IsSearching}"
+                            BackgroundColor="{DynamicResource CWarning}"/>
+                    <Button Style="{StaticResource BorderButton}" 
+                            Margin="20,0" Text="Закончить выполнение" 
+                            Command="{Binding CompleteTaskCommand}" 
                             IsEnabled="{Binding InProgress}"
-                            IsVisible="{Binding InProgress}"/>
+                            IsVisible="{Binding InProgress}"
+                            BackgroundColor="{DynamicResource CSuccess}"/>
+                    <Border Style="{StaticResource EditSection}" Stroke="{DynamicResource CSuccess}" IsVisible="{Binding Completed}" Padding="6">
+                        <Label Style="{StaticResource SectionTitle}" Text="Задача выполнена" Margin="0" HorizontalOptions="Center" TextColor="{DynamicResource CSuccess}"/>
+                    </Border>
                 </VerticalStackLayout>
-
             </VerticalStackLayout>
         </ScrollView>
     </Grid>

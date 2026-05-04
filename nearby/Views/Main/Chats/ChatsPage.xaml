@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:header="clr-namespace:nearby.ContentViews.Headers"
              x:Class="nearby.Views.Main.ChatsPage"
              xmlns:viewModels="clr-namespace:nearby.ViewModels"
              xmlns:models="clr-namespace:nearby.Models"
              xmlns:converters="clr-namespace:nearby.Classes.Interface.Converters"
              Title="Чаты"
-             x:DataType="viewModels:ChatsViewModel">
-    <Shell.TitleView>
-        <StackLayout Orientation="Horizontal" HorizontalOptions="FillAndExpand" VerticalOptions="Center">
-            <Label Style="{StaticResource Headline}" Text="Чаты" VerticalOptions="Center" HorizontalOptions="StartAndExpand"/>
-            <Button Text="Создать группу" Command="{Binding CreateGroupCommand}" HorizontalOptions="End" Margin="5,0" Style="{StaticResource Border}"/>
-        </StackLayout>
-    </Shell.TitleView>
-
-    <Grid Padding="5">
+             x:DataType="viewModels:ChatsViewModel"
+             x:Name="thisControl"
+             Shell.NavBarIsVisible="False">
+    <VerticalStackLayout>
+        <header:BaseHeaderView Text="{Binding Title, Source={x:Reference thisControl}}" BackIsVisible="False" Icon="{StaticResource ChatCreate}" MenuIsVisible="True" Command="{Binding CreateChatCommand}"/>
         <RefreshView IsRefreshing="{Binding IsRefreshing}" 
                      Command="{Binding RefreshCommand}"
                      VerticalOptions="Fill">
@@ -47,5 +44,5 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </RefreshView>
-    </Grid>
+    </VerticalStackLayout>
 </ContentPage>

@@ -178,7 +178,7 @@
                                 <Border Padding="16,10"
                                         StrokeThickness="0">
                                     <VerticalStackLayout>
-                                        <Label Style="{StaticResource CommonLabel}" Text="Созданные"/>
+                                        <Label Style="{StaticResource CommonLabel}" Text="Актуальные"/>
                                         <BoxView BackgroundColor="{Binding SelectedCategory, Converter={StaticResource ColorConverter}, ConverterParameter={x:Static local:TaskCategory.Created}}" HeightRequest="2" Margin="0,3,0,0"/>
                                     </VerticalStackLayout>
                                     <Border.GestureRecognizers>

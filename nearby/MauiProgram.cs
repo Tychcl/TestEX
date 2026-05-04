@@ -39,6 +39,9 @@ namespace nearby
             builder.Services.AddSingleton<ITaskService, TaskService>();
             builder.Services.AddSingleton<IChatService, ChatService>();
 
+            builder.Services.AddTransient<CreateChatViewModel>();
+            builder.Services.AddTransient<CreateChatPage>();
+
             //=====================
             //ВиевМодели
             //=====================

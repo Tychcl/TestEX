@@ -10,8 +10,8 @@ public partial class MainShell : Shell
 
         Routing.RegisterRoute(nameof(TaskDetailPage), typeof(TaskDetailPage));
         Routing.RegisterRoute(nameof(TaskAddEditPage), typeof(TaskAddEditPage));
-        
 
+        Routing.RegisterRoute(nameof(CreateChatPage), typeof(CreateChatPage));
         Routing.RegisterRoute(nameof(ChatDetailPage), typeof(ChatDetailPage));
         //настройки
         Routing.RegisterRoute(nameof(ThemeChangePage), typeof(ThemeChangePage));

@@ -32,6 +32,87 @@ use Propel\Runtime\Map\TableMap;
 class UserController
 {
 
+    #[OA\Get(
+        path: '/api/users/search',
+        tags: ['Users'],
+        summary: 'Поиск пользователей по имени, телефону или email',
+        parameters: [
+            new OA\Parameter(
+                name: 'q',
+                in: 'query',
+                required: true,
+                schema: new OA\Schema(type: 'string'),
+                description: 'Строка поиска (по full_name, phone, email)'
+            ),
+            new OA\Parameter(
+                name: 'limit',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', default: 10),
+                description: 'Количество результатов'
+            ),
+            new OA\Parameter(
+                name: 'offset',
+                in: 'query',
+                required: false,
+                schema: new OA\Schema(type: 'integer', default: 0),
+                description: 'Смещение для пагинации'
+            )
+        ],
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Список найденных пользователей',
+                content: new OA\JsonContent(
+                    type: 'array',
+                    items: new OA\Items(ref: '#/components/schemas/UserProfile')
+                )
+            ),
+            new OA\Response(
+                response: 400,
+                description: 'Не указан параметр q',
+                content: new OA\JsonContent(
+                    properties: [
+                        new OA\Property(property: 'error', type: 'string')
+                    ]
+                )
+            )
+        ]
+    )]
+    #[Route("/search", "GET", false)]
+    public function searchUsers($params)
+    {
+        try {
+            $q = $params['q'] ?? null;
+            if (!$q || trim($q) === '') {
+                return new Response(400, ['error' => 'Search query required']);
+            }
+
+            $limit = isset($params['limit']) ? (int)$params['limit'] : 10;
+            $offset = isset($params['offset']) ? (int)$params['offset'] : 0;
+
+            $likePattern = '%' . $q . '%';
+            $users = UsersQuery::create()
+                ->filterByFullName($likePattern, \Propel\Runtime\ActiveQuery\Criteria::LIKE)
+                ->_or()
+                ->filterByPhone($likePattern, \Propel\Runtime\ActiveQuery\Criteria::LIKE)
+                ->_or()
+                ->filterByEmail($likePattern, \Propel\Runtime\ActiveQuery\Criteria::LIKE)
+                ->limit($limit)
+                ->offset($offset)
+                ->find();
+
+            $result = [];
+            foreach ($users as $user) {
+                $result[] = $this->formatUserProfile($user);
+            }
+
+            return new Response(200, $result);
+        } catch (\Exception $ex) {
+            return Validate::Ex($ex);
+        }
+    }
+
     /**
      * Регистрация нового пользователя
      */

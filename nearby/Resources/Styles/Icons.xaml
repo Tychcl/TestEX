@@ -44,8 +44,8 @@
 
     <!--ADD-->
     <x:String x:Key="AddCircle">&#xE147;</x:String>
-    <x:String x:Key="AddTask">&#xF23A;</x:String> 
-    <x:String x:Key="AddNote">&#xF23A;</x:String>
+    <x:String x:Key="AddTask">&#xF23A;</x:String>
+    <x:String x:Key="AddNote">&#xF848;</x:String>
     <x:String x:Key="AddBox">&#xE146;</x:String> 
     
     <!--Edit-->

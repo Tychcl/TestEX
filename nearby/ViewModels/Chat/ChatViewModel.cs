@@ -99,9 +99,9 @@ namespace nearby.ViewModels
         }
 
         [RelayCommand]
-        private async Task CreateGroupAsync()
+        private async Task CreateChatAsync()
         {
-            await Application.Current.MainPage.DisplayAlert("Создание группы", "Функция в разработке", "OK");
+            await Shell.Current.GoToAsync(nameof(CreateChatPage));
         }
     }
 }

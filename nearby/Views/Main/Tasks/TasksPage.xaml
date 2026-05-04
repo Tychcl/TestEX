@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:header="clr-namespace:nearby.ContentViews.Headers"
              xmlns:local="clr-namespace:nearby"
              x:Class="nearby.Views.Main.TasksPage"
              xmlns:viewModels="clr-namespace:nearby.ViewModels"
              xmlns:models="clr-namespace:nearby.Models"
              Title="Задачи"
              xmlns:elements="clr-namespace:nearby.ContentViews.Elements"
-             x:DataType="viewModels:TasksViewModel">
+             x:DataType="viewModels:TasksViewModel"
+             x:Name="thisControl"
+             Shell.NavBarIsVisible="False">
 
-    <Grid RowDefinitions="Auto, *" RowSpacing="10">
-        <Border Style="{StaticResource Card}" Grid.Row="0">
+    <Grid RowDefinitions="Auto, Auto, *" RowSpacing="10">
+        <header:BaseHeaderView Grid.Row="0" Text="{Binding Title, Source={x:Reference thisControl}}" BackIsVisible="False" Icon="{StaticResource AddNote}" MenuIsVisible="True" Command="{Binding GoToCreateCommand}"/>
+        <Border Style="{StaticResource Card}" Grid.Row="1">
             <VerticalStackLayout Spacing="5">
                 <Grid ColumnDefinitions="*, Auto">
                     <Label Text="Фильтры" Style="{StaticResource SectionTitle}" Margin="0" Grid.Column="0" VerticalOptions="Center"/>
@@ -42,8 +46,7 @@
                 </HorizontalStackLayout>
             </VerticalStackLayout>
         </Border>
-
-        <RefreshView Grid.Row="1" 
+        <RefreshView Grid.Row="2" 
                      IsRefreshing="{Binding IsRefreshing}" 
                      Command="{Binding RefreshCommand}"
                      VerticalOptions="Fill">
@@ -59,20 +62,5 @@
                 </CollectionView.ItemTemplate>
             </CollectionView>
         </RefreshView>
-
-        <Border Grid.Row="1"  
-                Style="{StaticResource Button}"
-                BackgroundColor="{DynamicResource CBackground}"
-                StrokeShape="RoundRectangle 30"
-                WidthRequest="50" HeightRequest="50"
-                VerticalOptions="End"
-                HorizontalOptions="End"
-                Margin="0,0,25,25"
-                Padding="0">
-            <Image local:IconHelper.Icon="{StaticResource AddCircle}" local:IconHelper.Size="36" Aspect="AspectFit"/>
-            <Border.GestureRecognizers>
-                <TapGestureRecognizer Command="{Binding GoToCreateCommand}"/>
-            </Border.GestureRecognizers>
-        </Border>
     </Grid>
 </ContentPage>

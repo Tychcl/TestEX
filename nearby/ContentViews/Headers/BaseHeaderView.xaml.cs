@@ -40,6 +40,15 @@ namespace nearby.ContentViews.Headers
             set => SetValue(MenuIsVisibleProperty, value);
         }
 
+        public static readonly BindableProperty BackIsVisibleProperty =
+        BindableProperty.Create(nameof(BackIsVisible), typeof(bool), typeof(BaseHeaderView),
+            true, BindingMode.OneWay);
+        public bool BackIsVisible
+        {
+            get => (bool)GetValue(BackIsVisibleProperty);
+            set => SetValue(BackIsVisibleProperty, value);
+        }
+
         public static readonly BindableProperty IconProperty =
         BindableProperty.Create(nameof(Icon), typeof(string), typeof(BaseHeaderView),
             default(string), BindingMode.OneWay);

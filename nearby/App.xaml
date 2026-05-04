@@ -22,6 +22,7 @@
             <converters:LengthConverter x:Key="LengthConverter"/>
             <converters:MessageAlignmentConverter x:Key="MessageAlignmentConverter"/>
             <converters:IsNotNullConverter x:Key="IsNotNullConverter"/>
+            <converters:AndConverter x:Key="AndConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

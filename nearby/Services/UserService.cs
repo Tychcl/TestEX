@@ -68,4 +68,23 @@ public partial class UserService : ObservableObject, IUserService
         //this.OnPropertyChanged(nameof(IUserService.CurrentUser));
         return new ApiResponse<User>("Данные обновленны", user.Data);
     }
+
+    public async Task<ApiResponse<List<User>>> SearchUsersAsync(string query, int limit = 10, int offset = 0)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+            return new ApiResponse<List<User>>("Пустой поисковый запрос", new List<User>());
+
+        var url = $"users/search?q={Uri.EscapeDataString(query)}&limit={limit}&offset={offset}";
+        var response = await _apiClient.GetAsync(url);
+
+        if (response is null)
+            throw new Exception("Не удалось подключиться к серверу");
+
+        var json = await response.Content.ReadAsStringAsync();
+        if (!response.IsSuccessStatusCode)
+            throw new Exception(json);
+
+        var users = JsonConvert.DeserializeObject<List<User>>(json);
+        return new ApiResponse<List<User>>("Результаты поиска", users);
+    }
 }

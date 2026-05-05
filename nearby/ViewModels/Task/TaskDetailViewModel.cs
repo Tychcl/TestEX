@@ -1,16 +1,16 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using nearby.Interfaces;
+using nearby.Classes;
 using nearby.ContentViews.Elements;
+using nearby.Interfaces;
 using nearby.Models;
 using nearby.Services;
-using nearby.Classes;
 using nearby.Views.Main;
-using CommunityToolkit.Maui.Extensions;
-using System.Diagnostics;
 
 namespace nearby.ViewModels
 {
@@ -21,13 +21,16 @@ namespace nearby.ViewModels
         private readonly IUserService _userService;
 
         [ObservableProperty]
+        private View _creatorProfileView;
+
+        [ObservableProperty]
         private ObservableCollection<PopupItem> _popupItems = new();
 
         [ObservableProperty]
-        private User _creator = null!;
+        private User _creator = new();
 
         [ObservableProperty]
-        private TaskItem _task = null!;
+        private TaskItem _task = new();
 
         [ObservableProperty]
         private bool _isOwner;
@@ -260,6 +263,11 @@ namespace nearby.ViewModels
             await Shell.Current.GoToAsync(nameof(ProfilePage), new Dictionary<string, object?> { { "id", userId } });
         }
 
+        [RelayCommand]
+        private async Task StartChatAsync()
+        {
+            await ShowMsgAsync("Тут типо переход", "чат создан и все такое");
+        }
 
         [RelayCommand]
         private async Task OpenPopupMenuAsync()

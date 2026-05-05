@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Maui;
 using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Platform;
 using nearby.Classes;
 using nearby.Interfaces;
 using nearby.Services;
@@ -16,7 +17,17 @@ namespace nearby
         {
             var builder = MauiApp.CreateBuilder();
             builder
-                .UseMauiApp<App>().UseMauiCommunityToolkit()
+                .UseMauiApp<App>()
+                .ConfigureMauiHandlers(handlers =>
+                {
+                    #if ANDROID
+                    handlers.AddHandler<Entry, Microsoft.Maui.Handlers.EntryHandler>();
+                    Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping("NoUnderline", (handler, view) =>
+                    {
+                        handler.PlatformView.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(Colors.Transparent.ToPlatform());
+                    });
+                    #endif
+                }).UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Bold.ttf", "OpenSansBold");

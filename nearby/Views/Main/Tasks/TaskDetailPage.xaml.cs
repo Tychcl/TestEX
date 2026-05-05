@@ -10,4 +10,9 @@ public partial class TaskDetailPage : ContentPage
         BindingContext = viewModel;
         InitializeComponent();
     }
+
+    protected override void OnAppearing()
+    {
+        base.OnAppearing();
+    }
 }

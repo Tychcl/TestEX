@@ -23,6 +23,7 @@
             <converters:MessageAlignmentConverter x:Key="MessageAlignmentConverter"/>
             <converters:IsNotNullConverter x:Key="IsNotNullConverter"/>
             <converters:AndConverter x:Key="AndConverter"/>
+            <converters:DoubleToRectConverter x:Key="DoubleToRectConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

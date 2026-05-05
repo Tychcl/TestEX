@@ -4,6 +4,7 @@
              x:Class="nearby.Views.Main.TaskDetailPage"
              xmlns:viewModels="clr-namespace:nearby.ViewModels"
              xmlns:header="clr-namespace:nearby.ContentViews.Headers"
+             xmlns:element="clr-namespace:nearby.ContentViews.Elements"
              xmlns:models="clr-namespace:nearby.Models"
              xmlns:ih="clr-namespace:nearby"
              x:DataType="viewModels:TaskDetailViewModel"
@@ -44,34 +45,19 @@
                     </Border.GestureRecognizers>
                     <VerticalStackLayout>
                         <Label Style="{StaticResource SectionTitle}" Text="Заказчик"/>
-                        <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="8" Padding="0" Margin="0">
-                            <Border Grid.Column="0"
+                        <element:MiniUserProfile User="{Binding Creator}" ImageSize="70" IsFullNameMode="False" >
+                            <element:MiniUserProfile.ExtraContent>
+                                <Border Style="{StaticResource Button}" 
                                         WidthRequest="70" HeightRequest="70"
-                                        Stroke="{StaticResource CBorder}"
-                                        StrokeThickness="2"
-                                        StrokeShape="RoundRectangle 12"
-                                        Margin="0">
-                                <Image Source="{Binding Creator.ProfilePicture, TargetNullValue='test_profile_image.jpg'}" Aspect="AspectFill">
-                                    <Image.Clip>
-                                        <RoundRectangleGeometry CornerRadius="12" Rect="0,0,70,70"/>
-                                    </Image.Clip>
-                                </Image>
-                            </Border>
-                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="0">
-                                <Label Text="{Binding Creator.Name}" Style="{StaticResource BoldCommonLabel}" Margin="0"/>
-                                <Label Text="{Binding Creator.Surname}" Style="{StaticResource BoldCommonLabel}" Margin="0"/>
-                                <Label Text="{Binding Creator.BirthDate, StringFormat='{0:dd.MM.yyyy}'}" Style="{StaticResource BoldCommonLabel}" TextColor="{StaticResource Gray500}" FontSize="14"/>
-                            </VerticalStackLayout>
-                            <Border Style="{StaticResource Button}" 
-                                    WidthRequest="70" HeightRequest="70"
-                                    IsVisible="{Binding IsOwner, Converter={StaticResource InverseBoolConverter}}"
-                                    Margin="0" Grid.Column="2">
-                                <Image ih:IconHelper.Icon="{StaticResource Chat}" Scale="0.7"/>
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding StartChatCommand}"/>
-                                </Border.GestureRecognizers>
-                            </Border>
-                        </Grid>
+                                        IsVisible="{Binding IsOwner, Converter={StaticResource InverseBoolConverter}}"
+                                        Margin="0" Grid.Column="2">
+                                    <Image ih:IconHelper.Icon="{StaticResource Chat}" Scale="0.7"/>
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding StartChatCommand}"/>
+                                    </Border.GestureRecognizers>
+                                </Border>
+                            </element:MiniUserProfile.ExtraContent>
+                        </element:MiniUserProfile>
                     </VerticalStackLayout>
                 </Border>
                 <Button Style="{StaticResource BorderButton}" Margin="20,0" Text="Откликнуться" Command="{Binding VolunteerCommand}" IsVisible="{Binding CanVolunteer}"/>
@@ -85,48 +71,35 @@
                             <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="models:TaskVolunteerInfo">
                                     <Border Style="{StaticResource EditSection}" Margin="0,0,0,12">
-                                        <Grid ColumnDefinitions="Auto, *, Auto" ColumnSpacing="8" Padding="0" Margin="0">
-                                            <Grid.GestureRecognizers>
+                                        <element:MiniUserProfile User="{Binding .}" ImageSize="70">
+                                            <element:MiniUserProfile.GestureRecognizers>
                                                 <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:TaskDetailViewModel}}, Path=GoToProfileCommand}" CommandParameter="{Binding Id}"/>
-                                            </Grid.GestureRecognizers>
-                                            <Border Grid.Column="0"
-                                                WidthRequest="70" HeightRequest="70"
-                                                Stroke="{StaticResource CBorder}"
-                                                StrokeThickness="2"
-                                                StrokeShape="RoundRectangle 12"
-                                                Margin="0">
-                                                <Image Source="{Binding ProfilePicture, TargetNullValue='test_profile_image.jpg'}" Aspect="AspectFill">
-                                                    <Image.Clip>
-                                                        <RoundRectangleGeometry CornerRadius="12" Rect="0,0,70,70"/>
-                                                    </Image.Clip>
-                                                </Image>
-                                            </Border>
-                                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="0">
-                                                <Label Text="{Binding Name}" Style="{StaticResource BoldCommonLabel}" Margin="0"/>
-                                                <Label Text="{Binding Surname}" Style="{StaticResource BoldCommonLabel}" Margin="0"/>
-                                                <Label Text="{Binding BirthDate, StringFormat='{0:dd.MM.yyyy}'}" Style="{StaticResource BoldCommonLabel}" TextColor="{StaticResource Gray500}" FontSize="14"/>
-                                            </VerticalStackLayout>
-                                            <HorizontalStackLayout Grid.Column="3" HorizontalOptions="End" IsVisible="{Binding pending}" Spacing="5" VerticalOptions="Center">
-                                                <Button ih:IconHelper.Icon="{StaticResource Confirm}" 
+                                            </element:MiniUserProfile.GestureRecognizers>
+                                            <element:MiniUserProfile.ExtraContent>
+                                                <Grid>
+                                                    <HorizontalStackLayout HorizontalOptions="End" IsVisible="{Binding pending}" Spacing="5" VerticalOptions="Center">
+                                                        <Button ih:IconHelper.Icon="{StaticResource Confirm}" 
                                                         ih:IconHelper.Color="CSuccess" 
                                                         Style="{StaticResource ImageButtonBorder}" 
                                                         ih:IconHelper.Size="36" 
                                                         BorderColor="{DynamicResource CSuccess}"
                                                         Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:TaskDetailViewModel}}, Path=AcceptVolunteerCommand}"
                                                         CommandParameter="{Binding Id}"/>
-                                                <Button ih:IconHelper.Icon="{StaticResource Cancel}" 
+                                                        <Button ih:IconHelper.Icon="{StaticResource Cancel}" 
                                                         ih:IconHelper.Color="CError" 
                                                         Style="{StaticResource ImageButtonBorder}" 
                                                         ih:IconHelper.Size="36" 
                                                         BorderColor="{DynamicResource CError}"
                                                         Command="{Binding Source={RelativeSource AncestorType={x:Type viewModels:TaskDetailViewModel}}, Path=RejectVolunteerCommand}"
                                                         CommandParameter="{Binding Id}"/>
-                                            </HorizontalStackLayout>
-                                            <HorizontalStackLayout Grid.Column="3" HorizontalOptions="End" IsVisible="{Binding pending, Converter={StaticResource InverseBoolConverter}}" VerticalOptions="Center">
-                                                <Label Style="{StaticResource SectionTitle}" VerticalTextAlignment="Center" VerticalOptions="Center" Text="Принят" TextColor="{DynamicResource CSuccess}" IsVisible="{Binding accepted}" Margin="0"/>
-                                                <Label Style="{StaticResource SectionTitle}" VerticalTextAlignment="Center" VerticalOptions="Center" Text="Отклонён" TextColor="{DynamicResource CError}" IsVisible="{Binding rejected}" Margin="0"/>
-                                            </HorizontalStackLayout>
-                                        </Grid>
+                                                    </HorizontalStackLayout>
+                                                    <HorizontalStackLayout HorizontalOptions="End" IsVisible="{Binding pending, Converter={StaticResource InverseBoolConverter}}" VerticalOptions="Center">
+                                                        <Label Style="{StaticResource SectionTitle}" VerticalTextAlignment="Center" VerticalOptions="Center" Text="Принят" TextColor="{DynamicResource CSuccess}" IsVisible="{Binding accepted}" Margin="0"/>
+                                                        <Label Style="{StaticResource SectionTitle}" VerticalTextAlignment="Center" VerticalOptions="Center" Text="Отклонён" TextColor="{DynamicResource CError}" IsVisible="{Binding rejected}" Margin="0"/>
+                                                    </HorizontalStackLayout>
+                                                </Grid>
+                                            </element:MiniUserProfile.ExtraContent>
+                                        </element:MiniUserProfile>
                                     </Border>
                                 </DataTemplate>
                             </CollectionView.ItemTemplate>

@@ -21,7 +21,8 @@
     </Style>
 
     <Style TargetType="BoxView">
-        <Setter Property="BackgroundColor" Value="{DynamicResource CSurface}" />
+        <Setter Property="BackgroundColor" Value="{DynamicResource CBorder}"/>
+        <Setter Property="HeightRequest" Value="2"/>
     </Style>
 
     <Style TargetType="Button">

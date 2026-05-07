@@ -65,6 +65,10 @@ public class ChatService : IChatService
         json = await response.Content.ReadAsStringAsync();
         if (!response.IsSuccessStatusCode)
         {
+            if(response.StatusCode == System.Net.HttpStatusCode.Conflict)
+            {
+                throw new Exception("Чат с этим пользователем уже существует");
+            }
             throw new Exception(json);
         }
         var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);

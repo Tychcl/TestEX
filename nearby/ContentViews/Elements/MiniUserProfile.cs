@@ -13,8 +13,7 @@ public class MiniUserProfile : ContentView
             propertyChanged: OnUserChanged);
 
     public static readonly BindableProperty ImageSizeProperty =
-        BindableProperty.Create(nameof(ImageSize), typeof(int), typeof(MiniUserProfile), 70,
-            propertyChanged: OnImageSizeChanged);
+        BindableProperty.Create(nameof(ImageSize), typeof(int), typeof(MiniUserProfile), 70);
 
     public static readonly BindableProperty ImageIsVisibleProperty =
         BindableProperty.Create(nameof(ImageIsVisible), typeof(bool), typeof(MiniUserProfile), true);
@@ -71,8 +70,7 @@ public class MiniUserProfile : ContentView
     }
 
     private readonly Grid _rootGrid;
-    private readonly Border _avatarBorder;
-    private readonly Image _avatarImage;
+    private readonly ProfileImageView _piv;
     private readonly VerticalStackLayout _detailedInfo;   // Имя, Фамилия, ДР
     private readonly VerticalStackLayout _shortInfo;      // ФИО, Email, Телефон
     private readonly Label _labelName, _labelSurname, _labelBirthDate;
@@ -83,20 +81,9 @@ public class MiniUserProfile : ContentView
     public MiniUserProfile()
     {
         Style BCL = (Style)ResourceManager.Get("BoldCommonLabel");
-        _avatarImage = new Image
-        {
-            Aspect = Aspect.AspectFill,
-            Source = "test_profile_image.jpg"
-        };
 
-        _avatarBorder = new Border
-        {
-            StrokeThickness = 2,
-            StrokeShape = new RoundRectangle { CornerRadius = 12 },
-            Margin = new Thickness(0),
-            Content = _avatarImage
-        };
-        _avatarBorder.SetDynamicResource(Border.StrokeProperty, "CBorder");
+        _piv = new ProfileImageView();
+        _piv.ImageSize = ImageSize;
 
         _labelName = new Label { Style = BCL, Margin = new Thickness(0) };
         _labelSurname = new Label { Style = BCL, Margin = new Thickness(0) };
@@ -161,19 +148,15 @@ public class MiniUserProfile : ContentView
             Margin = new Thickness(0)
         };
 
-        _rootGrid.Add(_avatarBorder, 0, 0);
+        _rootGrid.Add(_piv, 0, 0);
         _rootGrid.Add(_userDataContainer, 1, 0);
         _rootGrid.Add(_extraContentSlot, 2, 0);
 
-            Content = _rootGrid;
+        Content = _rootGrid;
 
-        _avatarBorder.SetBinding(IsVisibleProperty, new Binding(nameof(ImageIsVisible), source: this));
-        _avatarBorder.SetBinding(WidthRequestProperty, new Binding(nameof(ImageSize), source: this));
-        _avatarBorder.SetBinding(HeightRequestProperty, new Binding(nameof(ImageSize), source: this));
-
-        _avatarImage.SetBinding(Image.SourceProperty, new Binding("User.ProfilePicture", source: this) { TargetNullValue = "test_profile_image.jpg" });
-
-        UpdateAvatarClip();
+        _piv.SetBinding(IsVisibleProperty, new Binding(nameof(ImageIsVisible), source: this));
+        _piv.SetBinding(ProfileImageView.ImageSizeProperty, new Binding(nameof(ImageSize), source: this));
+        _piv.SetBinding(ProfileImageView.ImageProperty, new Binding("User.ProfilePicture", source: this) { TargetNullValue = "test_profile_image.jpg" });
 
         _labelName.SetBinding(Label.TextProperty, new Binding("Name"));
         _labelSurname.SetBinding(Label.TextProperty, new Binding("Surname"));
@@ -191,12 +174,6 @@ public class MiniUserProfile : ContentView
         
     }
 
-    private static void OnImageSizeChanged(BindableObject bindable, object oldValue, object newValue)
-    {
-        var control = (MiniUserProfile)bindable;
-        control.UpdateAvatarClip();
-    }
-
     private static void OnFullNameModeChanged(BindableObject bindable, object oldValue, object newValue)
     {
         var control = (MiniUserProfile)bindable;
@@ -206,12 +183,6 @@ public class MiniUserProfile : ContentView
     private static void OnExtraContentChanged(BindableObject bindable, object oldValue, object newValue)
     {
         
-    }
-
-    private void UpdateAvatarClip()
-    {
-        double size = (double)ImageSize;
-        _avatarImage.Clip = new RoundRectangleGeometry(new CornerRadius(12), new Rect(0, 0, size, size));
     }
 
     private void UpdateDetailMode()

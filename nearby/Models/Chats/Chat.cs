@@ -12,7 +12,19 @@ public class Chat
     public string Type { get; set; }
     public string? Name { get; set; }
     public DateTime CreatedAt { get; set; }
-    public User OtherUser { get; set; }
+    private User _otherUser;
+    public User OtherUser 
+    {
+        get => _otherUser;
+        set
+        {
+            _otherUser = value;
+            if(Type == "personal")
+            {
+                Name = value.FullName; 
+            }
+        }
+    }
     public Message LastMessage { get; set; }
     public int UnreadCount { get; set; } = 0;
 }

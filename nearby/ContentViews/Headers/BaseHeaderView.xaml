@@ -4,11 +4,12 @@
              xmlns:local="clr-namespace:nearby"
              x:Class="nearby.ContentViews.Headers.BaseHeaderView"
              x:Name="thisControl" Padding="0" Margin="0" Background="Transparent">
-    <Grid ColumnDefinitions="*, auto" Margin="20,20,20,12">
+    <Grid ColumnDefinitions="*, auto" Margin="{Binding InnerMargin, Source={x:Reference thisControl}}">
         <Border Grid.Column="0" Style="{StaticResource EditSection}" Padding="0" Margin="0">
             <HorizontalStackLayout>
                 <ImageButton IsVisible="{Binding BackIsVisible, Source={x:Reference thisControl}}" local:IconHelper.Icon="{StaticResource Back}" local:IconHelper.Color="CTextPrimary" Command="{Binding BackCommand, Source={x:Reference thisControl}}" HorizontalOptions="Center" Margin="0"/>
-                <Label Style="{StaticResource SectionTitle}" Text="{Binding Text, Source={x:Reference thisControl}}" HorizontalOptions="Center" Margin="10,0,0,0" Padding="0" VerticalTextAlignment="Center"/>
+                <ContentView x:Name="ExtraContentView" IsVisible="False"/>
+                <Label x:Name="TitleLabel" Style="{StaticResource SectionTitle}" Text="{Binding Text, Source={x:Reference thisControl}}" HorizontalOptions="Center" Margin="10,0,0,0" Padding="0" VerticalTextAlignment="Center"/>
             </HorizontalStackLayout>
         </Border>
         <Border Grid.Column="1" Style="{StaticResource EditSection}" Padding="0" Margin="12,0,0,0" IsVisible="{Binding MenuIsVisible, Source={x:Reference thisControl}}">

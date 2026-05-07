@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Reflection;
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -66,29 +67,37 @@ namespace nearby.ViewModels
                 if (!_hasMorePages) return;
 
                 IsRefreshing = true;
-
                 var response = await _chatService.GetChatsAsync(_currentPage, PageSize);
-                if (response.Data != null && response.Data.Any())
-                {
-                    foreach (var chat in response.Data)
-                        Chats.Add(chat);
-                    _currentPage++;
-                    if (response.Data.Count < PageSize)
-                        _hasMorePages = false;
-                }
-                else
-                {
-                    _hasMorePages = false;
-                }
+                await GetChats(response.Data);
             }
             catch (Exception ex)
             {
-                await ShowErrorAsync(ex.Message);
+                var inner = ex.InnerException ?? ex;
+                System.Diagnostics.Debug.WriteLine($"LoadChatsBaseAsync error: {inner.GetType()}: {inner.Message}");
+                if (ex is TargetInvocationException tie)
+                    System.Diagnostics.Debug.WriteLine($"Real error: {tie.InnerException?.Message}");
+                await ShowErrorAsync(inner.Message);
             }
             finally
             {
                 IsBusy = false;
                 IsRefreshing = false;
+            }
+        }
+
+        private async Task GetChats(List<Chat>? chats)
+        {
+            if (chats != null && chats.Any())
+            {
+                foreach (var chat in chats)
+                    Chats.Add(chat);
+                _currentPage++;
+                if (chats.Count < PageSize)
+                    _hasMorePages = false;
+            }
+            else
+            {
+                _hasMorePages = false;
             }
         }
 

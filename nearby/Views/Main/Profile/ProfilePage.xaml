@@ -41,7 +41,7 @@
                         <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Margin="0">
                             <Label Text="{Binding User.Name}" Style="{StaticResource BoldCommonLabel}" Margin="0"/>
                             <Label Text="{Binding User.Surname}" Style="{StaticResource BoldCommonLabel}" Margin="0"/>
-                            <Label Text="{Binding User.BirthDate, StringFormat='{0:dd.MM.yyyy}'}" Style="{StaticResource BoldCommonLabel}" TextColor="{StaticResource Gray500}" FontSize="14"/>
+                            <Label Text="{Binding User.BirthDate, StringFormat='{0:dd.MM.yyyy}'}" Style="{StaticResource BoldCommonLabel}" TextColor="{DynamicResource CTextSecondary}" FontSize="14"/>
                         </VerticalStackLayout>
 
                         <!-- Кнопки: Чат / Выход -->

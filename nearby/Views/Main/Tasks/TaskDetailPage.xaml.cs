@@ -4,15 +4,18 @@ namespace nearby.Views.Main;
 
 public partial class TaskDetailPage : ContentPage
 {
-
     public TaskDetailPage(TaskDetailViewModel viewModel)
     {
         BindingContext = viewModel;
         InitializeComponent();
     }
 
-    protected override void OnAppearing()
+    protected override async void OnAppearing()
     {
         base.OnAppearing();
+        if (BindingContext is TaskDetailViewModel vm)
+        {
+            await vm.RefreshAsync();
+        }
     }
 }

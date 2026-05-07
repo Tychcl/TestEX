@@ -15,10 +15,11 @@ using nearby.Views.Main;
 namespace nearby.ViewModels
 {
     [QueryProperty(nameof(Task), "task")]
-    public partial class TaskDetailViewModel : BaseViewModel
+    public partial class TaskDetailViewModel : BaseViewModel, IDisposable
     {
         private readonly ITaskService _taskService;
         private readonly IUserService _userService;
+        private readonly IServiceProvider _serviceProvider;
 
         [ObservableProperty]
         private View _creatorProfileView;
@@ -33,7 +34,15 @@ namespace nearby.ViewModels
         private TaskItem _task = new();
 
         [ObservableProperty]
+        private bool _headerMenuVisible;
+
+        [ObservableProperty]
         private bool _isOwner;
+        partial void OnIsOwnerChanged(bool value)
+        {
+            RefreshCommands();
+            HeaderMenuVisible = IsOwner && !Completed;
+        }
 
         [ObservableProperty]
         private bool _hasVolunteered;
@@ -52,21 +61,36 @@ namespace nearby.ViewModels
 
         [ObservableProperty]
         private bool _isSearching;
+
         [ObservableProperty]
         private bool _completed;
+        partial void OnCompletedChanged(bool value)
+        {
+            HeaderMenuVisible = IsOwner && !Completed;
+        }
 
         private bool _isInitialized;
 
         private PopupMenu popupMenu;
-        public TaskDetailViewModel(ITaskService taskService, IUserService userService)
+        public TaskDetailViewModel(ITaskService taskService, IUserService userService, IServiceProvider sp)
         {
             _taskService = taskService;
+            _taskService.TaskUpdated += TaskUpdated;
             _userService = userService;
+            _serviceProvider = sp;
 
             PopupItems.Add(new((string)ResourceManager.Get("EditBox"), "Редактировать", EditCommand));
             PopupItems.Add(new((string)ResourceManager.Get("Delete"), "Удалить", DeleteCommand));
 
             popupMenu = PopupManager.Create(PopupItems, new Thickness(0, 15, 15, 0));
+        }
+
+        private async void TaskUpdated(object? sender, TaskItem task)
+        {
+            if (task.Id == Task.Id)
+            {
+                Task = task;
+            }
         }
 
         partial void OnTaskChanged(TaskItem? value)
@@ -78,8 +102,6 @@ namespace nearby.ViewModels
             InProgress = value.Status == "in_progress";
             Completed = value.Status == "completed";
         }
-
-        partial void OnIsOwnerChanged(bool value) => RefreshCommands();
 
         private async Task InitializeAsync(TaskItem task)
         {
@@ -275,6 +297,19 @@ namespace nearby.ViewModels
             await PopupManager.Show(popupMenu);
         }
 
+        [RelayCommand]
+        public async Task RefreshAsync()
+        {
+            if (Task.Id == 0) return;
+            var response = await _taskService.GetTaskAsync(Task.Id);
+            if (response.Data != null)
+            {
+                Task = response.Data;
+                _isInitialized = false;
+                await InitializeAsync(Task);
+            }
+        }
+
         private void RefreshCommands()
         {
             StartTaskCommand.NotifyCanExecuteChanged();
@@ -288,6 +323,11 @@ namespace nearby.ViewModels
         {
             base.OnBusyStateChanged(isBusy);
             RefreshCommands();
+        }
+
+        public void Dispose()
+        {
+            _taskService.TaskUpdated -= TaskUpdated;
         }
     }
 }

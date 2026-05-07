@@ -18,7 +18,7 @@
             <VerticalStackLayout Spacing="5">
                 <Grid ColumnDefinitions="*, Auto">
                     <Label Text="Фильтры" Style="{StaticResource SectionTitle}" Margin="0" Grid.Column="0" VerticalOptions="Center"/>
-                    <Button Grid.Column="1" Style="{StaticResource BorderButton}" local:IconHelper.Icon="{StaticResource FilterOff}" local:IconHelper.Color="CBackground"/>
+                    <Button Grid.Column="1" Style="{StaticResource BorderButton}" local:IconHelper.Icon="{StaticResource FilterOff}" local:IconHelper.Color="CBackground" Command="{Binding FilterClearCommand}"/>
                 </Grid>
                 <HorizontalStackLayout Spacing="5" HorizontalOptions="Center">
                     <Picker Title="Статус" SelectedItem="{Binding StatusFilter}" WidthRequest="120">

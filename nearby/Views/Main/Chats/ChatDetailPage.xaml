@@ -3,19 +3,26 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="nearby.Views.Main.ChatDetailPage"
              xmlns:viewModels="clr-namespace:nearby.ViewModels"
+             xmlns:header="clr-namespace:nearby.ContentViews.Headers"
+             xmlns:element="clr-namespace:nearby.ContentViews.Elements"
              xmlns:models="clr-namespace:nearby.Models"
              xmlns:converters="clr-namespace:nearby.Classes.Interface.Converters"
              x:DataType="viewModels:ChatDetailViewModel"
-             Title="{Binding Chat.OtherUser.FullName, FallbackValue='Чат'}"
-             Shell.TabBarIsVisible="False">
-
-    <ContentPage.Resources>
-        <converters:MessageAlignmentConverter x:Key="MessageAlignmentConverter"/>
-    </ContentPage.Resources>
-
-    <Grid RowDefinitions="*, Auto">
-        <!-- Список сообщений -->
-        <CollectionView Grid.Row="0"
+             Shell.TabBarIsVisible="False"
+             Shell.NavBarIsVisible="False">
+    <Grid RowDefinitions="Auto, *, Auto">
+        <header:BaseHeaderView Grid.Row="0" BackCommand="{Binding GoBackCommand}" InnerMargin="10,20,10,12" MenuIsVisible="True">
+            <header:BaseHeaderView.ExtraContent>
+                <HorizontalStackLayout Margin="0,5" Spacing="5">
+                    <element:ProfileImageView ImageSize="45"/>
+                    <VerticalStackLayout>
+                        <Label Style="{StaticResource SectionTitle}" Text="{Binding Chat.Name, FallbackValue='Чат'}" Padding="0" Margin="0" VerticalTextAlignment="Start" FontFamily="OpenSansBold"/>
+                        <Label Style="{StaticResource CommonLabel}" Text="{Binding Chat.OtherUser.LastSeenAt, FallbackValue='Чат'}" Padding="0" VerticalTextAlignment="Start" TextColor="{DynamicResource CTextSecondary}"/>
+                    </VerticalStackLayout>
+                </HorizontalStackLayout>
+            </header:BaseHeaderView.ExtraContent>
+        </header:BaseHeaderView>
+        <CollectionView Grid.Row="1"
                         ItemsSource="{Binding Messages}"
                         SelectionMode="None"
                         RemainingItemsThreshold="3"
@@ -42,8 +49,7 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <!-- Поле ввода сообщения -->
-        <Grid Grid.Row="1"
+        <Grid Grid.Row="2"
               Padding="10"
               ColumnDefinitions="*, Auto"
               BackgroundColor="White">

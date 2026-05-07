@@ -1,13 +1,20 @@
 ﻿using System.Text;
-using Newtonsoft.Json;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
+using nearby.Classes;
 using nearby.Interfaces;
 using nearby.Models;
-using nearby.Classes;
+using Newtonsoft.Json;
 
 namespace nearby.Services;
 
-public class TaskService : ITaskService
+public partial class TaskService : ObservableObject, ITaskService
 {
+    public event EventHandler<TaskItem> TaskUpdated;
+    private void OnTaskUpdated(TaskItem task)
+    {
+        TaskUpdated?.Invoke(this, task);
+    }
     private readonly ApiClient _apiClient;
 
     public TaskService(ApiClient apiClient)
@@ -122,6 +129,7 @@ public class TaskService : ITaskService
         {
             throw new Exception(json);
         }
+        OnTaskUpdated(task);
         return new ApiResponse<TaskItem>(json, null);
     }
 

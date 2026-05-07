@@ -18,16 +18,7 @@ namespace nearby
             var builder = MauiApp.CreateBuilder();
             builder
                 .UseMauiApp<App>()
-                .ConfigureMauiHandlers(handlers =>
-                {
-                    #if ANDROID
-                    handlers.AddHandler<Entry, Microsoft.Maui.Handlers.EntryHandler>();
-                    Microsoft.Maui.Handlers.EntryHandler.Mapper.AppendToMapping("NoUnderline", (handler, view) =>
-                    {
-                        handler.PlatformView.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(Colors.Transparent.ToPlatform());
-                    });
-                    #endif
-                }).UseMauiCommunityToolkit()
+                .UseMauiCommunityToolkit()
                 .ConfigureFonts(fonts =>
                 {
                     fonts.AddFont("OpenSans-Bold.ttf", "OpenSansBold");
@@ -90,7 +81,11 @@ namespace nearby
             builder.Services.AddTransient<ChatDetailPage>();
             //настройки
             builder.Services.AddTransient<ThemeChangePage>();
-
+            AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+            {
+                var ex = (Exception)e.ExceptionObject;
+                System.Diagnostics.Debug.WriteLine($"ГЛОБАЛЬНАЯ ОШИБКА: {ex}");
+            };
             return builder.Build();
         }
     }

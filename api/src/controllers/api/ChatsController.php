@@ -64,7 +64,7 @@ class ChatsController
                 ->toArray();
 
             if (empty($chatIds)) {
-                return new Response(200, ['object' => [], 'total' => 0, 'page' => $page, 'limit' => $limit, 'pages' => 0]);
+                return new Response(200, ['data' => [], 'total' => 0, 'page' => $page, 'limit' => $limit, 'pages' => 0]);
             }
 
             $query = ChatsQuery::create()
@@ -82,7 +82,7 @@ class ChatsController
             }
 
             return new Response(200, [
-                'object' => $data,
+                'data' => $data,
                 'total' => $total,
                 'page' => $page,
                 'limit' => $limit,
@@ -179,7 +179,7 @@ class ChatsController
                 'chat' => $this->formatChat($chat, $userId),
                 'participants' => $participants,
                 'messages' => [
-                    'object' => $formattedMessages,
+                    'data' => $formattedMessages,
                     'total' => $totalMessages,
                     'page' => $page,
                     'limit' => $limit,
@@ -263,7 +263,7 @@ class ChatsController
                     ->findOne();
 
                 if ($existingChat) {
-                    return new Response(200, ['id' => $existingChat->getId(), 'result' => 'already_exists']);
+                    return new Response(409, ['id' => $existingChat->getId(), 'result' => 'already_exists']);
                 }
             } elseif ($type === 'group') {
                 $name = trim($params['name'] ?? '');
@@ -621,7 +621,7 @@ class ChatsController
             }
 
             return new Response(200, [
-                'object' => $data,
+                'data' => $data,
                 'total' => $total,
                 'page' => $page,
                 'limit' => $limit,

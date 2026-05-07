@@ -13,6 +13,15 @@ namespace nearby.ContentViews.Headers
             set => SetValue(TextProperty, value);
         }
 
+        public static readonly BindableProperty InnerMarginProperty =
+        BindableProperty.Create(nameof(InnerMargin), typeof(Thickness), typeof(BaseHeaderView),
+            new Thickness(20, 20, 20, 12), BindingMode.OneWay);
+        public Thickness InnerMargin
+        {
+            get => (Thickness)GetValue(InnerMarginProperty);
+            set => SetValue(InnerMarginProperty, value);
+        }
+
         public static readonly BindableProperty BackCommandProperty =
         BindableProperty.Create(nameof(BackCommand), typeof(ICommand), typeof(BaseHeaderView),
             default(ICommand), BindingMode.OneWay);
@@ -58,9 +67,31 @@ namespace nearby.ContentViews.Headers
             set => SetValue(IconProperty, value);
         }
 
+        public static readonly BindableProperty ExtraContentProperty =
+        BindableProperty.Create(nameof(ExtraContent), typeof(View), typeof(BaseHeaderView), null, propertyChanged: OnEXChanged);
+        public View? ExtraContent
+        {
+            get => (View?)GetValue(ExtraContentProperty);
+            set => SetValue(ExtraContentProperty, value);
+        }
+        public static void OnEXChanged(BindableObject bin, object newValue, object oldValue)
+        {
+            (bin as BaseHeaderView).Extra();
+        }
+        private void Extra()
+        {
+            if (ExtraContent is not null)
+            {
+                ExtraContentView.IsVisible = true;
+                TitleLabel.IsVisible = false;
+                ExtraContentView.SetBinding(ContentView.ContentProperty, new Binding(nameof(ExtraContent), source: this));
+            }
+        }
+
         public BaseHeaderView()
         {
             InitializeComponent();
+            Extra();
         }
     }
 }

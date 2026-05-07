@@ -18,5 +18,10 @@ namespace nearby.Classes
             this.message = message;
             Data = _object;
         }
+
+        public int total;
+        public int page;
+        public int limit;
+        public int pages;
     }
 }

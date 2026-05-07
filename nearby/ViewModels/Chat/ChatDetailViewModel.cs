@@ -117,9 +117,9 @@ namespace nearby.ViewModels
 
                 var response = await _chatService.GetMessagesAsync(ChatId, _currentPage, PageSize);
 
-                if (response.Data?.Object != null && response.Data.Object.Any())
+                if (response.Data?.Data != null && response.Data.Data.Any())
                 {
-                    var newMessages = response.Data.Object.OrderBy(m => m.CreatedAt).ToList();
+                    var newMessages = response.Data.Data.OrderBy(m => m.CreatedAt).ToList();
                     foreach (var msg in newMessages)
                     {
                         bool isOwn = msg.SenderId == CurrentUserId;
@@ -128,7 +128,7 @@ namespace nearby.ViewModels
                         Messages.Add(msg);
                     }
                     _currentPage++;
-                    if (response.Data.Object.Count < PageSize)
+                    if (response.Data.Data.Count < PageSize)
                         _hasMoreMessages = false;
                 }
                 else

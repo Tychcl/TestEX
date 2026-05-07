@@ -11,7 +11,7 @@
              Shell.NavBarIsVisible="False">
     <Grid RowDefinitions="auto, *, auto">
         <!--<header:BaseHeaderView Grid.Row="0" Icon="{StaticResource EditBox}" BackCommand="{Binding GoBackCommand}" Text="{Binding PageTitle, FallbackValue='Задача'}" MenuIsVisible="{Binding IsOwner}" Command="{Binding EditCommand}"/>-->
-        <header:BaseHeaderView Grid.Row="0" Icon="{StaticResource MenuDots}" BackCommand="{Binding GoBackCommand}" Text="Задача" MenuIsVisible="{Binding IsOwner}" Command="{Binding OpenPopupMenuCommand}"/>
+        <header:BaseHeaderView Grid.Row="0" Icon="{StaticResource MenuDots}" BackCommand="{Binding GoBackCommand}" Text="Задача" MenuIsVisible="{Binding HeaderMenuVisible}" Command="{Binding OpenPopupMenuCommand}"/>
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Padding="0,0,0,20">
                 <Border Style="{StaticResource EditSection}">

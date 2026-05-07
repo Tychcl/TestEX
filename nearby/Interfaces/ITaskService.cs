@@ -5,6 +5,7 @@ namespace nearby.Interfaces;
 
 public interface ITaskService
 {
+    event EventHandler<TaskItem> TaskUpdated;
     Task<ApiResponse<List<TaskItem>>> GetTasksAsync(int page = 1, int limit = 10, string status = null, string priority = null, string city = null);
     Task<ApiResponse<List<TaskItem>>> GetUserTasksAsync(int userId, string status, int page = 1, int pageSize = 10);
     Task<ApiResponse<TaskItem>> GetTaskAsync(int id);

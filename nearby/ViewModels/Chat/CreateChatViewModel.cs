@@ -19,6 +19,9 @@ namespace nearby.ViewModels
         private string? _searchQuery;
 
         [ObservableProperty]
+        private bool _searchResultsVisibilitty;
+
+        [ObservableProperty]
         private ObservableCollection<User> _searchResults = new();
 
         [ObservableProperty]
@@ -60,10 +63,11 @@ namespace nearby.ViewModels
                 await Task.Delay(300, token);
                 if (string.IsNullOrWhiteSpace(query))
                 {
+                    SearchResultsVisibilitty = false;
                     SearchResults.Clear();
                     return;
                 }
-
+                SearchResultsVisibilitty = true;
                 await ExecuteSearchAsync(query, token);
             }
             catch (TaskCanceledException) { }
@@ -121,6 +125,12 @@ namespace nearby.ViewModels
             CreateChatCommand.NotifyCanExecuteChanged();
         }
 
+        [RelayCommand]
+        private void ClearSearch()
+        {
+            SearchQuery = string.Empty;
+        }
+
         [RelayCommand(CanExecute = nameof(CanCreateChat))]
         private async Task CreateChat()
         {
@@ -137,7 +147,6 @@ namespace nearby.ViewModels
                 var userIds = SelectedUsers.Select(u => u.Id).ToList();
                 var response = await _chatService.CreateChatAsync(type, name, userIds);
                 await Shell.Current.GoToAsync($"{nameof(ChatDetailPage)}?id={response.Data}");
-                await Shell.Current.GoToAsync("..");
             }
             catch (Exception ex)
             {

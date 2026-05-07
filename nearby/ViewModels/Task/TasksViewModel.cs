@@ -121,9 +121,17 @@ namespace nearby.ViewModels
         }
 
         [RelayCommand]
-        private Task GoToCreateAsync()
+        private async Task GoToCreateAsync()
         {
-            return Shell.Current.GoToAsync(nameof(TaskAddEditPage));
+            await Shell.Current.GoToAsync(nameof(TaskAddEditPage));
+        }
+
+        [RelayCommand]
+        private void FilterClear()
+        {
+            PriorityFilter = string.Empty;
+            CityFilter = string.Empty;
+            StatusFilter = string.Empty;
         }
 
         [RelayCommand]

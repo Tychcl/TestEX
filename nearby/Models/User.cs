@@ -49,7 +49,7 @@ namespace nearby.Models
         public string? EducationInstitution { get; set; }
         public string? EducationDegree { get; set; }
         public string? EducationField { get; set; }
-        public int EducationStartYear { get; set; }
-        public int EducationEndYear { get; set; }
+        public int? EducationStartYear { get; set; }
+        public int? EducationEndYear { get; set; }
     }
 }

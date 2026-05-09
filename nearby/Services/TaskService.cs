@@ -40,6 +40,10 @@ public partial class TaskService : ObservableObject, ITaskService
 
     public async Task<ApiResponse<List<TaskItem>>> GetTasksAsync(int page = 1, int limit = 10, string status = null, string priority = null, string city = null)
     {
+        var settings = new JsonSerializerSettings
+        {
+            DateFormatString = "yyyy-MM-dd HH:mm:ss"
+        };
         var queryParams = new List<string>();
         queryParams.Add($"page={page}");
         queryParams.Add($"limit={limit}");
@@ -58,7 +62,7 @@ public partial class TaskService : ObservableObject, ITaskService
         {
             throw new Exception(json);
         }
-        var result = JsonConvert.DeserializeObject<ApiResponse<List<TaskItem>>>(json);
+        var result = JsonConvert.DeserializeObject<ApiResponse<List<TaskItem>>>(json, settings);
         return result;
     }
 

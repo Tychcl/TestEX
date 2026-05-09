@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace nearby.Classes.Interface.Converters
 {
-    public class GreaterThanZeroConverter : IValueConverter
+    public class GreaterThanConverter : IValueConverter
     {
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
-            => (int)value > 0;
+            => value is not null && parameter is not null && int.TryParse((string)parameter, out int p) && (int)value > p;
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {

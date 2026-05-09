@@ -52,7 +52,7 @@ namespace nearby
             => Application.Current!.MainPage!.DisplayAlert(title, message, cancel);
 
         [RelayCommand]
-        private async Task GoBackAsync() => await Shell.Current.GoToAsync("..");
+        private static async Task GoBackAsync() => await Shell.Current.GoToAsync("..");
 
         partial void OnIsBusyChanged(bool value)
         {

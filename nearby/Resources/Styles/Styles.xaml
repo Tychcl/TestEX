@@ -20,7 +20,7 @@
         <Setter Property="StrokeThickness" Value="1"/>
     </Style>
 
-    <Style TargetType="BoxView">
+    <Style TargetType="BoxView" x:Key="SplitLine">
         <Setter Property="BackgroundColor" Value="{DynamicResource CBorder}"/>
         <Setter Property="HeightRequest" Value="2"/>
     </Style>
@@ -388,6 +388,11 @@
     <Style TargetType="Page" ApplyToDerivedTypes="True">
         <Setter Property="Padding" Value="0"/>
         <Setter Property="BackgroundColor" Value="{DynamicResource CBackground}" />
+        <Setter Property="Shell.BackButtonBehavior">
+            <Setter.Value>
+                <BackButtonBehavior IsVisible="False" />
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style TargetType="Shell" ApplyToDerivedTypes="True">
@@ -401,6 +406,11 @@
         <Setter Property="Shell.TabBarForegroundColor" Value="{DynamicResource CPrimary}" />
         <Setter Property="Shell.TabBarTitleColor" Value="{DynamicResource CPrimary}" />
         <Setter Property="Shell.TabBarUnselectedColor" Value="{DynamicResource CTextPrimary}" />
+        <Setter Property="Shell.BackButtonBehavior">
+            <Setter.Value>
+                <BackButtonBehavior IsVisible="False" />
+            </Setter.Value>
+        </Setter>
     </Style>
 
     <Style TargetType="NavigationPage">

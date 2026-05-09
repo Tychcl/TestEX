@@ -24,6 +24,7 @@
             <converters:IsNotNullConverter x:Key="IsNotNullConverter"/>
             <converters:AndConverter x:Key="AndConverter"/>
             <converters:DoubleToRectConverter x:Key="DoubleToRectConverter"/>
+            <converters:GreaterThanConverter x:Key="GreaterThanConverter"/>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

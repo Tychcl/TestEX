@@ -11,6 +11,6 @@
             <Image local:IconHelper.Icon="{Binding Icon, Source={x:Reference thisControl}}" local:IconHelper.Color="CPrimary" Margin="12" Scale="1.5" VerticalOptions="Center"/>
             <Label Style="{StaticResource CommonLabel}" Text="{Binding Text, Source={x:Reference thisControl}}" HorizontalOptions="Start" VerticalOptions="Center"/>
         </HorizontalStackLayout>
-        <BoxView HeightRequest="2" BackgroundColor="{DynamicResource CBorder}"/>
+        <!--<BoxView Style="{StaticResource SplitLine}"/>-->
     </VerticalStackLayout>
 </ContentView>

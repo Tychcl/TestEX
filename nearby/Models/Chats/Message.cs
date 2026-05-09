@@ -18,7 +18,4 @@ public class Message
     public string FileUrl { get; set; }
     public string TranscribedText { get; set; }
     public DateTime CreatedAt { get; set; }
-    public LayoutOptions layout { get; set; }
-    public CornerRadius corner { get; set; }
-
 }

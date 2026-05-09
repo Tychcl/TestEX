@@ -1,4 +1,5 @@
 using System.Windows.Input;
+using CommunityToolkit.Mvvm.Input;
 
 namespace nearby.ContentViews.Headers
 {
@@ -15,7 +16,7 @@ namespace nearby.ContentViews.Headers
 
         public static readonly BindableProperty InnerMarginProperty =
         BindableProperty.Create(nameof(InnerMargin), typeof(Thickness), typeof(BaseHeaderView),
-            new Thickness(20, 20, 20, 12), BindingMode.OneWay);
+            new Thickness(10, 2, 10, 2), BindingMode.OneWay);
         public Thickness InnerMargin
         {
             get => (Thickness)GetValue(InnerMarginProperty);
@@ -24,11 +25,15 @@ namespace nearby.ContentViews.Headers
 
         public static readonly BindableProperty BackCommandProperty =
         BindableProperty.Create(nameof(BackCommand), typeof(ICommand), typeof(BaseHeaderView),
-            default(ICommand), BindingMode.OneWay);
+            defaultValue: null, BindingMode.OneWay);
         public ICommand BackCommand
         {
             get => (ICommand)GetValue(BackCommandProperty);
             set => SetValue(BackCommandProperty, value);
+        }
+        private async Task GoBackDefault()
+        {
+            await Shell.Current.GoToAsync("..");
         }
 
         public static readonly BindableProperty CommandProperty =
@@ -51,11 +56,18 @@ namespace nearby.ContentViews.Headers
 
         public static readonly BindableProperty BackIsVisibleProperty =
         BindableProperty.Create(nameof(BackIsVisible), typeof(bool), typeof(BaseHeaderView),
-            true, BindingMode.OneWay);
+            false, BindingMode.OneWay, propertyChanged: OnBackIsVisibleChanged);
         public bool BackIsVisible
         {
             get => (bool)GetValue(BackIsVisibleProperty);
             set => SetValue(BackIsVisibleProperty, value);
+        }
+        public static void OnBackIsVisibleChanged(BindableObject bin, object nV, object oV)
+        {
+            if (bin is BaseHeaderView BHV && BHV.BackIsVisible && BHV.BackCommand is null)
+            {
+                BHV.BackCommand = new Command(async () => await BHV.GoBackDefault());
+            }
         }
 
         public static readonly BindableProperty IconProperty =

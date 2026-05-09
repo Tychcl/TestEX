@@ -18,6 +18,9 @@ namespace nearby.ViewModels
         private readonly IUserService _userService;
 
         [ObservableProperty]
+        private DateTime minimumDate = DateTime.Today;
+
+        [ObservableProperty]
         private TaskItem _task = new TaskItem();
         partial void OnTaskChanged(TaskItem item)
         {
@@ -28,6 +31,7 @@ namespace nearby.ViewModels
             Location = _task.Location ?? string.Empty;
             Reward = _task.Reward;
             Deadline = _task.Deadline;
+            minimumDate = _task.Deadline;
             ValidateAllProperties();
         }
 

@@ -63,15 +63,20 @@ public class ChatService : IChatService
             throw new Exception("Ошибка подключения к серверу");
         }
         json = await response.Content.ReadAsStringAsync();
+        Dictionary<string, object>? data;
         if (!response.IsSuccessStatusCode)
         {
             if(response.StatusCode == System.Net.HttpStatusCode.Conflict)
             {
-                throw new Exception("Чат с этим пользователем уже существует");
+                data = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+                if (data != null && data.TryGetValue("id", out var idVT) && idVT is long idLT)
+                {
+                    return new ApiResponse<int>("", (int)idLT);
+                }
             }
             throw new Exception(json);
         }
-        var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+        data = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
         if (data != null && data.TryGetValue("id", out var idObj) && idObj is long idLong)
         {
             return new ApiResponse<int>("", (int)idLong);
@@ -183,7 +188,7 @@ public class ChatService : IChatService
         var payload = new { content = newContent };
         var json = JsonConvert.SerializeObject(payload);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
-        var response = await _apiClient.PutAsync($"messages/{messageId}", content);
+        var response = await _apiClient.PutAsync($"chats/messages/{messageId}", content);
         if (response is null)
         {
             throw new Exception("Ошибка подключения к серверу");
@@ -203,7 +208,7 @@ public class ChatService : IChatService
 
     public async Task<ApiResponse<bool>> DeleteMessageAsync(int messageId)
     {
-        var response = await _apiClient.DeleteAsync($"messages/{messageId}");
+        var response = await _apiClient.DeleteAsync($"chats/messages/{messageId}");
         if (response is null)
         {
             throw new Exception("Ошибка подключения к серверу");

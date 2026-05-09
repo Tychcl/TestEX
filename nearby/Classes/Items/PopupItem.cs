@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Input;
-using CommunityToolkit.Mvvm.Input;
+﻿using System.Windows.Input;
 
 namespace nearby.Classes
 {
@@ -15,5 +9,14 @@ namespace nearby.Classes
         public PopupItem() { }
 
         public PopupItem(string icon, string text, ICommand command) : base(icon, text) { Command = command; }
+    }
+
+    public class PopupItem<T> : PopupItem
+    {
+        public T? Parameter;
+
+        public PopupItem() { }
+
+        public PopupItem(string icon, string text, ICommand command, T? parameter) : base(icon, text, command) { Parameter = parameter; }
     }
 }

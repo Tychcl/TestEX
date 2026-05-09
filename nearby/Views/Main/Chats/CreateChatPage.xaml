@@ -7,19 +7,37 @@
              x:Class="nearby.Views.Main.CreateChatPage"
              xmlns:viewModels="clr-namespace:nearby.ViewModels"
              xmlns:models="clr-namespace:nearby.Models"
-             x:DataType="viewModels:CreateChatViewModel"
-             Shell.NavBarIsVisible="False">
-
-    <VerticalStackLayout>
-        <header:BaseHeaderView Icon="{StaticResource Confirm}" MenuIsVisible="True" Text="{Binding PageTitle}" BackCommand="{Binding GoBackCommand}" Command="{Binding CreateChatCommand}"/>
-        <Border Style="{StaticResource Card}" Padding="0">
+             x:DataType="viewModels:CreateChatViewModel">
+    <Shell.TitleView>
+        <header:BaseHeaderView Icon="{StaticResource Confirm}" MenuIsVisible="True" Text="{Binding PageTitle}" BackIsVisible="True" Command="{Binding CreateChatCommand}">
+            <header:BaseHeaderView.ExtraContent>
+                <VerticalStackLayout>
+                    <Label Style="{StaticResource SectionTitle}" 
+                   Text="{Binding PageTitle}" 
+                   HorizontalOptions="Center"
+                   Padding="0" 
+                   VerticalTextAlignment="Center"
+                   VerticalOptions="Center"
+                   IsVisible="{Binding IsGroup, Converter={StaticResource InverseBoolConverter}}"/>
+                    <Entry Text="{Binding ChatName}" 
+                   Placeholder="Введите название группы" 
+                   Style="{StaticResource EditEntry}" 
+                   HorizontalOptions="Fill" 
+                   VerticalTextAlignment="Center"
+                   IsVisible="{Binding IsGroup}"/>
+                </VerticalStackLayout>
+            </header:BaseHeaderView.ExtraContent>
+        </header:BaseHeaderView>
+    </Shell.TitleView>
+    <VerticalStackLayout Spacing="12">
+        <Border Style="{StaticResource Card}" Padding="0" Margin="20,0,20,0">
             <VerticalStackLayout>
                 <Grid ColumnDefinitions="Auto, *, Auto" Margin="0,0,0,6">
                     <Image Grid.Column="0" ih:IconHelper.Icon="{StaticResource Search}" HorizontalOptions="Start" VerticalOptions="Center" WidthRequest="28" HeightRequest="28" Margin="6"/>
                     <Entry Grid.Column="1" Margin="0" Text="{Binding SearchQuery}" Placeholder="Поиск по имени, телефону или почте..." VerticalOptions="Center"/>
                     <ImageButton Grid.Column="2" ih:IconHelper.Icon="{StaticResource Cancel}" VerticalOptions="Center" ih:IconHelper.Color="CError" Command="{Binding ClearSearchCommand}"/>
                 </Grid>
-                <BoxView IsVisible="{Binding SearchResultsVisibilitty}" Margin="0,0,0,10"/>
+                <BoxView IsVisible="{Binding SearchResultsVisibilitty}" Style="{StaticResource SplitLine}" Margin="0,0,0,10"/>
                 <CollectionView ItemsSource="{Binding SearchResults}"
                     SelectionMode="None" MaximumHeightRequest="300"
                     Margin="20,0" IsVisible="{Binding SearchResultsVisibilitty}">
@@ -67,12 +85,5 @@
                 </VerticalStackLayout>
             </VerticalStackLayout>
         </Border>
-        <!-- Секция: Название группы (только для группового чата) -->
-        <VerticalStackLayout IsVisible="{Binding IsGroupChat}" Spacing="5">
-            <Label Text="Название группы" Style="{StaticResource BoldCommonLabel}"/>
-            <Entry Text="{Binding ChatName}" 
-                   Placeholder="Введите название группы"
-                   Style="{StaticResource EditEntry}"/>
-        </VerticalStackLayout>
     </VerticalStackLayout>
 </ContentPage>

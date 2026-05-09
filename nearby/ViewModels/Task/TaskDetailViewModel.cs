@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using CommunityToolkit.Maui;
@@ -19,6 +20,7 @@ namespace nearby.ViewModels
     {
         private readonly ITaskService _taskService;
         private readonly IUserService _userService;
+        private readonly IChatService _chatService;
         private readonly IServiceProvider _serviceProvider;
 
         [ObservableProperty]
@@ -72,17 +74,19 @@ namespace nearby.ViewModels
         private bool _isInitialized;
 
         private PopupMenu popupMenu;
-        public TaskDetailViewModel(ITaskService taskService, IUserService userService, IServiceProvider sp)
+        public TaskDetailViewModel(ITaskService taskService, IUserService userService, IServiceProvider sp, IChatService chatService)
         {
             _taskService = taskService;
             _taskService.TaskUpdated += TaskUpdated;
             _userService = userService;
             _serviceProvider = sp;
+            _chatService = chatService;
 
             PopupItems.Add(new((string)ResourceManager.Get("EditBox"), "Редактировать", EditCommand));
             PopupItems.Add(new((string)ResourceManager.Get("Delete"), "Удалить", DeleteCommand));
 
-            popupMenu = PopupManager.Create(PopupItems, new Thickness(0, 15, 15, 0));
+            popupMenu = PopupManager.Create(PopupItems, new Thickness(0, 15, 15, 0), LayoutOptions.End, LayoutOptions.Start);
+            _chatService = chatService;
         }
 
         private async void TaskUpdated(object? sender, TaskItem task)
@@ -124,7 +128,7 @@ namespace nearby.ViewModels
             }
             catch (Exception ex)
             {
-                await ShowErrorAsync(ex.Message);
+                //await ShowErrorAsync(ex.Message);
                 await GoBackCommand.ExecuteAsync(null);
             }
             finally
@@ -268,14 +272,21 @@ namespace nearby.ViewModels
         [RelayCommand(CanExecute = nameof(CanDeleteTaskExecute))]
         private async Task DeleteAsync()
         {
-            var confirm = await Application.Current!.MainPage!.DisplayAlert(
+            try
+            {
+                var confirm = await Application.Current!.MainPage!.DisplayAlert(
                 "Удаление", "Удалить задачу?", "Да", "Нет");
-            if (!confirm) return;
-
-            var response = await _taskService.DeleteTaskAsync(Task.Id);
-
-            await ShowMsgAsync("Успех", "Задача удалена", "OK");
-            await GoBackCommand.ExecuteAsync(null);
+                if (!confirm) return;
+                var response = await _taskService.DeleteTaskAsync(Task.Id);
+                Task.Id = 0;
+                await Shell.Current.ClosePopupAsync();
+                await ShowMsgAsync("Успех", "Задача удалена", "OK");
+                await GoBackCommand.ExecuteAsync(null);
+            }
+            catch
+            {
+                await GoBackCommand.ExecuteAsync(null);
+            }
         }
         private bool CanDeleteTaskExecute() => IsOwner && !IsBusy;
 
@@ -288,7 +299,18 @@ namespace nearby.ViewModels
         [RelayCommand]
         private async Task StartChatAsync()
         {
-            await ShowMsgAsync("Тут типо переход", "чат создан и все такое");
+            try
+            {
+                var r = await _chatService.CreateChatAsync("personal", "", new() { Creator.Id, _userService.CurrentUser.Id});
+                if (r is ApiResponse<int>)
+                {
+                    await Shell.Current.GoToAsync(nameof(ChatDetailPage), new Dictionary<string, object?> { { "id", r.Data } });
+                }
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex.Message);
+            }
         }
 
         [RelayCommand]

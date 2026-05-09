@@ -6,11 +6,12 @@
           Padding="0"
           Margin="0"
           BackgroundColor="Transparent">
-
-    <Border Style="{StaticResource Card}" Margin="0"
-            HorizontalOptions="Start" VerticalOptions="Start">
-        <VerticalStackLayout x:Name="MenuContainer"
-                             HorizontalOptions="Start" VerticalOptions="Start"
-                             Spacing="0" />
-    </Border>
+    <AbsoluteLayout VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
+        <Border Style="{StaticResource Card}" Margin="0"
+        HorizontalOptions="Start" VerticalOptions="Start">
+            <VerticalStackLayout x:Name="MenuContainer"
+                         HorizontalOptions="Start" VerticalOptions="Start"
+                         Spacing="0" />
+        </Border>
+    </AbsoluteLayout>
 </tk:Popup>

@@ -7,12 +7,12 @@
              xmlns:element="clr-namespace:nearby.ContentViews.Elements"
              xmlns:models="clr-namespace:nearby.Models"
              xmlns:ih="clr-namespace:nearby"
-             x:DataType="viewModels:TaskDetailViewModel"
-             Shell.NavBarIsVisible="False">
-    <Grid RowDefinitions="auto, *, auto">
-        <!--<header:BaseHeaderView Grid.Row="0" Icon="{StaticResource EditBox}" BackCommand="{Binding GoBackCommand}" Text="{Binding PageTitle, FallbackValue='Задача'}" MenuIsVisible="{Binding IsOwner}" Command="{Binding EditCommand}"/>-->
-        <header:BaseHeaderView Grid.Row="0" Icon="{StaticResource MenuDots}" BackCommand="{Binding GoBackCommand}" Text="Задача" MenuIsVisible="{Binding HeaderMenuVisible}" Command="{Binding OpenPopupMenuCommand}"/>
-        <ScrollView Grid.Row="1">
+             x:DataType="viewModels:TaskDetailViewModel">
+    <Shell.TitleView>
+        <header:BaseHeaderView Icon="{StaticResource MenuDots}" BackIsVisible="True" Text="Задача" MenuIsVisible="{Binding HeaderMenuVisible}" Command="{Binding OpenPopupMenuCommand}"/>
+    </Shell.TitleView>
+    <Grid RowDefinitions="auto, *, auto" RowSpacing="12" Margin="0,16,0,0">
+        <ScrollView Grid.Row="0">
             <VerticalStackLayout Padding="0,0,0,20">
                 <Border Style="{StaticResource EditSection}">
                     <VerticalStackLayout>

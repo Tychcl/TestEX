@@ -26,9 +26,18 @@ namespace nearby
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                     fonts.AddFont("MaterialSymbols-Rounded.ttf", "Icons");
                 });
-
+            Microsoft.Maui.Handlers.ToolbarHandler.Mapper.AppendToMapping("CustomTitleViewInsets", (handler, view) =>
+            {
+                #if ANDROID
+                    var toolbar = handler.PlatformView;
+                    toolbar.SetContentInsetsAbsolute(0, 0);
+                    toolbar.ContentInsetStartWithNavigation = 0;
+                    toolbar.ContentInsetEndWithActions = 0;
+                    toolbar.SetPadding(0, toolbar.PaddingTop, 0, toolbar.PaddingBottom);
+                #endif
+            });
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
             //=====================
             //Сервисы

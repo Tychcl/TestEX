@@ -12,10 +12,14 @@ public partial class TaskDetailPage : ContentPage
 
     protected override async void OnAppearing()
     {
-        base.OnAppearing();
-        if (BindingContext is TaskDetailViewModel vm)
+        try
         {
-            await vm.RefreshAsync();
+            base.OnAppearing();
+            if (BindingContext is TaskDetailViewModel vm)
+            {
+                await vm.RefreshAsync();
+            }
         }
+        catch { }
     }
 }

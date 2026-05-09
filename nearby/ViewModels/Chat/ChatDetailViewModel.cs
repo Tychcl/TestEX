@@ -1,7 +1,10 @@
 using System.Collections.ObjectModel;
+using System.Reflection.Metadata;
+using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-
+using nearby.Classes;
+using nearby.ContentViews.Elements;
 using nearby.Interfaces;
 using nearby.Models;
 using nearby.Services;
@@ -17,6 +20,13 @@ namespace nearby.ViewModels
         private const int PageSize = 50;
         private int _currentPage = 1;
         private bool _hasMoreMessages = true;
+        private PopupMenu MessageOwnerPopup;
+        private ObservableCollection<PopupItem> MessageOwnerPopupItems;
+        private PopupMenu MessageNotOwnerPopup;
+        private ObservableCollection<PopupItem> MessageNotOwnerPopupItems = new();
+
+        [ObservableProperty]
+        private int _curentUserId;
 
         [ObservableProperty]
         private int _chatId;
@@ -45,6 +55,19 @@ namespace nearby.ViewModels
         {
             _chatService = chatService;
             _userService = userService;
+            CurentUserId = _userService.CurrentUser.Id;
+
+            MessageNotOwnerPopupItems.Add(new((string)ResourceManager.Get("Reply"), "Ответить", CopyMessageCommand));
+            MessageNotOwnerPopupItems.Add(new((string)ResourceManager.Get("Copy"), "Копировать", CopyMessageCommand));
+            
+            MessageOwnerPopupItems = new(MessageNotOwnerPopupItems)
+            {
+                new((string)ResourceManager.Get("EditBox"), "Редактировать", EditMessageCommand),
+                new((string)ResourceManager.Get("Delete"), "Удалить", DeleteMessageCommand)
+            };
+
+            MessageNotOwnerPopup = PopupManager.Create(MessageNotOwnerPopupItems, new Thickness(0));
+            MessageOwnerPopup = PopupManager.Create(MessageOwnerPopupItems, new Thickness(0));
         }
 
         async partial void OnChatIdChanged(int value)
@@ -122,9 +145,9 @@ namespace nearby.ViewModels
                     var newMessages = response.Data.Data.OrderBy(m => m.CreatedAt).ToList();
                     foreach (var msg in newMessages)
                     {
-                        bool isOwn = msg.SenderId == CurrentUserId;
-                        msg.layout = isOwn ? LayoutOptions.End : LayoutOptions.Start;
-                        msg.corner = isOwn ? new CornerRadius(15, 15, 15, 0) : new CornerRadius(15, 15, 0, 15);
+                        //bool isOwn = msg.SenderId == CurrentUserId;
+                        //msg.layout = isOwn ? LayoutOptions.End : LayoutOptions.Start;
+                        //msg.corner = isOwn ? new CornerRadius(15, 15, 15, 0) : new CornerRadius(15, 15, 0, 15);
                         Messages.Add(msg);
                     }
                     _currentPage++;
@@ -147,22 +170,21 @@ namespace nearby.ViewModels
         {
             try
             {
-                if (string.IsNullOrWhiteSpace(NewMessageText)) return;
+                var mes = NewMessageText.Trim();
+                if (string.IsNullOrWhiteSpace(mes)) return;
 
-                var messageModel = new MessageSendModel { content_type = "text", content = NewMessageText };
+                var messageModel = new MessageSendModel { content_type = "text", content = mes };
                 var response = await _chatService.SendMessageAsync(ChatId, messageModel);
 
                 var newMessage = new Message
                 {
                     Id = response.Data?.Id ?? 0,
-                    Content = NewMessageText,
+                    Content = mes,
                     ContentType = "text",
                     CreatedAt = DateTime.UtcNow,
                     SenderId = CurrentUserId,
                     SenderName = _userService.CurrentUser?.FullName ?? "Вы",
-                    SenderProfilePicture = _userService.CurrentUser?.ProfilePicture,
-                    layout = LayoutOptions.End,
-                    corner = new CornerRadius(15, 15, 15, 0)
+                    SenderProfilePicture = _userService.CurrentUser?.ProfilePicture
                 };
                 Messages.Add(newMessage);
                 NewMessageText = string.Empty;
@@ -212,12 +234,11 @@ namespace nearby.ViewModels
         {
             try
             {
-                if (message == null) return;
-                var newText = await Application.Current!.MainPage!.DisplayPromptAsync("Редактировать", "", "OK", "Отмена", placeholder: message.Content, maxLength: 500);
+                if (message is null) return;
+                var newText = await Application.Current!.MainPage!.DisplayPromptAsync("Редактировать", "", "OK", "Отмена", maxLength: 500, initialValue: message.Content);
                 if (string.IsNullOrWhiteSpace(newText)) return;
                 var result = await _chatService.EditMessageAsync(message.Id, newText);
                 message.Content = newText;
-                // Для обновления UI можно заменить объект в ObservableCollection
                 var index = Messages.IndexOf(message);
                 if (index >= 0)
                     Messages[index] = message;
@@ -233,7 +254,7 @@ namespace nearby.ViewModels
         {
             try
             {
-                if (message == null) return;
+                if (message is null) return;
                 var confirm = await Application.Current!.MainPage!.DisplayAlert("Удаление", "Удалить сообщение?", "Да", "Нет");
                 if (!confirm) return;
                 var result = await _chatService.DeleteMessageAsync(message.Id);
@@ -247,29 +268,19 @@ namespace nearby.ViewModels
         private bool CanModifyMessage() => !IsBusy;
 
         [RelayCommand]
-        private async Task OpenMenu(Message? message)
+        private async Task OpenMenu(object view)
         {
-            if (message == null) return;
-            bool isOwnMessage = message.SenderId == CurrentUserId;
-
-            var actions = new List<string>();
-            if (isOwnMessage)
+            if (view is not MessageView MV) return;
+            if (MV.IsOwnMessage)
             {
-                actions.Add("Редактировать");
-                actions.Add("Удалить");
+                MessageOwnerPopup.Parameter = MV.Message;
+                await PopupManager.Show(MessageOwnerPopup, MV.point.Value.X, MV.point.Value.Y);
             }
-            actions.Add("Копировать текст");
-            actions.Add("Отмена");
-
-            var result = await Application.Current!.MainPage!.DisplayActionSheet(
-                "Действия с сообщением", null, null, actions.ToArray());
-
-            if (result == "Редактировать")
-                await EditMessageCommand.ExecuteAsync(message);
-            else if (result == "Удалить")
-                await DeleteMessageCommand.ExecuteAsync(message);
-            else if (result == "Копировать текст")
-                await CopyMessage(message);
+            else
+            {
+                MessageNotOwnerPopup.Parameter = MV.Message;
+                await PopupManager.Show(MessageNotOwnerPopup, MV.point.Value.X, MV.point.Value.Y);
+            }
         }
 
         [RelayCommand]
@@ -283,7 +294,7 @@ namespace nearby.ViewModels
         [RelayCommand]
         private async Task CopyMessage(Message? message)
         {
-            if (message == null) return;
+            if (message is null) return;
             await Clipboard.Default.SetTextAsync(message.Content);
             IsMenuVisible = false;
             SelectedMessage = null;

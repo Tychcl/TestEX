@@ -41,6 +41,8 @@
     <x:String x:Key="ChatCreate">&#xF0F3;</x:String>
     <x:String x:Key="GroupCreate">&#xF0F3;</x:String>
     <x:String x:Key="AddUser">&#xE7FE;</x:String>
+    <x:String x:Key="Reply">&#xE15E;</x:String>
+    <x:String x:Key="Copy">&#xE14D;</x:String>
 
     <!--ADD-->
     <x:String x:Key="AddCircle">&#xE147;</x:String>

@@ -9,12 +9,12 @@
              Title="Задачи"
              xmlns:elements="clr-namespace:nearby.ContentViews.Elements"
              x:DataType="viewModels:TasksViewModel"
-             x:Name="thisControl"
-             Shell.NavBarIsVisible="False">
-
-    <Grid RowDefinitions="Auto, Auto, *" RowSpacing="10">
-        <header:BaseHeaderView Grid.Row="0" Text="{Binding Title, Source={x:Reference thisControl}}" BackIsVisible="False" Icon="{StaticResource AddNote}" MenuIsVisible="True" Command="{Binding GoToCreateCommand}"/>
-        <Border Style="{StaticResource Card}" Grid.Row="1">
+             x:Name="thisControl">
+    <Shell.TitleView>
+        <header:BaseHeaderView Text="{Binding Title, Source={x:Reference thisControl}}" BackIsVisible="False" Icon="{StaticResource AddNote}" MenuIsVisible="True" Command="{Binding GoToCreateCommand}"/>
+    </Shell.TitleView>
+    <Grid RowDefinitions="Auto, *" RowSpacing="12" Margin="0,16,0,0">
+        <Border Style="{StaticResource Card}" Grid.Row="0" Margin="20,0,20,0">
             <VerticalStackLayout Spacing="5">
                 <Grid ColumnDefinitions="*, Auto">
                     <Label Text="Фильтры" Style="{StaticResource SectionTitle}" Margin="0" Grid.Column="0" VerticalOptions="Center"/>
@@ -46,7 +46,7 @@
                 </HorizontalStackLayout>
             </VerticalStackLayout>
         </Border>
-        <RefreshView Grid.Row="2" 
+        <RefreshView Grid.Row="1" 
                      IsRefreshing="{Binding IsRefreshing}" 
                      Command="{Binding RefreshCommand}"
                      VerticalOptions="Fill">

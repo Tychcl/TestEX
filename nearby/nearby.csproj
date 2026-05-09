@@ -191,9 +191,4 @@
 	  </MauiXaml>
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Classes\Interface\Dependency\" />
-	  <Folder Include="Classes\Interface\Popup\" />
-	</ItemGroup>
-
 </Project>

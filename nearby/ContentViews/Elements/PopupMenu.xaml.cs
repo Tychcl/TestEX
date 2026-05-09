@@ -8,6 +8,7 @@ namespace nearby.ContentViews.Elements;
 public partial class PopupMenu : Popup
 {
     private ObservableCollection<PopupItem> _items;
+    public object? Parameter;
 
     public PopupMenu(ObservableCollection<PopupItem> items)
     {
@@ -58,8 +59,7 @@ public partial class PopupMenu : Popup
 
             var separator = new BoxView
             {
-                HeightRequest = 2,
-                BackgroundColor = (Color)Application.Current!.Resources["CBorder"],
+                Style = (Style)ResourceManager.Get("SplitLine"),
                 Margin = new Thickness(0, 4, 0, 0),
                 InputTransparent = true
             };
@@ -70,7 +70,7 @@ public partial class PopupMenu : Popup
             if (item.Command != null)
             {
                 var tapGesture = new TapGestureRecognizer();
-                tapGesture.Tapped += (s, e) => item.Command.Execute(null);
+                tapGesture.Tapped += (s, e) => item.Command.Execute(Parameter);
                 row.GestureRecognizers.Add(tapGesture);
             }
 

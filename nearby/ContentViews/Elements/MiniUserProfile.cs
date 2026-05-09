@@ -2,6 +2,7 @@ using nearby.Models;
 using Microsoft.Maui.Controls.Shapes;
 using System.Globalization;
 using nearby.Classes;
+using nearby.Classes.Interface.Converters;
 
 namespace nearby.ContentViews.Elements;
 
@@ -106,14 +107,14 @@ public class MiniUserProfile : ContentView
         _labelEmail = new Label
         {
             Style = BCL,
-            TextColor = (Color)Application.Current.Resources["Gray500"],
+            TextColor = (Color)ResourceManager.Get("Gray500"),
             FontSize = 14,
             Margin = new Thickness(0)
         };
         _labelPhone = new Label
         {
             Style = BCL,
-            TextColor = (Color)Application.Current.Resources["Gray500"],
+            TextColor = (Color)ResourceManager.Get("Gray500"),
             FontSize = 14,
             Margin = new Thickness(0)
         };

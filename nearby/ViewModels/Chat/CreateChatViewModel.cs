@@ -19,6 +19,9 @@ namespace nearby.ViewModels
         private string? _searchQuery;
 
         [ObservableProperty]
+        private bool _isGroup;
+
+        [ObservableProperty]
         private bool _searchResultsVisibilitty;
 
         [ObservableProperty]
@@ -31,14 +34,6 @@ namespace nearby.ViewModels
         private string? _chatName;
 
         private CancellationTokenSource? _debounceCts;
-
-        public bool IsGroupChat => SelectedUsers.Count > 1;
-
-        partial void OnSelectedUsersChanged(ObservableCollection<User> value)
-        {
-            OnPropertyChanged(nameof(IsGroupChat));
-            CreateChatCommand.NotifyCanExecuteChanged();
-        }
 
         public CreateChatViewModel(IUserService userService, IChatService chatService)
         {
@@ -104,8 +99,8 @@ namespace nearby.ViewModels
         {
             if (user == null) return;
             if (SelectedUsers.Any(u => u.Id == user.Id)) return;
-
             SelectedUsers.Add(user);
+            IsGroup = SelectedUsers.Count > 1;
             SearchResults.Remove(user);
             CreateChatCommand.NotifyCanExecuteChanged();
         }
@@ -115,6 +110,7 @@ namespace nearby.ViewModels
         {
             if (user == null) return;
             SelectedUsers.Remove(user);
+            IsGroup = SelectedUsers.Count > 1;
             if (!string.IsNullOrWhiteSpace(SearchQuery) &&
                 (user.FullName?.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) == true ||
                  user.Phone?.Contains(SearchQuery, StringComparison.OrdinalIgnoreCase) == true ||

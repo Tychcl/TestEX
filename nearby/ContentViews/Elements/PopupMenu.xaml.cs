@@ -8,7 +8,6 @@ namespace nearby.ContentViews.Elements;
 public partial class PopupMenu : Popup
 {
     private ObservableCollection<PopupItem> _items;
-    public object? Parameter;
 
     public PopupMenu(ObservableCollection<PopupItem> items)
     {
@@ -70,7 +69,7 @@ public partial class PopupMenu : Popup
             if (item.Command != null)
             {
                 var tapGesture = new TapGestureRecognizer();
-                tapGesture.Tapped += (s, e) => item.Command.Execute(Parameter);
+                tapGesture.Tapped += (s, e) => item.Command.Execute(null);
                 row.GestureRecognizers.Add(tapGesture);
             }
 

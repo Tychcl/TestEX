@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 using CommunityToolkit.Maui;
@@ -13,6 +14,7 @@ namespace nearby.Classes
 {
     public static class PopupManager
     {
+        public static readonly Point MaxDIU = new Point(DeviceDisplay.Current.MainDisplayInfo.Width / DeviceDisplay.Current.MainDisplayInfo.Density, DeviceDisplay.Current.MainDisplayInfo.Height / DeviceDisplay.Current.MainDisplayInfo.Density);
         public static PopupOptions options = new PopupOptions
         {
             PageOverlayColor = Colors.Transparent,
@@ -22,11 +24,11 @@ namespace nearby.Classes
 
         public static INavigation navigation => Application.Current?.Windows[0]?.Page?.Navigation;
 
-        public static PopupMenu Create(ObservableCollection<PopupItem> list, Thickness margin = default(Thickness), LayoutOptions horizontal = default(LayoutOptions), LayoutOptions vertical = default(LayoutOptions))
+        public static PopupMenu Create(ObservableCollection<PopupItem> list, Thickness margin = default(Thickness), LayoutOptions? horizontal = null, LayoutOptions? vertical = null)
         {
             var popup = new PopupMenu(list);
-            popup.HorizontalOptions = horizontal;
-            popup.VerticalOptions = vertical;
+            popup.HorizontalOptions = horizontal ?? LayoutOptions.Start;
+            popup.VerticalOptions = vertical ?? LayoutOptions.Start;
             popup.Margin = margin;
             return popup;
         }
@@ -39,17 +41,13 @@ namespace nearby.Classes
 
         public static async Task Show(PopupMenu popup, double x, double y, INavigation? nav = null)
         {
-            double popupWidth = popup.Width / DeviceDisplay.Current.MainDisplayInfo.Density;
-            double popupHeight = popup.Height / DeviceDisplay.Current.MainDisplayInfo.Density;
-            double Width = x / DeviceDisplay.Current.MainDisplayInfo.Density;
-            double Height = y / DeviceDisplay.Current.MainDisplayInfo.Density;
-            Width = Width < popupWidth ? popupWidth : Width;
-            Height = Height < popupHeight ? popupHeight : Height;
-            //double width = Application.Current.Windows[0].Page.Width;
-            //double height = Application.Current.Windows[0].Page.Height;
-            //popup.AnchorX = x / width; 
-            //popup.AnchorY = y / height;
-            popup.Margin = new Thickness(Math.Max(0, Width), Math.Max(0, Height), 0, 0);
+            double minLeft = 50;
+            double minTop = 75;
+            double finalLeft = Math.Min(MaxDIU.X - 200, x);
+            double finalTop = Math.Min(MaxDIU.Y - 300, y);
+            popup.Margin = new Thickness(
+                Math.Max(minLeft, finalLeft) / 2, 
+                Math.Max(minTop, finalTop) / 2, 0, 0);
             await Show(popup, nav);
         }
     }

@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Maui.Platform;
 using nearby.Classes;
+using nearby.ContentViews.Elements;
 using nearby.Interfaces;
 using nearby.Services;
 using nearby.ViewModels;
@@ -26,6 +27,15 @@ namespace nearby
                     fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
                     fonts.AddFont("MaterialSymbols-Rounded.ttf", "Icons");
                 });
+            Microsoft.Maui.Handlers.EditorHandler.Mapper.AppendToMapping("NoUnderline", (handler, view) =>
+            {
+                if (view is NoUnderlineEditor)
+                {
+                    #if ANDROID
+                        handler.PlatformView.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(Android.Graphics.Color.Transparent);
+                    #endif
+                }
+            });
             Microsoft.Maui.Handlers.ToolbarHandler.Mapper.AppendToMapping("CustomTitleViewInsets", (handler, view) =>
             {
                 #if ANDROID

@@ -10,6 +10,7 @@
     <x:String x:Key="Cancel">&#xF508;</x:String>
     <x:String x:Key="Back">&#xF46B;</x:String>
     <x:String x:Key="MenuDots">&#xE5D4;</x:String>
+    <x:String x:Key="AddPlus">&#xE145;</x:String>
     <x:String x:Key="Delete">&#xE872;</x:String>
     
     <!--Profile-->

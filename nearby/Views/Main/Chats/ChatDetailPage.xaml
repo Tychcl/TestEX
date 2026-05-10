@@ -4,6 +4,7 @@
              x:Class="nearby.Views.Main.ChatDetailPage"
              xmlns:viewModels="clr-namespace:nearby.ViewModels"
              xmlns:header="clr-namespace:nearby.ContentViews.Headers"
+             xmlns:ih="clr-namespace:nearby"
              xmlns:element="clr-namespace:nearby.ContentViews.Elements"
              xmlns:models="clr-namespace:nearby.Models"
              xmlns:converters="clr-namespace:nearby.Classes.Interface.Converters"
@@ -42,20 +43,21 @@
             </CollectionView>
             <Border Grid.Row="2" Style="{StaticResource Card}" Padding="0" Margin="0">
             <Grid ColumnDefinitions="Auto, *, Auto">
-                <Editor Grid.Column="1"
-            Style="{StaticResource EditEditor}"
-        Placeholder="Введите сообщение..."
-        Text="{Binding NewMessageText}"
-        AutoSize="TextChanges"
-        MaximumHeightRequest="150"
-        Margin="0,5"
-        VerticalOptions="Center"/>
+                <ImageButton Grid.Column="0" ih:IconHelper.Icon="{StaticResource AddPlus}" HeightRequest="24" WidthRequest="24"/>
+                <element:NoUnderlineEditor Grid.Column="1"
+                        Style="{StaticResource EditEditor}"
+                        Placeholder="Введите сообщение..."
+                        Text="{Binding NewMessageText}"
+                        AutoSize="TextChanges"
+                        MaximumHeightRequest="150"
+                        Margin="0,5"
+                        VerticalOptions="Center"/>
                 <Button Grid.Column="2"
-            Text="Отправить"
-            Command="{Binding SendMessageCommand}"
-            Margin="5,0,0,0"
-            BackgroundColor="#3498db"
-            TextColor="White"/>
+                        Text="Отправить"
+                        Command="{Binding SendMessageCommand}"
+                        Margin="5,0,0,0"
+                        BackgroundColor="#3498db"
+                        TextColor="White"/>
             </Grid>
         </Border>
     </Grid>

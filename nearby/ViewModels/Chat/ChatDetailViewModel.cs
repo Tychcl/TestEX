@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Reflection.Metadata;
+using CommunityToolkit.Maui.Extensions;
 using CommunityToolkit.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -20,9 +21,9 @@ namespace nearby.ViewModels
         private const int PageSize = 50;
         private int _currentPage = 1;
         private bool _hasMoreMessages = true;
-        private PopupMenu MessageOwnerPopup;
+        public PopupMenu MessageOwnerPopup;
         private ObservableCollection<PopupItem> MessageOwnerPopupItems;
-        private PopupMenu MessageNotOwnerPopup;
+        public PopupMenu MessageNotOwnerPopup;
         private ObservableCollection<PopupItem> MessageNotOwnerPopupItems = new();
 
         [ObservableProperty]
@@ -42,9 +43,6 @@ namespace nearby.ViewModels
 
         [ObservableProperty]
         private string _newMessageText = string.Empty;
-
-        [ObservableProperty]
-        private bool _isMenuVisible;
 
         [ObservableProperty]
         private Message? _selectedMessage;
@@ -230,11 +228,13 @@ namespace nearby.ViewModels
         private bool CanModifyMember() => !IsBusy;
 
         [RelayCommand(CanExecute = nameof(CanModifyMessage))]
-        private async Task EditMessage(Message? message)
+        private async Task EditMessage()
         {
             try
             {
-                if (message is null) return;
+                if (SelectedMessage is not Message message) return;
+                SelectedMessage = null;
+                await PopupManager.navigation.ClosePopupAsync();
                 var newText = await Application.Current!.MainPage!.DisplayPromptAsync("Редактировать", "", "OK", "Отмена", maxLength: 500, initialValue: message.Content);
                 if (string.IsNullOrWhiteSpace(newText)) return;
                 var result = await _chatService.EditMessageAsync(message.Id, newText);
@@ -250,13 +250,15 @@ namespace nearby.ViewModels
         }
 
         [RelayCommand(CanExecute = nameof(CanModifyMessage))]
-        private async Task DeleteMessage(Message? message)
+        private async Task DeleteMessage()
         {
             try
             {
-                if (message is null) return;
+                if (SelectedMessage is not Message message) return;
+                SelectedMessage = null;
                 var confirm = await Application.Current!.MainPage!.DisplayAlert("Удаление", "Удалить сообщение?", "Да", "Нет");
                 if (!confirm) return;
+                await PopupManager.navigation.ClosePopupAsync();
                 var result = await _chatService.DeleteMessageAsync(message.Id);
                 Messages.Remove(message);
             }
@@ -271,33 +273,24 @@ namespace nearby.ViewModels
         private async Task OpenMenu(object view)
         {
             if (view is not MessageView MV) return;
+            SelectedMessage = MV.Message;
             if (MV.IsOwnMessage)
             {
-                MessageOwnerPopup.Parameter = MV.Message;
                 await PopupManager.Show(MessageOwnerPopup, MV.point.Value.X, MV.point.Value.Y);
             }
             else
             {
-                MessageNotOwnerPopup.Parameter = MV.Message;
                 await PopupManager.Show(MessageNotOwnerPopup, MV.point.Value.X, MV.point.Value.Y);
             }
         }
 
         [RelayCommand]
-        private Task CloseMenu()
+        private async Task CopyMessage()
         {
-            IsMenuVisible = false;
+            if (SelectedMessage is not Message message) return;
             SelectedMessage = null;
-            return Task.CompletedTask;
-        }
-
-        [RelayCommand]
-        private async Task CopyMessage(Message? message)
-        {
-            if (message is null) return;
+            await PopupManager.navigation.ClosePopupAsync();
             await Clipboard.Default.SetTextAsync(message.Content);
-            IsMenuVisible = false;
-            SelectedMessage = null;
         }
 
         private void RefreshCommands()

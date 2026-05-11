@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: db:3306
--- Время создания: Апр 13 2026 г., 15:27
+-- Время создания: Май 11 2026 г., 15:07
 -- Версия сервера: 8.0.43
 -- Версия PHP: 8.3.26
 
@@ -48,7 +48,9 @@ INSERT INTO `balance_transactions` (`id`, `user_id`, `amount`, `balance_after`, 
 (3, 6, 50.00, 150.00, 'task_reward', 'task', 3, '2026-03-30 10:25:07'),
 (4, 6, 50.00, 200.00, 'task_reward', 'task', 3, '2026-04-01 11:10:58'),
 (5, 6, 50.00, 250.00, 'task_reward', 'task', 3, '2026-04-01 11:14:38'),
-(6, 6, 23.00, 273.00, 'task_reward', 'task', 4, '2026-04-08 21:12:51');
+(6, 6, 23.00, 273.00, 'task_reward', 'task', 4, '2026-04-08 21:12:51'),
+(7, 6, 12.00, 285.00, 'task_reward', 'task', 6, '2026-05-03 00:44:29'),
+(8, 7, 0.00, 0.00, 'task_reward', 'task', 7, '2026-05-07 17:38:36');
 
 -- --------------------------------------------------------
 
@@ -68,7 +70,10 @@ CREATE TABLE `chats` (
 --
 
 INSERT INTO `chats` (`id`, `type`, `name`, `created_at`) VALUES
-(1, 'personal', NULL, '2026-04-01 11:03:55');
+(1, 'personal', NULL, '2026-04-01 11:03:55'),
+(2, 'personal', NULL, '2026-05-07 17:36:16'),
+(3, 'group', 'Мега абобусы 2000', '2026-05-08 09:45:29'),
+(4, 'personal', NULL, '2026-05-08 10:32:12');
 
 -- --------------------------------------------------------
 
@@ -90,7 +95,14 @@ CREATE TABLE `chat_members` (
 
 INSERT INTO `chat_members` (`id`, `chat_id`, `user_id`, `joined_at`, `last_read_message_id`) VALUES
 (1, 1, 6, '2026-04-01 11:03:55', NULL),
-(2, 1, 5, '2026-04-01 11:03:55', 1);
+(2, 1, 5, '2026-04-01 11:03:55', 1),
+(3, 2, 6, '2026-05-07 17:36:16', NULL),
+(4, 2, 7, '2026-05-07 17:36:16', NULL),
+(5, 3, 6, '2026-05-08 09:45:29', NULL),
+(6, 3, 7, '2026-05-08 09:45:29', NULL),
+(7, 3, 5, '2026-05-08 09:45:29', NULL),
+(8, 4, 5, '2026-05-08 10:32:12', NULL),
+(9, 4, 7, '2026-05-08 10:32:12', NULL);
 
 -- --------------------------------------------------------
 
@@ -102,27 +114,53 @@ CREATE TABLE `messages` (
   `id` int UNSIGNED NOT NULL,
   `chat_id` int UNSIGNED NOT NULL,
   `sender_id` int UNSIGNED NOT NULL COMMENT 'Отправитель (пользователь)',
-  `content_type` enum('text','image','file','voice') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'text',
+  `content_type` enum('text','image','file','voice','notification') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT 'text',
   `content` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'Текст сообщения или ссылка на файл',
   `file_url` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'URL файла (если есть)',
   `transcribed_text` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci COMMENT 'Распознанный текст голосового сообщения',
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `reply` int UNSIGNED DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Сообщения';
 
 --
 -- Дамп данных таблицы `messages`
 --
 
-INSERT INTO `messages` (`id`, `chat_id`, `sender_id`, `content_type`, `content`, `file_url`, `transcribed_text`, `created_at`) VALUES
-(1, 1, 5, 'text', 'string', 'string', 'string', '2026-04-01 11:41:49'),
-(2, 1, 5, 'text', '12345', NULL, NULL, '2026-04-08 06:09:25'),
-(3, 1, 5, 'text', '123', NULL, NULL, '2026-04-08 06:10:41'),
-(4, 1, 5, 'text', '123', NULL, NULL, '2026-04-08 06:11:11'),
-(5, 1, 5, 'text', '234', NULL, NULL, '2026-04-08 06:12:08'),
-(6, 1, 5, 'text', 'aboba\n2', NULL, NULL, '2026-04-08 07:01:23'),
-(7, 1, 5, 'text', '123\nпривет\nпривет', NULL, NULL, '2026-04-08 21:09:29'),
-(8, 1, 5, 'text', 'string', NULL, NULL, '2026-04-08 21:09:56'),
-(9, 1, 6, 'text', 'привет', NULL, NULL, '2026-04-08 21:12:12');
+INSERT INTO `messages` (`id`, `chat_id`, `sender_id`, `content_type`, `content`, `file_url`, `transcribed_text`, `created_at`, `reply`) VALUES
+(1, 1, 5, 'text', 'string', 'string', 'string', '2026-04-01 11:41:49', NULL),
+(2, 1, 5, 'text', '12345', NULL, NULL, '2026-04-08 06:09:25', NULL),
+(3, 1, 5, 'text', '123', NULL, NULL, '2026-04-08 06:10:41', NULL),
+(4, 1, 5, 'text', '123', NULL, NULL, '2026-04-08 06:11:11', NULL),
+(5, 1, 5, 'text', '234', NULL, NULL, '2026-04-08 06:12:08', NULL),
+(6, 1, 5, 'text', 'aboba\n2', NULL, NULL, '2026-04-08 07:01:23', NULL),
+(7, 1, 5, 'text', 'привет\nпривет', NULL, NULL, '2026-04-08 21:09:29', NULL),
+(8, 1, 5, 'text', 'Working?\nРаботает?', NULL, NULL, '2026-04-08 21:09:56', NULL),
+(9, 1, 6, 'text', 'привет', NULL, NULL, '2026-04-08 21:12:12', NULL),
+(11, 1, 5, 'text', '1234gvggh', NULL, NULL, '2026-05-06 23:19:53', NULL),
+(12, 2, 7, 'text', '123567', NULL, NULL, '2026-05-07 17:36:22', NULL),
+(14, 1, 5, 'text', '123123', NULL, NULL, '2026-05-08 08:47:44', NULL),
+(15, 1, 5, 'text', 'Bye Bye', NULL, NULL, '2026-05-08 08:52:22', NULL),
+(18, 3, 7, 'text', 'Привет, как у вас дела?', NULL, NULL, '2026-05-08 10:11:50', NULL),
+(19, 3, 7, 'text', 'маааааааааааакккккккккссссссссииииииииммммммаааааалллллльььььнннннооооо\nдлинное сообщение', NULL, NULL, '2026-05-08 10:14:27', NULL),
+(23, 4, 7, 'text', '500?\n123', NULL, NULL, '2026-05-08 10:35:43', NULL),
+(24, 4, 7, 'text', '`12', NULL, NULL, '2026-05-08 10:38:50', NULL),
+(25, 4, 7, 'text', '1\n2\n3\n4\n5\n6\n7\n8\n9\n10', NULL, NULL, '2026-05-08 10:52:28', NULL),
+(26, 4, 7, 'text', '123\n123\n1\n23', NULL, NULL, '2026-05-08 10:52:36', NULL),
+(27, 4, 7, 'text', '432', NULL, NULL, '2026-05-08 10:52:38', NULL),
+(28, 4, 7, 'text', '6456', NULL, NULL, '2026-05-08 10:52:39', NULL),
+(29, 4, 7, 'text', '1231245345345', NULL, NULL, '2026-05-08 10:56:25', NULL),
+(30, 4, 7, 'text', 'dfgdgfdfg', NULL, NULL, '2026-05-08 10:56:32', NULL),
+(31, 4, 7, 'text', 'fghfghfghjghj', NULL, NULL, '2026-05-08 10:56:35', NULL),
+(32, 4, 7, 'text', 'sdfsfds', NULL, NULL, '2026-05-08 10:56:36', NULL),
+(33, 4, 7, 'text', 'jghjgjh', NULL, NULL, '2026-05-08 10:56:38', NULL),
+(34, 4, 5, 'text', '123', NULL, NULL, '2026-05-09 15:37:01', NULL),
+(37, 1, 5, 'text', 'test', NULL, NULL, '2026-05-10 15:58:45', NULL),
+(47, 3, 5, 'text', 'норм', NULL, NULL, '2026-05-11 14:03:05', 18),
+(48, 3, 5, 'text', 'а теперь нет', NULL, NULL, '2026-05-11 14:04:54', 47),
+(49, 3, 5, 'text', 'Привет!\nКак дела?\nЯ тут вспомнил тебя.\nДавно не виделись.\nМожет, встретимся?\nНапиши, когда сможешь.\nБуду ждать ответа.\nПока.', NULL, NULL, '2026-05-11 14:10:52', NULL),
+(50, 3, 5, 'text', 'Слушай, а давай в пятницу?\nВообще хочется кофе и поболтать.\nУ тебя как с графиком?\nЯ свободна после шести.\nМожно в «Кофе и точке» у парка.\nИли где ты захочешь.\nОтветь, когда увидишь.\nБуду рада встрече.\nЦелую.', NULL, NULL, '2026-05-11 14:11:14', NULL),
+(51, 3, 5, 'text', 'Привет! Как твои дела?\nЧто нового вообще?\nУ меня на работе аврал.\nДумаю о тебе часто.\nКак твоя кошка поживает?\nНапиши пару строчек.\nОчень не хватает общения.\nОбнимаю. До связи.', NULL, NULL, '2026-05-11 14:11:42', NULL),
+(52, 3, 5, 'text', 'Доброе утро! Как спалось?\nСегодня отличная погода.\nМожет, погуляем вечером?\nЯ буду в центре в шесть.\nНапиши, где удобно встретиться.\nМожно просто пройтись по набережной.\nЖду твой ответ с надеждой.\nХорошего дня! Пока.', NULL, NULL, '2026-05-11 14:11:57', 48);
 
 -- --------------------------------------------------------
 
@@ -388,7 +426,7 @@ CREATE TABLE `tasks` (
 
 INSERT INTO `tasks` (`id`, `title`, `description`, `needed_volunteers`, `priority`, `location`, `reward`, `status`, `created_by_user_id`, `created_by_organization_id`, `deadline`, `created_at`, `updated_at`) VALUES
 (3, 'Попить со мной чай и поболтать', 'да да, благодарю благодарю', 1, 'low', 'хз', 50.00, 'completed', 5, NULL, '2026-03-24 00:00:00', '2026-03-23 10:20:17', '2026-04-01 11:14:38'),
-(5, 'Купить продукты', 'Яблоки, мясо, печеньки, чай', 1, 'medium', 'хз', 50.00, 'searching', 5, NULL, '2026-03-24 00:00:00', '2026-03-23 10:20:17', '2026-04-01 11:14:38');
+(5, 'Купить продукты', 'Яблоки, мясо, печеньки, чай123', 2, 'medium', 'хз', 50.00, 'searching', 5, NULL, '2026-03-24 00:00:00', '2026-03-23 10:20:17', '2026-05-07 16:40:58');
 
 -- --------------------------------------------------------
 
@@ -411,7 +449,7 @@ CREATE TABLE `task_volunteers` (
 
 INSERT INTO `task_volunteers` (`id`, `task_id`, `user_id`, `status`, `assigned_at`, `updated_at`) VALUES
 (2, 3, 6, 'completed', '2026-03-23 12:43:48', '2026-04-01 11:14:38'),
-(4, 5, 6, 'rejected', '2026-04-08 22:09:31', '2026-04-08 22:10:54');
+(4, 5, 6, 'rejected', '2026-04-08 22:09:31', '2026-05-04 20:07:26');
 
 -- --------------------------------------------------------
 
@@ -452,8 +490,9 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `full_name`, `city`, `birth_date`, `about`, `profile_picture`, `email`, `phone`, `password`, `vk_id`, `tg_id`, `balance`, `availability_status`, `is_admin`, `is_moderator`, `lastSeenAt`, `is_online`, `average_rating`, `created_at`, `updated_at`, `education_institution`, `education_degree`, `education_field`, `education_start_year`, `education_end_year`) VALUES
-(5, 'Вожегов Григорий Романович', 'Пермь2', '2006-06-07', 'Начинающий программист', NULL, 'tocabloha@gmail.com', '+79082697661', '$2y$10$y4VrRWP/21wRwpuxa5dl/.fcYssm5EsBRX2P5nieTJjFrCJpggZeW', NULL, NULL, 0.00, 'available', 0, 0, '2026-04-08 22:09:44', 1, 0.00, '2026-03-12 22:51:22', '2026-04-08 22:09:44', '', '', '', '0000', '0000'),
-(6, 'test test2 test2', NULL, '2006-03-23', NULL, NULL, 'test@test.test', '89082697661', '$2y$10$Z.XSxoIjk0yqF86DJl0ZfO9PsGCrC8mfjgHSkTTgkn/WmZrYRY7sC', NULL, NULL, 273.00, 'available', 0, 0, '2026-04-08 22:09:27', 1, 0.00, '2026-03-18 11:22:05', '2026-04-08 22:09:26', NULL, NULL, NULL, '0000', '0000');
+(5, 'Вожегов Григорий Романович', 'Пермь2', '2006-06-07', 'Начинающий программист', NULL, 'tocabloha@gmail.com', '+79082697661', '$2y$10$y4VrRWP/21wRwpuxa5dl/.fcYssm5EsBRX2P5nieTJjFrCJpggZeW', NULL, NULL, 0.00, 'available', 0, 0, '2026-05-11 13:35:17', 1, 0.00, '2026-03-12 22:51:22', '2026-05-11 13:35:17', 'Пермский авиационный техникум имени А.Д. Швецова', 'Среднее специальное', 'Информационные системы и программирование', '2022', '2026'),
+(6, 'test test2 test2', NULL, '2006-03-23', NULL, NULL, 'test@test.test', '89082697661', '$2y$10$Z.XSxoIjk0yqF86DJl0ZfO9PsGCrC8mfjgHSkTTgkn/WmZrYRY7sC', NULL, NULL, 285.00, 'available', 0, 0, '2026-05-04 19:57:10', 1, 0.00, '2026-03-18 11:22:05', '2026-05-04 19:57:10', NULL, NULL, NULL, '2022', '2026'),
+(7, 'Иванов Иван Иванович', NULL, NULL, NULL, NULL, 'example@gmail.com', '+79082697668', '$2y$10$a/OQd5w/a9SbnXBiQZ1/mueYaR7y1olcn8qZQCFZ2.L3V3rTnYzvS', NULL, NULL, 0.00, 'available', 0, 0, '2026-05-08 10:11:26', 1, 0.00, '2026-05-07 17:18:52', '2026-05-08 10:11:25', NULL, NULL, NULL, NULL, NULL);
 
 --
 -- Индексы сохранённых таблиц
@@ -488,7 +527,8 @@ ALTER TABLE `chat_members`
 ALTER TABLE `messages`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idx_chat` (`chat_id`),
-  ADD KEY `idx_sender` (`sender_id`);
+  ADD KEY `idx_sender` (`sender_id`),
+  ADD KEY `messages_ibfk_3` (`reply`);
 
 --
 -- Индексы таблицы `notifications`
@@ -616,25 +656,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT для таблицы `balance_transactions`
 --
 ALTER TABLE `balance_transactions`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT для таблицы `chats`
 --
 ALTER TABLE `chats`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT для таблицы `chat_members`
 --
 ALTER TABLE `chat_members`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT для таблицы `messages`
 --
 ALTER TABLE `messages`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT для таблицы `notifications`
@@ -706,19 +746,19 @@ ALTER TABLE `ratings`
 -- AUTO_INCREMENT для таблицы `tasks`
 --
 ALTER TABLE `tasks`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT для таблицы `task_volunteers`
 --
 ALTER TABLE `task_volunteers`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT для таблицы `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц
@@ -743,7 +783,8 @@ ALTER TABLE `chat_members`
 --
 ALTER TABLE `messages`
   ADD CONSTRAINT `messages_ibfk_1` FOREIGN KEY (`chat_id`) REFERENCES `chats` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `messages_ibfk_2` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `messages_ibfk_3` FOREIGN KEY (`reply`) REFERENCES `messages` (`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 --
 -- Ограничения внешнего ключа таблицы `notifications`

@@ -17,5 +17,7 @@ public class Message
     public string Content { get; set; }
     public string FileUrl { get; set; }
     public string TranscribedText { get; set; }
-    public DateTime CreatedAt { get; set; }
+    public DateTime? CreatedAt { get; set; }
+    public string ChatType {  get; set; }
+    public Message Reply {  get; set; }
 }

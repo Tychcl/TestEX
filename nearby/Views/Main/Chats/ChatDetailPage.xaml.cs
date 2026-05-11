@@ -10,6 +10,7 @@ public partial class ChatDetailPage : ContentPage
     public ChatDetailPage(ChatDetailViewModel viewModel)
     {
         InitializeComponent();
+        viewModel.CV = ChatCollectionView;
         BindingContext = viewModel;
     }
 

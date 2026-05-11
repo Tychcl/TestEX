@@ -12,5 +12,6 @@ namespace nearby.Models
         public string? content { get; set; }
         public string? file_url { get; set; }
         public string? transcribed_text { get; set; }
+        public int? reply { get; set; }
     }
 }

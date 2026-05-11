@@ -49,9 +49,9 @@ namespace nearby
 #if DEBUG
             builder.Logging.AddDebug();
 #endif
-            //=====================
+            //====================
             //Сервисы
-            //=====================
+            //====================
             builder.Services.AddSingleton<HttpClient>();
             builder.Services.AddSingleton<ApiClient>();
             builder.Services.AddSingleton<ITokenService, TokenService>();

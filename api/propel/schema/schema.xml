@@ -69,17 +69,24 @@
     <column name="file_url" phpName="FileUrl" type="VARCHAR" size="500" description="URL файла (если есть)"/>
     <column name="transcribed_text" phpName="TranscribedText" type="LONGVARCHAR" description="Распознанный текст голосового сообщения"/>
     <column name="created_at" phpName="CreatedAt" type="TIMESTAMP" defaultExpr="CURRENT_TIMESTAMP"/>
+    <column name="reply" phpName="Reply" type="INTEGER" sqlType="int unsigned"/>
     <foreign-key foreignTable="chats" name="messages_ibfk_1" onDelete="CASCADE">
       <reference local="chat_id" foreign="id"/>
     </foreign-key>
     <foreign-key foreignTable="users" name="messages_ibfk_2" onDelete="CASCADE">
       <reference local="sender_id" foreign="id"/>
     </foreign-key>
+    <foreign-key foreignTable="messages" name="messages_ibfk_3" onDelete="CASCADE" onUpdate="CASCADE">
+      <reference local="reply" foreign="id"/>
+    </foreign-key>
     <index name="idx_chat">
       <index-column name="chat_id"/>
     </index>
     <index name="idx_sender">
       <index-column name="sender_id"/>
+    </index>
+    <index name="reply">
+      <index-column name="reply"/>
     </index>
     <vendor type="mysql">
       <parameter name="Engine" value="InnoDB"/>

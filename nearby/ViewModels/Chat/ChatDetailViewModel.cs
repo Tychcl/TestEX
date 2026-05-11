@@ -12,6 +12,10 @@ using nearby.Services;
 
 namespace nearby.ViewModels
 {
+    public enum ChatAction
+    {
+        Edit, Reply
+    }
     [QueryProperty(nameof(ChatId), "id")]
     public partial class ChatDetailViewModel : BaseViewModel
     {
@@ -25,6 +29,34 @@ namespace nearby.ViewModels
         private ObservableCollection<PopupItem> MessageOwnerPopupItems;
         public PopupMenu MessageNotOwnerPopup;
         private ObservableCollection<PopupItem> MessageNotOwnerPopupItems = new();
+        public CollectionView? CV;
+
+        [ObservableProperty]
+        private ChatAction? _currentAction;
+        partial void OnCurrentActionChanged(ChatAction? value)
+        {
+            switch (_currentAction)
+            {
+                case ChatAction.Edit:
+                    CurrentActionName = "Редактирование";
+                    CurrentActionDescription = SelectedMessage.Content;
+                    CurrentActionIcon = (string)ResourceManager.Get("Edit");
+                    break;
+                case ChatAction.Reply:
+                    CurrentActionName = "Ответ";
+                    CurrentActionDescription = SelectedMessage.Content;
+                    CurrentActionIcon = (string)ResourceManager.Get("Reply");
+                    break;
+            }
+        }
+
+        [ObservableProperty]
+        private string? _currentActionName;
+        [ObservableProperty]
+        private string? _currentActionDescription;
+        [ObservableProperty]
+        private string? _currentActionIcon;
+
 
         [ObservableProperty]
         private int _curentUserId;
@@ -43,6 +75,8 @@ namespace nearby.ViewModels
 
         [ObservableProperty]
         private string _newMessageText = string.Empty;
+        [ObservableProperty]
+        private string _newMessageTextSave = string.Empty;
 
         [ObservableProperty]
         private Message? _selectedMessage;
@@ -55,7 +89,7 @@ namespace nearby.ViewModels
             _userService = userService;
             CurentUserId = _userService.CurrentUser.Id;
 
-            MessageNotOwnerPopupItems.Add(new((string)ResourceManager.Get("Reply"), "Ответить", CopyMessageCommand));
+            MessageNotOwnerPopupItems.Add(new((string)ResourceManager.Get("Reply"), "Ответить", ReplyMessageCommand));
             MessageNotOwnerPopupItems.Add(new((string)ResourceManager.Get("Copy"), "Копировать", CopyMessageCommand));
             
             MessageOwnerPopupItems = new(MessageNotOwnerPopupItems)
@@ -143,9 +177,7 @@ namespace nearby.ViewModels
                     var newMessages = response.Data.Data.OrderBy(m => m.CreatedAt).ToList();
                     foreach (var msg in newMessages)
                     {
-                        //bool isOwn = msg.SenderId == CurrentUserId;
-                        //msg.layout = isOwn ? LayoutOptions.End : LayoutOptions.Start;
-                        //msg.corner = isOwn ? new CornerRadius(15, 15, 15, 0) : new CornerRadius(15, 15, 0, 15);
+                        msg.ChatType = Chat.Type;
                         Messages.Add(msg);
                     }
                     _currentPage++;
@@ -163,28 +195,46 @@ namespace nearby.ViewModels
             }
         }
 
-        [RelayCommand(CanExecute = nameof(CanSendMessage))]
-        private async Task SendMessage()
+        private async Task EditMessageTask()
+        {
+            try
+            {
+                if (SelectedMessage is not Message message) return;
+                SelectedMessage = null;
+                var newText = NewMessageText;
+                NewMessageText = string.Empty;
+                if (string.IsNullOrWhiteSpace(newText)) return;
+                var result = await _chatService.EditMessageAsync(message.Id, newText);
+                message.Content = newText;
+                var index = Messages.IndexOf(message);
+                if (index >= 0)
+                    Messages[index] = message;
+            }
+            catch (Exception ex)
+            {
+                CurrentAction = null;
+                await ShowErrorAsync(ex.Message);
+            }
+        }
+        private async Task SendMessageTask(int? reply = null)
         {
             try
             {
                 var mes = NewMessageText.Trim();
                 if (string.IsNullOrWhiteSpace(mes)) return;
-
-                var messageModel = new MessageSendModel { content_type = "text", content = mes };
+                var messageModel = new MessageSendModel { content_type = "text", content = mes, reply = reply };
                 var response = await _chatService.SendMessageAsync(ChatId, messageModel);
-
-                var newMessage = new Message
-                {
-                    Id = response.Data?.Id ?? 0,
-                    Content = mes,
-                    ContentType = "text",
-                    CreatedAt = DateTime.UtcNow,
-                    SenderId = CurrentUserId,
-                    SenderName = _userService.CurrentUser?.FullName ?? "Вы",
-                    SenderProfilePicture = _userService.CurrentUser?.ProfilePicture
-                };
-                Messages.Add(newMessage);
+                //var newMessage = new Message
+                //{
+                //    Id = response.Data?.Id ?? 0,
+                //    Content = mes,
+                //    ContentType = "text",
+                //    CreatedAt = DateTime.UtcNow,
+                //    SenderId = CurrentUserId,
+                //    SenderName = _userService.CurrentUser?.FullName ?? "Вы",
+                //    SenderProfilePicture = _userService.CurrentUser?.ProfilePicture
+                //};
+                Messages.Add(response.Data);
                 NewMessageText = string.Empty;
             }
             catch (Exception ex)
@@ -192,7 +242,44 @@ namespace nearby.ViewModels
                 await ShowErrorAsync(ex.Message);
             }
         }
+
         private bool CanSendMessage() => !string.IsNullOrWhiteSpace(NewMessageText) && !IsBusy;
+        [RelayCommand(CanExecute = nameof(CanSendMessage))]
+        private async Task SendMessage()
+        {
+            try
+            {
+                switch (CurrentAction)
+                {
+                    case ChatAction.Edit:
+                        await EditMessageTask();
+                        break;
+                    case ChatAction.Reply:
+                        await SendMessageTask(SelectedMessage.Id);
+                        SelectedMessage = null;
+                        break;
+                    default:
+                        await SendMessageTask();
+                        break;
+                }
+                CurrentAction = null;
+            }
+            catch (Exception ex)
+            {
+                CurrentAction = null;
+                await ShowErrorAsync(ex.Message);
+            }
+        }
+
+        [RelayCommand]
+        private async Task CancelAction()
+        {
+            if (CurrentAction == ChatAction.Edit)
+            {
+                NewMessageText = NewMessageTextSave;
+            }
+            CurrentAction = null;
+        }
 
         [RelayCommand]
         private async Task AddMember()
@@ -233,15 +320,25 @@ namespace nearby.ViewModels
             try
             {
                 if (SelectedMessage is not Message message) return;
-                SelectedMessage = null;
+                NewMessageTextSave = NewMessageText;
+                NewMessageText = message.Content;
+                CurrentAction = ChatAction.Edit;
                 await PopupManager.navigation.ClosePopupAsync();
-                var newText = await Application.Current!.MainPage!.DisplayPromptAsync("Редактировать", "", "OK", "Отмена", maxLength: 500, initialValue: message.Content);
-                if (string.IsNullOrWhiteSpace(newText)) return;
-                var result = await _chatService.EditMessageAsync(message.Id, newText);
-                message.Content = newText;
-                var index = Messages.IndexOf(message);
-                if (index >= 0)
-                    Messages[index] = message;
+            }
+            catch (Exception ex)
+            {
+                await ShowErrorAsync(ex.Message);
+            }
+        }
+
+        [RelayCommand]
+        private async Task ReplyMessage()
+        {
+            try
+            {
+                if (SelectedMessage is not Message message) return;
+                CurrentAction = ChatAction.Reply;
+                await PopupManager.navigation.ClosePopupAsync();
             }
             catch (Exception ex)
             {
@@ -291,6 +388,13 @@ namespace nearby.ViewModels
             SelectedMessage = null;
             await PopupManager.navigation.ClosePopupAsync();
             await Clipboard.Default.SetTextAsync(message.Content);
+        }
+
+        [RelayCommand]
+        private async Task GoToReplyedMessage(int? id)
+        {
+            if (id is null || CV is null) return;
+            CV.ScrollTo(Messages.First(x => x.Id == id));
         }
 
         private void RefreshCommands()

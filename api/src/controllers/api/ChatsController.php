@@ -4,6 +4,7 @@ namespace Api;
 use Classes\Validate;
 use Core\Response;
 use Core\Route;
+use DateTime;
 use Exception;
 use Models\Chats;
 use Models\ChatsQuery;
@@ -546,12 +547,11 @@ class ChatsController
             $message->setContent($content);
             $message->setFileUrl($fileUrl);
             $message->setTranscribedText($transcribedText);
+            $message->setReply($params['reply'] ?? null);
+            $message->setCreatedAt(new DateTime());
             $message->save();
 
-            // Можно добавить уведомления для других участников (опционально)
-            // ...
-
-            return new Response(200, ['id' => $message->getId(), 'result' => 'successful']);
+            return new Response(200, ['data' => $this->formatMessage($message)]);
         } catch (Exception $ex) {
             return Validate::Ex($ex);
         }
@@ -865,10 +865,10 @@ class ChatsController
         return $data;
     }
 
-    private function formatMessage(Messages $message): array
+    private function formatMessage(Messages $message, bool $CheckReply = true): array
     {
         $sender = UsersQuery::create()->findOneById($message->getSenderId());
-        return [
+        $data = [
             'Id' => $message->getId(),
             'SenderId' => $message->getSenderId(),
             'SenderName' => $sender ? $sender->getFullName() : null,
@@ -877,7 +877,14 @@ class ChatsController
             'Content' => $message->getContent(),
             'FileUrl' => $message->getFileUrl(),
             'TranscribedText' => $message->getTranscribedText(),
-            'CreatedAt' => $message->getCreatedAt() ? $message->getCreatedAt()->format('Y-m-d H:i:s') : null,
+            'CreatedAt' => $message->getCreatedAt() ? $message->getCreatedAt()->format('Y-m-d H:i:s') : null
         ];
+        if ($CheckReply) {
+            $data['reply'] = $message->getReply() ? $this->formatMessage(MessagesQuery::create()->findOneById($message->getReply()), false) : null;
+            return $data;
+        }
+        else {
+            return $data;
+        }
     }
 }

@@ -131,25 +131,8 @@ public class ChatService : IChatService
         {
             throw new Exception(json);
         }
-        var data = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
-        if (data != null && data.TryGetValue("id", out var idObj))
-        {
-            // Можно получить только id, но для полного сообщения нужно сделать дополнительный запрос.
-            // Однако API возвращает только id, поэтому возвращаем сообщение с минимальной информацией.
-            var msg = new Message
-            {
-                Id = Convert.ToInt32(idObj),
-                Content = message.content ?? "",
-                ContentType = message.content_type,
-                CreatedAt = DateTime.UtcNow,
-                SenderId = 0, // Неизвестно, но можно получить из сессии позже
-                SenderName = "",
-                FileUrl = message.file_url ?? "",
-                TranscribedText = message.transcribed_text ?? ""
-            };
-            return new ApiResponse<Message>("", msg);
-        }
-        throw new Exception("Не известная ошибка");
+        var data = JsonConvert.DeserializeObject<ApiResponse<Message>>(json);
+        return data;
     }
 
     public async Task<ApiResponse<nearby.Models.Messages>> GetMessagesAsync(int chatId, int page = 1, int limit = 50)

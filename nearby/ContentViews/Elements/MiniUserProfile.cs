@@ -92,9 +92,9 @@ public class MiniUserProfile : ContentView
         {
             Style = BCL,
             TextColor = (Color)ResourceManager.Get("Gray500"),
-            FontSize = 14,
             Margin = new Thickness(0)
         };
+        _labelBirthDate.SetDynamicResource(Label.FontSizeProperty, "PrimaryFontSize");
 
         _detailedInfo = new VerticalStackLayout
         {
@@ -108,16 +108,17 @@ public class MiniUserProfile : ContentView
         {
             Style = BCL,
             TextColor = (Color)ResourceManager.Get("Gray500"),
-            FontSize = 14,
             Margin = new Thickness(0)
         };
+        _labelEmail.SetDynamicResource(Label.FontSizeProperty, "PrimaryFontSize");
+
         _labelPhone = new Label
         {
             Style = BCL,
             TextColor = (Color)ResourceManager.Get("Gray500"),
-            FontSize = 14,
             Margin = new Thickness(0)
         };
+        _labelPhone.SetDynamicResource(Label.FontSizeProperty, "PrimaryFontSize");
 
         _shortInfo = new VerticalStackLayout
         {

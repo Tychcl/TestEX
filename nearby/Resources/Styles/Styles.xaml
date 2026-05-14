@@ -29,7 +29,7 @@
         <Setter Property="TextColor" Value="{DynamicResource CBackground}" />
         <Setter Property="BackgroundColor" Value="{DynamicResource CPrimary}" />
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
-        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}"/>
         <Setter Property="BorderWidth" Value="0"/>
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="Padding" Value="14,10"/>
@@ -73,7 +73,7 @@
         <Setter Property="TextColor" Value="{DynamicResource CTextPrimary}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
-        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}"/>
         <Setter Property="MinimumHeightRequest" Value="44"/>
         <Setter Property="MinimumWidthRequest" Value="44"/>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -94,7 +94,7 @@
         <Setter Property="TextColor" Value="{DynamicResource CTextPrimary}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}" />
         <Setter Property="PlaceholderColor" Value="{DynamicResource CTextSecondary}" />
         <Setter Property="MinimumHeightRequest" Value="44"/>
         <Setter Property="MinimumWidthRequest" Value="44"/>
@@ -116,7 +116,7 @@
         <Setter Property="TextColor" Value="{DynamicResource CTextPrimary}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}" />
         <Setter Property="PlaceholderColor" Value="{DynamicResource CTextSecondary}" />
         <Setter Property="MinimumHeightRequest" Value="44"/>
         <Setter Property="MinimumWidthRequest" Value="44"/>
@@ -161,7 +161,7 @@
         <Setter Property="TextColor" Value="{DynamicResource CTextPrimary}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="FontFamily" Value="OpenSansRegular" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}" />
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
@@ -200,7 +200,7 @@
         <Setter Property="TitleColor" Value="{DynamicResource CTextPrimary}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}" />
         <Setter Property="MinimumHeightRequest" Value="44"/>
         <Setter Property="MinimumWidthRequest" Value="44"/>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -238,7 +238,7 @@
         <Setter Property="BackgroundColor" Value="Transparent"/>
         <Setter Property="TextColor" Value="{DynamicResource CTextPrimary}" />
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
-        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}"/>
         <Setter Property="MinimumHeightRequest" Value="44"/>
         <Setter Property="MinimumWidthRequest" Value="44"/>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -265,7 +265,7 @@
         <Setter Property="CancelButtonColor" Value="{DynamicResource CTextSecondary}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="FontFamily" Value="OpenSansRegular" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}" />
         <Setter Property="MinimumHeightRequest" Value="44"/>
         <Setter Property="MinimumWidthRequest" Value="44"/>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -288,7 +288,7 @@
         <Setter Property="PlaceholderColor" Value="{DynamicResource CTextSecondary}" />
         <Setter Property="BackgroundColor" Value="Transparent" />
         <Setter Property="FontFamily" Value="OpenSansRegular" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}" />
         <Setter Property="VisualStateManager.VisualStateGroups">
             <VisualStateGroupList>
                 <VisualStateGroup x:Name="CommonStates">
@@ -368,7 +368,7 @@
         <Setter Property="TextColor" Value="{DynamicResource CTextPrimary}" />
         <Setter Property="BackgroundColor" Value="Transparent"/>
         <Setter Property="FontFamily" Value="OpenSansRegular"/>
-        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}"/>
         <Setter Property="MinimumHeightRequest" Value="44"/>
         <Setter Property="MinimumWidthRequest" Value="44"/>
         <Setter Property="VisualStateManager.VisualStateGroups">
@@ -432,25 +432,30 @@
     <Style x:Key="CommonLabel" TargetType="Label">
         <Setter Property="TextColor" Value="{DynamicResource CTextPrimary}" />
         <Setter Property="FontAttributes" Value="Bold" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}" />
         <Setter Property="Padding" Value="0" />
     </Style>
 
+    <Style x:Key="SecondaryCommonLabel" BasedOn="{StaticResource CommonLabel}" TargetType="Label">
+        <Setter Property="TextColor" Value="{DynamicResource CTextSecondary}" />
+        <Setter Property="FontSize" Value="{DynamicResource SecondaryFontSize}" />
+    </Style>
+
     <Style BasedOn="{StaticResource CommonLabel}" TargetType="Label" x:Key="BoldCommonLabel">
-        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}"/>
         <Setter Property="FontFamily" Value="OpenSansBold"/>
     </Style>
     
     <Style x:Key="EditLabel" TargetType="Label">
         <Setter Property="TextColor" Value="{DynamicResource CTextSecondary}"/>
-        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}"/>
         <Setter Property="Margin" Value="0,0,0,4"/>
     </Style>
 
     <Style x:Key="EditEntry" TargetType="Entry">
         <Setter Property="BackgroundColor" Value="{DynamicResource CSurface}"/>
         <Setter Property="TextColor" Value="{DynamicResource CTextPrimary}"/>
-        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}"/>
         <Setter Property="Margin" Value="0,0,0,12"/>
         <Setter Property="PlaceholderColor" Value="{DynamicResource CTextSecondary}"/>
     </Style>
@@ -458,14 +463,14 @@
     <Style x:Key="EditPicker" TargetType="Picker">
         <Setter Property="BackgroundColor" Value="{DynamicResource CSurface}"/>
         <Setter Property="TextColor" Value="{DynamicResource CTextPrimary}"/>
-        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}"/>
         <Setter Property="Margin" Value="0,0,0,12"/>
     </Style>
 
     <Style x:Key="EditEditor" TargetType="Editor">
         <Setter Property="BackgroundColor" Value="{DynamicResource CSurface}"/>
         <Setter Property="TextColor" Value="{DynamicResource CTextPrimary}"/>
-        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}"/>
         <Setter Property="Margin" Value="0,0,0,12"/>
         <Setter Property="PlaceholderColor" Value="{DynamicResource CTextSecondary}"/>
         <Setter Property="AutoSize" Value="TextChanges"/>
@@ -514,7 +519,7 @@
         <Setter Property="Margin" Value="0"/>
         <Setter Property="TextColor" Value="{DynamicResource CTextPrimary}"/>
         <Setter Property="FontAttributes" Value="Bold" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}" />
     </Style>
 
     <Style x:Key="ImageButtonBorder" TargetType="Button" BasedOn="{StaticResource BorderButton}">
@@ -523,7 +528,7 @@
         <Setter Property="Margin" Value="0"/>
         <Setter Property="TextColor" Value="{DynamicResource CTextPrimary}"/>
         <Setter Property="FontAttributes" Value="Bold" />
-        <Setter Property="FontSize" Value="14" />
+        <Setter Property="FontSize" Value="{DynamicResource PrimaryFontSize}" />
     </Style>
 
     <Style x:Key="ImageButtonIB" TargetType="ImageButton">
@@ -532,4 +537,8 @@
         <Setter Property="Padding" Value="0"/>
         <Setter Property="Margin" Value="0"/>
     </Style>
+    
+    <!--FontSize-->
+    <x:Int32 x:Key="PrimaryFontSize">14</x:Int32>
+    <x:Int32 x:Key="SecondaryFontSize">12</x:Int32>
 </ResourceDictionary>

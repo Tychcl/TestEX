@@ -34,7 +34,7 @@
                             </VerticalStackLayout>
                             <VerticalStackLayout Grid.Column="2" VerticalOptions="Start" Spacing="4">
                                 <Label Text="{Binding LastMessage.CreatedAt, StringFormat='{0:dd.MM HH:mm}'}"
-                                           Style="{StaticResource CommonLabel}" FontSize="11"
+                                           Style="{StaticResource SecondaryCommonLabel}"
                                            HorizontalOptions="End"/>
                                 <Border Background="{DynamicResource CPrimary}"
                                             StrokeThickness="0"
@@ -43,7 +43,7 @@
                                             HorizontalOptions="End"
                                             VerticalOptions="End"
                                             IsVisible="{Binding UnreadCount, Converter={StaticResource GreaterThanConverter}, ConverterParameter='0'}">
-                                    <Label Text="{Binding UnreadCount}" TextColor="{DynamicResource CBackground}" FontSize="11"/>
+                                    <Label Text="{Binding UnreadCount}" TextColor="{DynamicResource CBackground}" Style="{StaticResource SecondaryCommonLabel}"/>
                                 </Border>
                             </VerticalStackLayout>
                         </Grid>

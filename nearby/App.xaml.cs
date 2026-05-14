@@ -29,6 +29,8 @@ namespace nearby
             base.OnStart();
             try
             {
+                await ResourceManager.Load<int>("PrimaryFontSize");
+                await ResourceManager.Load<int>("SecondaryFontSize");
                 var token = await _tokenService.GetTokenAsync();
                 if(string.IsNullOrEmpty(token)) MainPage = _serviceProvider.GetRequiredService<AuthShell>();
                 await _userService.LoadUserByIdAsync();

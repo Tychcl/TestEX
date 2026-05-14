@@ -19,19 +19,24 @@ namespace nearby.ViewModels
         private readonly IServiceProvider _serviceProvider;
 
         [ObservableProperty]
-        private bool _isRefreshing;
+        private List<string> priorityList = new() { "Все", "Низкий", "Средний", "Высокий" };
+
+        private Dictionary<string, string> priorityMap = new()
+        {
+            {"Все", ""},
+            {"Низкий", "low"},
+            {"Средний", "medium"},
+            {"Высокий", "high"}
+        };
 
         [ObservableProperty]
-        private string _statusFilter;
-        async partial void OnStatusFilterChanged(string value)
-        {
-            await Refresh();
-        }
+        private bool _isRefreshing;
 
         [ObservableProperty]
         private string _priorityFilter;
         async partial void OnPriorityFilterChanged(string value)
         {
+            _priorityFilter = priorityMap.GetValueOrDefault(PriorityFilter ?? "Все", "");
             await Refresh();
         }
 
@@ -87,7 +92,7 @@ namespace nearby.ViewModels
             IsBusy = true;
             try
             {
-                var response = await _taskService.GetTasksAsync(_currentPage, PageSize, StatusFilter, PriorityFilter, CityFilter);
+                var response = await _taskService.GetTasksAsync(_currentPage, PageSize, "searching", PriorityFilter, CityFilter);
                 if (response.Data != null && response.Data.Any())
                 {
                     foreach (var task in response.Data)
@@ -131,7 +136,6 @@ namespace nearby.ViewModels
         {
             PriorityFilter = string.Empty;
             CityFilter = string.Empty;
-            StatusFilter = string.Empty;
         }
 
         [RelayCommand]

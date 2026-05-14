@@ -129,11 +129,11 @@ public class MessageView : ContentView
             HorizontalOptions = LayoutOptions.Start,
             Margin = new Thickness(0),
             Padding = new Thickness(0),
-            LineBreakMode = LineBreakMode.TailTruncation,
-            FontSize = 12
+            LineBreakMode = LineBreakMode.TailTruncation
         };
         _replySender.SetBinding(Label.TextProperty, new Binding("Reply.SenderName"));
         _replySender.SetDynamicResource(Label.TextColorProperty, "CPrimary");
+        _replySender.SetDynamicResource(Label.FontSizeProperty, "SecondaryFontSize");
 
         _reply = new Label()
         {
@@ -142,10 +142,10 @@ public class MessageView : ContentView
             HorizontalOptions = LayoutOptions.Start,
             Margin = new Thickness(0),
             Padding = new Thickness(0),
-            LineBreakMode = LineBreakMode.TailTruncation,
-            FontSize = 12
+            LineBreakMode = LineBreakMode.TailTruncation
         };
         _reply.SetBinding(Label.TextProperty, new Binding("Reply.Content"));
+        _reply.SetDynamicResource(Label.FontSizeProperty, "SecondaryFontSize");
 
         _replyBoxBorder = new Border
         {
@@ -176,9 +176,9 @@ public class MessageView : ContentView
         {
             Style = LS,
             HorizontalOptions = LayoutOptions.End,
-            Margin = new Thickness(10, 5, 0, 0),
-            FontSize = 12
+            Margin = new Thickness(10, 5, 0, 0)
         };
+        _date.SetDynamicResource(Label.FontSizeProperty, "SecondaryFontSize");
         _date.SetBinding(Label.TextProperty, new Binding(nameof(Message.CreatedAt), stringFormat: "{0:dd.MM HH:mm}"));
         _date.SetDynamicResource(Label.TextColorProperty, "CTextSecondary");
 

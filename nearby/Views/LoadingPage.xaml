@@ -4,20 +4,5 @@
              x:Class="nearby.Views.LoadingPage"
              NavigationPage.HasNavigationBar="False"
              Shell.NavBarIsVisible="False">
-
-    <VerticalStackLayout VerticalOptions="Center" 
-                         HorizontalOptions="Center" 
-                         Spacing="20">
-        <Image Source="appicon.svg" 
-               HeightRequest="100" 
-               WidthRequest="100" />
-
-        <Label Text="Загрузка..." 
-               FontSize="18" 
-               TextColor="Gray" />
-
-        <ActivityIndicator IsRunning="True" 
-                           Color="#2196F3" />
-    </VerticalStackLayout>
-
+    <ActivityIndicator IsRunning="True" Color="{DynamicResource CPrimary}" HorizontalOptions="Center" VerticalOptions="Center"/>
 </ContentPage>

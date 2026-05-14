@@ -22,9 +22,7 @@
                     <Label Style="{StaticResource EditLabel}" Text="Полное описание"/>
                     <Editor Style="{StaticResource EditEditor}" Text="{Binding Description, Mode=TwoWay}" Placeholder="Список продуктов" MaxLength="300"/>
                     <Label Text="{Binding DescriptionLength,StringFormat='{0}/300'}"
-                               Style="{StaticResource CommonLabel}"
-                               TextColor="{StaticResource CTextSecondaryLight}"
-                               FontSize="11"
+                               Style="{StaticResource SecondaryCommonLabel}"
                                HorizontalOptions="End"/>
                 </VerticalStackLayout>
             </Border>
@@ -59,9 +57,7 @@
                     <Label Style="{StaticResource EditLabel}" Text="Адрес:"/>
                     <Editor Style="{StaticResource EditEditor}" Text="{Binding Location, Mode=TwoWay}" Placeholder="Адрес задачи" MaxLength="150"/>
                     <Label Text="{Binding LocationLength, StringFormat='{0}/150'}"
-                               Style="{StaticResource CommonLabel}"
-                               TextColor="{StaticResource CTextSecondaryLight}"
-                               FontSize="11"
+                               Style="{StaticResource SecondaryCommonLabel}"
                                HorizontalOptions="End"/>
                 </VerticalStackLayout>
             </Border>

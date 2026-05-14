@@ -34,9 +34,7 @@
                                        TextColor="{DynamicResource CPrimary}"
                                        FontAttributes="Bold"/>
                             <Label Text="JPG, PNG до 5 МБ" 
-                                       Style="{StaticResource CommonLabel}"
-                                       TextColor="{DynamicResource CTextSecondary}"
-                                       FontSize="12"/>
+                                       Style="{StaticResource SecondaryCommonLabel}"/>
                         </VerticalStackLayout>
                     </Grid>
                 </VerticalStackLayout>
@@ -83,9 +81,7 @@
                                 Placeholder="Расскажите немного о себе..."
                                 MaxLength="500"/>
                     <Label Text="{Binding AboutLength,StringFormat='{0}/500'}" 
-                               Style="{StaticResource CommonLabel}"
-                               TextColor="{DynamicResource CTextSecondary}"
-                               FontSize="11"
+                               Style="{StaticResource SecondaryCommonLabel}"
                                HorizontalOptions="End"/>
                 </VerticalStackLayout>
             </Border>
@@ -133,9 +129,7 @@
                                Placeholder="••••••••"
                                IsPassword="True"/>
                     <Label Text="Пароль необходим для подтверждения изменений" 
-                               Style="{StaticResource CommonLabel}"
-                               TextColor="{DynamicResource CTextSecondary}"
-                               FontSize="11"/>
+                               Style="{StaticResource SecondaryCommonLabel}"/>
                 </VerticalStackLayout>
             </Border>
         </VerticalStackLayout>

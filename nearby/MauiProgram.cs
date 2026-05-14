@@ -78,6 +78,7 @@ namespace nearby
             builder.Services.AddTransient<TaskDetailViewModel>();
             builder.Services.AddTransient<TaskAddEditViewModel>();
             builder.Services.AddTransient<SettingsViewModel>();
+            builder.Services.AddTransient<ThemeChangeViewModel>();
 
             //=====================
             //Страницы

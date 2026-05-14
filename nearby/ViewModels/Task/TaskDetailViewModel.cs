@@ -24,6 +24,26 @@ namespace nearby.ViewModels
         private readonly IServiceProvider _serviceProvider;
 
         [ObservableProperty]
+        private List<string> volunteerFilters = new(VolunteerStatusMap.Keys);
+
+        private static readonly Dictionary<string, string> VolunteerStatusMap = new()
+        {
+            {"Ожидающие", "pending"},
+            {"Принятые", "accepted"},
+            {"Отклоненные", "rejected"}
+        };
+
+        [ObservableProperty]
+        private string volunteerFilter;
+        partial void OnVolunteerFilterChanged(string value)
+        {
+            UpdateVolunteersList();
+        }
+        [ObservableProperty]
+        private ObservableCollection<TaskVolunteerInfo> volunteers = new();
+        private List<TaskVolunteerInfo> _allVolunteersCache = new();
+
+        [ObservableProperty]
         private View _creatorProfileView;
 
         [ObservableProperty]
@@ -56,9 +76,6 @@ namespace nearby.ViewModels
         private string _volunteerStatus = string.Empty;
 
         [ObservableProperty]
-        private ObservableCollection<TaskVolunteerInfo> _volunteers = new();
-
-        [ObservableProperty]
         private bool _inProgress;
 
         [ObservableProperty]
@@ -81,7 +98,7 @@ namespace nearby.ViewModels
             _userService = userService;
             _serviceProvider = sp;
             _chatService = chatService;
-
+            VolunteerFilter = volunteerFilters[0];
             PopupItems.Add(new((string)ResourceManager.Get("EditBox"), "Редактировать", EditCommand));
             PopupItems.Add(new((string)ResourceManager.Get("Delete"), "Удалить", DeleteCommand));
 
@@ -137,17 +154,36 @@ namespace nearby.ViewModels
             }
         }
 
+        private void UpdateVolunteersList()
+        {
+            string statusValue = VolunteerStatusMap.GetValueOrDefault(VolunteerFilter ?? volunteerFilters[0], "");
+            var filtered = string.IsNullOrEmpty(statusValue)
+                ? _allVolunteersCache
+                : _allVolunteersCache.Where(v => v.Status == statusValue).ToList();
+            var order = new[] { "pending", "accepted", "rejected" };
+            var sorted = filtered
+                .OrderBy(v => Array.IndexOf(order, v.Status))
+                .ThenBy(v => v.FullName)
+                .ToList();
+            Volunteers.Clear();
+            foreach (var v in sorted)
+                Volunteers.Add(v);
+        }
+
         private async Task LoadVolunteersAsync()
         {
             try
             {
                 var response = await _taskService.GetTaskVolunteersAsync(Task.Id);
-                Volunteers.Clear();
+                _allVolunteersCache.Clear();
                 if (response.Data != null)
                 {
                     foreach (var v in response.Data)
-                        Volunteers.Add(v);
+                    {
+                        _allVolunteersCache.Add(v);
+                    }
                 }
+                UpdateVolunteersList();
             }
             catch (Exception ex)
             {

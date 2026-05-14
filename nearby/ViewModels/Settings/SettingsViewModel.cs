@@ -15,7 +15,7 @@ namespace nearby.ViewModels
             new SettingsItem
             {
                 Icon = (string)ResourceManager.Get("Theme"),
-                Text = "Смена темы",
+                Text = "Внешний вид",
                 Page = nameof(ThemeChangePage)
             },
             new SettingsItem

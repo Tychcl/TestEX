@@ -14,18 +14,15 @@ public partial class LoginViewModel : BaseViewModel
     private readonly IAuthService _authService;
     private readonly IUserService _userService;
     private readonly IServiceProvider _serviceProvider;
-
     [ObservableProperty]
     [NotifyDataErrorInfo]
     [Required(ErrorMessage = "Логин не может быть пустым")]
     [ValidateWithValidator(validatorName: nameof(Validate.EmailOrPhoneValidator), ErrorMessage = "Неверный логин")]
     private string _login;
-
     [ObservableProperty]
     [NotifyDataErrorInfo]
     [Required(ErrorMessage = "Пароль не может быть пустым")]
     private string _password;
-
     public LoginViewModel(IAuthService authService, IUserService userService, IServiceProvider serviceProvider)
     {
         _authService = authService;
@@ -35,13 +32,11 @@ public partial class LoginViewModel : BaseViewModel
         ValidateAllProperties();
         ErrorsChanged += OnErrorsChanged;
     }
-
     protected override void OnErrorsChanged(object? sender, DataErrorsChangedEventArgs e)
     {
         base.OnErrorsChanged(sender, e);
         LoginCommand.NotifyCanExecuteChanged();
     }
-
     private bool CanLogin() => !HasErrors;
     [RelayCommand(CanExecute = nameof(CanLogin))]
     private async Task LoginAsync()

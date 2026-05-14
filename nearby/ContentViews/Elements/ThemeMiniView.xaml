@@ -26,11 +26,8 @@
                 </Grid>
             </Border>
             <VerticalStackLayout VerticalOptions="Center" Spacing="4">
-                <Label x:Name="Name"
-                   TextColor="{DynamicResource CTextPrimary}" 
-                   FontSize="16" FontAttributes="Bold" />
-                <Label TextColor="{DynamicResource CTextSecondary}" 
-                   FontSize="13" x:Name="Desc"/>
+                <Label x:Name="Name" Style="{StaticResource BoldCommonLabel}"/>
+                <Label Style="{StaticResource SecondaryCommonLabel}" x:Name="Desc"/>
             </VerticalStackLayout>
         </HorizontalStackLayout>
     </Border>

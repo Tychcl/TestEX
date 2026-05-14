@@ -75,8 +75,7 @@
                                    Text="{Binding User.EducationInstitution}"
                                    FontAttributes="Bold"/>
                         <Label Style="{StaticResource EditLabel}" 
-                                   Text="{Binding User.EducationField}"
-                                   FontSize="15"/>
+                                   Text="{Binding User.EducationField}"/>
                         <Label Style="{StaticResource EditLabel}" 
                                    Text="{Binding User.EducationDegree}" 
                                    TextColor="{DynamicResource CTextSecondary}"/>

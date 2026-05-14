@@ -20,28 +20,8 @@
                     <Label Text="Фильтры" Style="{StaticResource SectionTitle}" Margin="0" Grid.Column="0" VerticalOptions="Center"/>
                     <Button Grid.Column="1" Style="{StaticResource BorderButton}" local:IconHelper.Icon="{StaticResource FilterOff}" local:IconHelper.Color="CBackground" Command="{Binding FilterClearCommand}"/>
                 </Grid>
-                <HorizontalStackLayout Spacing="5" HorizontalOptions="Center">
-                    <Picker Title="Статус" SelectedItem="{Binding StatusFilter}" WidthRequest="120">
-                        <Picker.ItemsSource>
-                            <x:Array Type="{x:Type x:String}">
-                                <x:String></x:String>
-                                <x:String>searching</x:String>
-                                <x:String>in_progress</x:String>
-                                <x:String>completed</x:String>
-                                <x:String>cancelled</x:String>
-                            </x:Array>
-                        </Picker.ItemsSource>
-                    </Picker>
-                    <Picker Title="Приоритет" SelectedItem="{Binding PriorityFilter}" WidthRequest="120">
-                        <Picker.ItemsSource>
-                            <x:Array Type="{x:Type x:String}">
-                                <x:String></x:String>
-                                <x:String>low</x:String>
-                                <x:String>medium</x:String>
-                                <x:String>high</x:String>
-                            </x:Array>
-                        </Picker.ItemsSource>
-                    </Picker>
+                <HorizontalStackLayout Spacing="5">
+                    <Picker Title="Приоритет" SelectedItem="{Binding PriorityFilter}" WidthRequest="120" ItemsSource="{Binding PriorityList}"/>
                     <Entry Placeholder="Город" Text="{Binding CityFilter}" WidthRequest="120"/>
                 </HorizontalStackLayout>
             </VerticalStackLayout>

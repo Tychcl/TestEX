@@ -66,7 +66,10 @@
                 </Border>
                 <Border Style="{StaticResource EditSection}" IsVisible="{Binding IsOwner}">
                     <VerticalStackLayout>
-                    <Label Style="{StaticResource SectionTitle}" Text="Кандидаты"/>
+                        <Grid ColumnDefinitions="Auto, *">
+                            <Label Style="{StaticResource SectionTitle}" Text="Кандидаты" Grid.Column="0"/>
+                            <Picker Title="{Binding VolunteerFilter}" SelectedItem="{Binding VolunteerFilter}" ItemsSource="{Binding VolunteerFilters}" WidthRequest="120" Grid.Column="1" HorizontalOptions="End" VerticalOptions="Start" Margin="0" VerticalTextAlignment="Start"/>
+                        </Grid>
                         <CollectionView ItemsSource="{Binding Volunteers}" IsVisible="{Binding IsOwner}" MaximumHeightRequest="320">
                             <CollectionView.ItemTemplate>
                                 <DataTemplate x:DataType="models:TaskVolunteerInfo">

@@ -1,0 +1,7 @@
+fastapi[all]
+sqlalchemy
+python-dotenv
+asyncpg
+celery==5.4.0
+redis==5.2.1
+requests==2.32.3

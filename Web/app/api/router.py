@@ -1,0 +1,7 @@
+from fastapi import APIRouter
+from .controllers import auth_controller, user_controller, content_controller
+
+api_router = APIRouter(prefix="/api", tags=["api"])
+api_router.include_router(auth_controller)
+api_router.include_router(user_controller)
+api_router.include_router(content_controller)
